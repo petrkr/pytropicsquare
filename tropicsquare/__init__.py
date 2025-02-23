@@ -4,8 +4,9 @@ from .crc16 import CRC16
 from tropicsquare.constants import *
 from tropicsquare.constants.chip_status import *
 from tropicsquare.constants.get_info_req import *
-
+from tropicsquare.constants.rsp_status import RSP_STATUS_REQ_OK, RSP_STATUS_RES_OK
 from tropicsquare.exceptions import *
+
 
 class TropicSquare:
     def __init__(self):
@@ -57,6 +58,9 @@ class TropicSquare:
         if respcrc != calccrc:
             raise TropicSquareCRCError("CRC mismatch")
 
+        if response_status not in [RSP_STATUS_REQ_OK, RSP_STATUS_RES_OK]:
+            raise TropicSquareError("Response status is not OK (status: {})".format(hex(response_status)))
+
         return data
 
 
@@ -77,6 +81,16 @@ class TropicSquare:
     @property
     def riscv_fw_version(self):
         return self._l2_get_info_req(GET_INFO_RISCV_FW_VERSION)
+
+
+    @property
+    def spect_fw_version(self):
+        return self._l2_get_info_req(GET_INFO_SPECT_FW_VERSION)
+
+
+    @property
+    def fw_bank(self):
+        return self._l2_get_info_req(GET_INFO_FW_BANK)
 
 
     def start_secure_session(self, pubkey, privkey):
