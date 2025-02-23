@@ -14,7 +14,7 @@ class TropicSquare:
     @property
     def chipid(self):
         data = bytearray()
-        data.extend(REQ_ID_GET_INFO_REQ)
+        data.extend(bytes(REQ_ID_GET_INFO_REQ))
         data.append(GET_INFO_CHIPID)
         data.append(GET_INFO_DATA_CHUNK_0_127)
         data.extend(self._crc16.crc16(data))
@@ -24,7 +24,7 @@ class TropicSquare:
     @property
     def riscv_fw_version(self):
         data = bytearray()
-        data.extend(REQ_ID_GET_INFO_REQ)
+        data.extend(bytes(REQ_ID_GET_INFO_REQ))
         data.append(GET_INFO_RISCV_FW_VERSION)
         data.append(GET_INFO_DATA_CHUNK_0_127)
         data.extend(self._crc16.crc16(data))
