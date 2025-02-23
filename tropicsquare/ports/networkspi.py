@@ -3,6 +3,9 @@ from .. import TropicSquare
 import socket
 from random import randbytes
 
+from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat, PrivateFormat, NoEncryption
+from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey
+
 
 class NetworkSPI:
     COMMAND_READ = b'\x01'
@@ -119,3 +122,11 @@ class TropicSquareNetworkSPI(TropicSquare):
     def _random(self, length):
         # length is consider we return 4 bytes
         return randbytes(length*4)
+
+
+    def _get_ephemeral_keypair(self):
+        ehpriv = X25519PrivateKey.from_private_bytes(self._random(8))
+        ehpubraw = ehpriv.public_key().public_bytes(Encoding.Raw, PublicFormat.Raw)
+        ehprivraw = ehpriv.private_bytes(Encoding.Raw, PrivateFormat.Raw, NoEncryption())
+
+        return (ehprivraw, ehpubraw)

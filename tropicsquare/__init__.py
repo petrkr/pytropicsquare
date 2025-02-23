@@ -225,3 +225,6 @@ class TropicSquare:
 
     def _random(self, length):
         raise NotImplementedError("Not implemented")
+
+    def _get_ephemeral_keypair(self):
+        raise NotImplementedError("Not implemented")
