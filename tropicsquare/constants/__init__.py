@@ -12,3 +12,6 @@ REQ_ID_STARTUP_REQ = [0xB3, 0x01]
 
 
 REQ_ID_GET_RESPONSE = [0xAA] # Does not send length
+
+
+PROTOCOL_NAME = b'Noise_KK1_25519_AESGCM_SHA256\x00\x00\x00'
