@@ -47,3 +47,29 @@ class TropicSquare:
             raise Exception("Secure session not started")
 
         raise NotImplementedError("Not implemented yet")
+
+
+    def _l2_transfer(self, data):
+        pass
+
+
+    def _spi_cs(self, value):
+        # This must be implemented by the user in child class
+        raise NotImplementedError("Not implemented")
+
+
+    def _spi_write(self, data):
+        # This must be implemented by the user in child class
+        raise NotImplementedError("Not implemented")
+
+
+    def _spi_read(self, len: int) -> bytes:
+        raise NotImplementedError("Not implemented")
+
+
+    def _spi_readinto(self, buffer: bytearray):
+        raise NotImplementedError("Not implemented")
+
+
+    def _spi_write_readinto(self, tx_buffer, rx_buffer: bytearray):
+        raise NotImplementedError("Not implemented")
