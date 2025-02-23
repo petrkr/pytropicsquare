@@ -126,7 +126,7 @@ class TropicSquare:
         return self._l2_get_info_req(GET_INFO_FW_BANK)
 
 
-    def start_secure_session(self, pubkey, privkey):
+    def start_secure_session(self, stpub, pkey_index, shpriv, shpub):
         raise NotImplementedError("Not implemented yet")
 
 
