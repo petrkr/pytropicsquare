@@ -1,6 +1,7 @@
 
 from .. import TropicSquare
 import socket
+from random import randbytes
 
 
 class NetworkSPI:
@@ -113,3 +114,8 @@ class TropicSquareNetworkSPI(TropicSquare):
 
     def _spi_write_readinto(self, tx_buffer, rx_buffer: bytearray):
         self._spi.write_readinto(tx_buffer, rx_buffer)
+
+
+    def _random(self, length):
+        # length is consider we return 4 bytes
+        return randbytes(length*4)
