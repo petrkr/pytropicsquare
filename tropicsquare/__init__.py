@@ -12,6 +12,7 @@ class TropicSquare:
     def __init__(self):
         self._crc16 = CRC16()
         self._secure_session = None
+        self._certificate = None
 
 
     def _l2_get_info_req(self, object_id, req_data_chunk = GET_INFO_DATA_CHUNK_0_127):
@@ -66,12 +67,44 @@ class TropicSquare:
 
     @property
     def certificate(self):
+        if self._certificate:
+            return self._certificate
+
         data = self._l2_get_info_req(GET_INFO_X509_CERT, GET_INFO_DATA_CHUNK_0_127)
         data += self._l2_get_info_req(GET_INFO_X509_CERT, GET_INFO_DATA_CHUNK_128_255)
         data += self._l2_get_info_req(GET_INFO_X509_CERT, GET_INFO_DATA_CHUNK_256_383)
         data += self._l2_get_info_req(GET_INFO_X509_CERT, GET_INFO_DATA_CHUNK_384_511)
 
-        return data
+        # TODO: Figure out what are that 10 bytes at the beginning
+        # 2 bytes: unknown
+        # 2 bytes (big-endian): length of the certificate
+        # 6 bytes: unknown
+        lenght = int.from_bytes(data[2:4], "big")
+        self._certificate = data[10:10+lenght]
+        return self._certificate
+
+
+    @property
+    def public_key(self):
+        if self._certificate is None:
+            cert = self.certificate
+        else :
+            cert = self._certificate
+
+        # Find signature for X25519 public key
+        # 0x65, 0x6e, 0x03 and 0x21
+        def _parse_public_key(cert):
+            for i in range(len(cert)):
+                if cert[i] == 0x65:
+                    if cert[i+1] == 0x6e and \
+                       cert[i+2] == 0x03 and \
+                       cert[i+3] == 0x21:
+                        # Found it
+                        # Plus 5 bytes to skip the signature
+                        return cert[i+5:i+5+32]
+
+        return _parse_public_key(cert)
+
 
     @property
     def chipid(self):
