@@ -2,8 +2,10 @@
 
 from .crc16 import CRC16
 from tropicsquare.constants import *
+from tropicsquare.constants.chip_status import *
 from tropicsquare.constants.get_info_req import *
 
+from tropicsquare.exceptions import *
 
 class TropicSquare:
     def __init__(self):
@@ -11,24 +13,70 @@ class TropicSquare:
         self._secure_session = None
 
 
-    @property
-    def chipid(self):
+    def _l2_get_info_req(self, object_id, req_data_chunk = GET_INFO_DATA_CHUNK_0_127):
         data = bytearray()
         data.extend(bytes(REQ_ID_GET_INFO_REQ))
-        data.append(GET_INFO_CHIPID)
-        data.append(GET_INFO_DATA_CHUNK_0_127)
+        data.append(object_id)
+        data.append(req_data_chunk)
         data.extend(self._crc16.crc16(data))
+
+        self._spi_cs(0)
+        self._spi_write_readinto(data, data)
+        self._spi_cs(1)
+
+        chip_status = data[0]
+
+        if chip_status != CHIP_STATUS_READY:
+            raise TropicSquareError("Chip status is not ready (status: {})".format(hex(chip_status)))
+
+        data = bytearray()
+        data.extend(bytes(REQ_ID_GET_RESPONSE))
+
+        self._spi_cs(0)
+        self._spi_write_readinto(data, data)
+
+        chip_status = data[0]
+        if chip_status != CHIP_STATUS_READY:
+            raise TropicSquareError("Chip status is not ready (status: {})".format(hex(chip_status)))
+
+        response = self._spi.read(2)
+
+        response_status = response[0]
+        response_length = response[1]
+
+        if response_length > 0:
+            data = self._spi.read(response_length)
+        else:
+            data = None
+
+        calccrc = self._crc16.crc16(response + (data or b''))
+        respcrc = self._spi.read(2)
+
+        self._spi_cs(1)
+
+        if respcrc != calccrc:
+            raise TropicSquareCRCError("CRC mismatch")
+
         return data
+
+
+    @property
+    def certificate(self):
+        data = self._l2_get_info_req(GET_INFO_X509_CERT, GET_INFO_DATA_CHUNK_0_127)
+        data += self._l2_get_info_req(GET_INFO_X509_CERT, GET_INFO_DATA_CHUNK_128_255)
+        data += self._l2_get_info_req(GET_INFO_X509_CERT, GET_INFO_DATA_CHUNK_256_383)
+        data += self._l2_get_info_req(GET_INFO_X509_CERT, GET_INFO_DATA_CHUNK_384_511)
+
+        return data
+
+    @property
+    def chipid(self):
+        return self._l2_get_info_req(GET_INFO_CHIPID)
 
 
     @property
     def riscv_fw_version(self):
-        data = bytearray()
-        data.extend(bytes(REQ_ID_GET_INFO_REQ))
-        data.append(GET_INFO_RISCV_FW_VERSION)
-        data.append(GET_INFO_DATA_CHUNK_0_127)
-        data.extend(self._crc16.crc16(data))
-        return data
+        return self._l2_get_info_req(GET_INFO_RISCV_FW_VERSION)
 
 
     def start_secure_session(self, pubkey, privkey):
@@ -37,14 +85,14 @@ class TropicSquare:
 
     def ping(self, data):
         if self._secure_session is None:
-            raise Exception("Secure session not started")
+            raise TropicSquareNoSession("Secure session not started")
 
         raise NotImplementedError("Not implemented yet")
 
 
     def get_random(self):
         if self._secure_session is None:
-            raise Exception("Secure session not started")
+            raise TropicSquareNoSession("Secure session not started")
 
         raise NotImplementedError("Not implemented yet")
 
