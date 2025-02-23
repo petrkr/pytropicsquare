@@ -168,3 +168,7 @@ class TropicSquare:
 
     def _spi_write_readinto(self, tx_buffer, rx_buffer: bytearray):
         raise NotImplementedError("Not implemented")
+
+
+    def _random(self, length):
+        raise NotImplementedError("Not implemented")
