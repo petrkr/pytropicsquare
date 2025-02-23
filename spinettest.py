@@ -4,6 +4,7 @@ from time import sleep
 from tropicsquare.ports.networkspi import NetworkSPI
 from tropicsquare.crc16 import CRC16
 
+
 class dummyPin:
     def __init__(self, networkSpi):
         self._spi = networkSpi
@@ -21,12 +22,6 @@ if __name__ == "__main__":
     crc = CRC16()
     cs = dummyPin(spi)
 
-    # 0x2b92 - Request CRC
-    print(crc.crc16(b'\x01\x02\x02\x00'))
-
-    # 0x0608 - Response CRC
-    print(crc.crc16(b'\x7C\x00'))
-
     cs.value(1)
 
     chip_status = bytearray(1)
@@ -40,10 +35,10 @@ if __name__ == "__main__":
     spi.write(b'\x02')
 
     # Chip ID, Datachunk 0
-    spi.write(b'\x02\x00')
+    spi.write(b'\x01\x00')
 
     # CRC
-    spi.write(b'\x2b\x98')
+    spi.write(b'\x2b\x92')
 
     cs.value(1)
 
@@ -67,8 +62,12 @@ if __name__ == "__main__":
         data = None
 
     rescrc = spi.read(2)
+    calccrc = crc.crc16(resstatus.to_bytes(1) + reslen.to_bytes(1) + (data or b''))
 
     print("Response data: {}".format(data))
-    print("Response CRC: {}".format(rescrc))
+    print("Response CRC (Recv): {}".format(rescrc))
+    print("Response CRC (Calc): {}".format(calccrc))
+    print("CRC match: {}".format(rescrc == calccrc))
+
 
     cs.value(1)
