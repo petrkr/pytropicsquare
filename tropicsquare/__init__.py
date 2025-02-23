@@ -7,6 +7,7 @@ from tropicsquare.constants.get_info_req import *
 from tropicsquare.constants.rsp_status import RSP_STATUS_REQ_OK, RSP_STATUS_RES_OK
 from tropicsquare.exceptions import *
 
+from hashlib import sha256
 
 class TropicSquare:
     def __init__(self):
@@ -180,7 +181,32 @@ class TropicSquare:
 
 
     def start_secure_session(self, stpub, pkey_index, shpriv, shpub):
-        raise NotImplementedError("Not implemented yet")
+        ehpriv, ehpub = self._get_ephemeral_keypair()
+
+        # Handshake request
+        tsehpub, tsauth = self._l2_handshake_req(ehpub, pkey_index)
+
+        # Calculation magic
+
+        sha256hash = sha256()
+        sha256hash.update(PROTOCOL_NAME)
+
+        sha256hash = sha256(sha256hash.digest())
+        sha256hash.update(shpub)
+
+        sha256hash = sha256(sha256hash.digest())
+        sha256hash.update(stpub)
+
+        sha256hash = sha256(sha256hash.digest())
+        sha256hash.update(ehpub)
+
+        sha256hash = sha256(sha256hash.digest())
+        sha256hash.update(pkey_index.to_bytes(1, "big"))
+
+        sha256hash = sha256(sha256hash.digest())
+        sha256hash.update(tsehpub)
+
+        return (tsehpub, tsauth)
 
 
     def ping(self, data):
