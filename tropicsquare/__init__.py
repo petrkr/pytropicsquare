@@ -65,6 +65,59 @@ class TropicSquare:
         return data
 
 
+    def _l2_handshake_req(self, ehpub, p_keyslot):
+        data = bytearray()
+        data.extend(bytes(REQ_ID_HANDSHARE_REQ))
+        data.extend(ehpub)
+        data.append(p_keyslot)
+        data.extend(self._crc16.crc16(data))
+
+        self._spi_cs(0)
+        self._spi_write_readinto(data, data)
+        self._spi_cs(1)
+
+        chip_status = data[0]
+
+        if chip_status != CHIP_STATUS_READY:
+            raise TropicSquareError("Chip status is not ready (status: {})".format(hex(chip_status)))
+
+        data = bytearray()
+        data.extend(bytes(REQ_ID_GET_RESPONSE))
+
+        self._spi_cs(0)
+        self._spi_write_readinto(data, data)
+
+        chip_status = data[0]
+        if chip_status != CHIP_STATUS_READY:
+            raise TropicSquareError("Chip status is not ready (status: {})".format(hex(chip_status)))
+
+        response = self._spi.read(2)
+
+        response_status = response[0]
+        response_length = response[1]
+
+        if response_length > 0:
+            data = self._spi.read(response_length)
+        else:
+            data = None
+
+        calccrc = self._crc16.crc16(response + (data or b''))
+        respcrc = self._spi.read(2)
+
+        self._spi_cs(1)
+
+        if respcrc != calccrc:
+            raise TropicSquareCRCError("CRC mismatch")
+
+        if response_status not in [RSP_STATUS_REQ_OK, RSP_STATUS_RES_OK]:
+            raise TropicSquareError("Response status is not OK (status: {})".format(hex(response_status)))
+
+        tsehpub = data[0:32]
+        tsauth = data[32:48]
+
+        return (tsehpub, tsauth)
+
+
     @property
     def certificate(self):
         if self._certificate:
