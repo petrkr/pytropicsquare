@@ -1,9 +1,9 @@
 
-from tropicsquare import TropicSquare
+from tropicsquare.ports.micropython import TropicSquareMicroPython
 
 
 def main():
-    ts = TropicSquare()
+    ts = TropicSquareMicroPython(None, None)
     print(ts.chipid)
     print(ts.riscv_fw_version)
 
