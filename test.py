@@ -1,6 +1,10 @@
 
 import sys
 
+from cryptography import x509
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
+
 #from tropicsquare.ports.micropython import TropicSquareMicroPython
 from tropicsquare.ports.networkspi import TropicSquareNetworkSPI
 
@@ -19,8 +23,15 @@ def main():
     except Exception as e:
         print("Exception: {}".format(e))
 
-    cert = ts.certificate
-    print("Certificate: {}".format(cert))
+
+    rawcert = ts.certificate
+    print("RAW Certificate: {}".format(rawcert))
+
+    cert = x509.load_der_x509_certificate(rawcert, default_backend())
+    pubkey = cert.public_key()
+
+    print("Cert Public Key (PyTropicSquare): {}".format(ts.public_key))
+    print("Cert Public Key (cryptography): {}".format(pubkey.public_bytes(Encoding.Raw, PublicFormat.Raw)))
 
 
 if __name__ == "__main__":
