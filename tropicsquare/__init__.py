@@ -71,7 +71,8 @@ class TropicSquare:
         data += self._l2_get_info_req(GET_INFO_X509_CERT, GET_INFO_DATA_CHUNK_256_383)
         data += self._l2_get_info_req(GET_INFO_X509_CERT, GET_INFO_DATA_CHUNK_384_511)
 
-        return data
+        # TODO: Figure out what are that 10 bytes at the beginning
+        return data[10:]
 
     @property
     def chipid(self):
