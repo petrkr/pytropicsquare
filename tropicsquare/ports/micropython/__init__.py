@@ -3,6 +3,7 @@ from random import getrandbits
 from tropicsquare import TropicSquare
 from tropicsquare.ports.micropython.hkdf import HKDF
 from tropicsquare.ports.micropython.x25519 import X25519
+from tropicsquare.ports.micropython.aesgcm import AESGCM
 
 
 class TropicSquareMicroPython(TropicSquare):
@@ -52,3 +53,7 @@ class TropicSquareMicroPython(TropicSquare):
 
     def _x25519_exchange(self, private_bytes, public_bytes):
         return X25519.exchange(private_bytes, public_bytes)
+
+
+    def _aesgcm(self, key):
+        return AESGCM(key)
