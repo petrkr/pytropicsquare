@@ -295,7 +295,10 @@ class TropicSquare:
         ck_hkdf_cmdres = None
         kauth = None
 
-        self._secure_session = [ kcmd, kres ]
+        encrypt_key = AESGCM(kcmd)
+        decrypt_key = AESGCM(kres)
+
+        self._secure_session = [ encrypt_key, decrypt_key ]
 
         return (kcmd, kres)
 
