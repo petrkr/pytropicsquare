@@ -1,6 +1,6 @@
 # Version: 0.1
 
-from .crc16 import CRC16
+from tropicsquare.crc16 import CRC
 from tropicsquare.constants import *
 from tropicsquare.constants.chip_status import *
 from tropicsquare.constants.get_info_req import *
@@ -12,7 +12,6 @@ from time import sleep
 
 class TropicSquare:
     def __init__(self):
-        self._crc16 = CRC16()
         self._secure_session = None
         self._certificate = None
 
@@ -24,7 +23,7 @@ class TropicSquare:
         data.extend(bytes(REQ_ID_GET_INFO_REQ))
         data.append(object_id)
         data.append(req_data_chunk)
-        data.extend(self._crc16.crc16(data))
+        data.extend(CRC.crc16(data))
 
         self._spi_cs(0)
         self._spi_write_readinto(data, data)
@@ -55,7 +54,7 @@ class TropicSquare:
         else:
             data = None
 
-        calccrc = self._crc16.crc16(response + (data or b''))
+        calccrc = CRC.crc16(response + (data or b''))
         respcrc = self._spi.read(2)
 
         self._spi_cs(1)
@@ -74,7 +73,7 @@ class TropicSquare:
         data.extend(bytes(REQ_ID_HANDSHARE_REQ))
         data.extend(ehpub)
         data.append(p_keyslot)
-        data.extend(self._crc16.crc16(data))
+        data.extend(CRC.crc16(data))
 
         self._spi_cs(0)
         self._spi_write_readinto(data, data)
@@ -107,7 +106,7 @@ class TropicSquare:
         else:
             data = None
 
-        calccrc = self._crc16.crc16(response + (data or b''))
+        calccrc = CRC.crc16(response + (data or b''))
         respcrc = self._spi.read(2)
 
         self._spi_cs(1)
@@ -127,7 +126,7 @@ class TropicSquare:
     def _l2_get_log(self):
         data = bytearray()
         data.extend(bytes(REQ_ID_GET_LOG_REQ))
-        data.extend(self._crc16.crc16(data))
+        data.extend(CRC.crc16(data))
 
         self._spi_cs(0)
         self._spi_write_readinto(data, data)
@@ -158,7 +157,7 @@ class TropicSquare:
         else:
             data = None
 
-        calccrc = self._crc16.crc16(response + (data or b''))
+        calccrc = CRC.crc16(response + (data or b''))
         respcrc = self._spi.read(2)
 
         self._spi_cs(1)
