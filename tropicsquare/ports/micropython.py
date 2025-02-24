@@ -1,4 +1,6 @@
 import hashlib
+from random import randbytes
+
 from .. import TropicSquare
 
 
@@ -29,6 +31,11 @@ class TropicSquareMicroPython(TropicSquare):
 
     def _spi_write_readinto(self, tx_buffer, rx_buffer: bytearray):
         self._spi.write_readinto(tx_buffer, rx_buffer)
+
+
+    def _get_ephemeral_keypair(self):
+        ehpriv = randbytes(32)
+        return (ehpriv, self._x25519_pubkey(ehpriv))
 
 
     def _hkdf(self, salt, shared_secret, length = 1):
@@ -150,3 +157,9 @@ class TropicSquareMicroPython(TropicSquare):
             t = self._hmac_sha256(prk, t + info + bytes([i]))
             okm += t
         return okm[:length]
+
+
+    def _x25519_pubkey(self, private_bytes):
+        # The base point for X25519 is 9, represented as a 32-byte little-endian value.
+        basepoint = (9).to_bytes(32, "little")
+        return self._x25519_exchange(private_bytes, basepoint)
