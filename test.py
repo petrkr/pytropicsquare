@@ -33,6 +33,9 @@ def main():
         print("Exception: {}".format(e))
 
 
+#    with open("tropic.crt", "rb") as f:
+#        rawcert = f.read()
+
     rawcert = ts.certificate
     print("RAW Certificate: {}".format(rawcert))
 
