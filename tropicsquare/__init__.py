@@ -242,41 +242,37 @@ class TropicSquare:
         print("Shared secret EH vs ST: {}".format(shared_secret_eh_st.hex()))
 
 
-        hkdf_eh_tseh = HKDF(algorithm=hashes.SHA256(),
+        ck_hkdf_eh_tseh = HKDF(algorithm=hashes.SHA256(),
                      length=32,
                      salt=PROTOCOL_NAME,
                      info=None).derive(shared_secret_eh_tseh)
 
-        hkdf_sh_tseh = HKDF(algorithm=hashes.SHA256(),
+        ck_hkdf_sh_tseh = HKDF(algorithm=hashes.SHA256(),
                      length=32,
-                     salt=hkdf_eh_tseh,
+                     salt=ck_hkdf_eh_tseh,
                      info=None).derive(shared_secret_sh_tseh)
 
-        hkdf_eh_st = HKDF(algorithm=hashes.SHA256(),
-                        length=32,
-                        salt=hkdf_sh_tseh,
+        ck_hkdf_eh_st_kauth = HKDF(algorithm=hashes.SHA256(),
+                        length=64,
+                        salt=ck_hkdf_sh_tseh,
                         info=None).derive(shared_secret_eh_st)
 
-        hkdf_eh_st = HKDF(algorithm=hashes.SHA256(),
-                        length=64,
-                        salt=hkdf_sh_tseh,
-                        info=None).derive(shared_secret_eh_st)
+        ck_hkdf_cmdres = ck_hkdf_eh_st_kauth[:32]
+        kauth = ck_hkdf_eh_st_kauth[32:]
 
-        output_1 = hkdf_eh_st[:32]
-        kauth = hkdf_eh_st[32:]
-
-        cmdres = HKDF(algorithm=hashes.SHA256(),
+        hkdf_cmdres = HKDF(algorithm=hashes.SHA256(),
                         length=64,
-                        salt=output_1,
+                        salt=ck_hkdf_cmdres,
                         info=None).derive(b'')
 
-        kcmd = cmdres[:32]
-        kres = cmdres[32:]
+        kcmd = hkdf_cmdres[:32]
+        kres = hkdf_cmdres[32:]
 
-        print("HKDF EH TSEH: {}".format(hkdf_eh_tseh.hex()))
-        print("HKDF SH TSEH: {}".format(hkdf_sh_tseh.hex()))
-        print("HKDF EH ST: {}".format(output_1.hex()))
-        print("KAUTH: {}".format(kauth.hex()))
+        print("HKDF EH TSEH: {}".format(ck_hkdf_eh_tseh.hex()))
+        print("HKDF SH TSEH: {}".format(ck_hkdf_sh_tseh.hex()))
+        print("HKDF EH ST")
+        print("  CMDRES: {}".format(ck_hkdf_cmdres.hex()))
+        print("  KAUTH: {}".format(kauth.hex()))
 
         print("KCMD: {}".format(kcmd.hex()))
         print("KRES: {}".format(kres.hex()))
