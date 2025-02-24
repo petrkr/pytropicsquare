@@ -1,7 +1,6 @@
 
 from .. import TropicSquare
 import socket
-from random import randbytes
 
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat, PrivateFormat, NoEncryption
 from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey, X25519PublicKey
@@ -120,11 +119,6 @@ class TropicSquareNetworkSPI(TropicSquare):
 
     def _spi_write_readinto(self, tx_buffer, rx_buffer: bytearray):
         self._spi.write_readinto(tx_buffer, rx_buffer)
-
-
-    def _random(self, length):
-        # length is consider we return 4 bytes
-        return randbytes(length*4)
 
 
     def _get_ephemeral_keypair(self):
