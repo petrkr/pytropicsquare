@@ -24,6 +24,8 @@ class TropicSquare:
         self._certificate = None
 
 
+    # TODO: Create L2 same parts more generic
+
     def _l2_get_info_req(self, object_id, req_data_chunk = GET_INFO_DATA_CHUNK_0_127):
         data = bytearray()
         data.extend(bytes(REQ_ID_GET_INFO_REQ))
