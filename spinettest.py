@@ -1,17 +1,8 @@
 import sys
 from time import sleep
 
-from tropicsquare.ports.networkspi import NetworkSPI
+from networkspi import NetworkSPI, DummyNetworkSpiCSPin
 from tropicsquare.crc16 import CRC16
-
-
-class dummyPin:
-    def __init__(self, networkSpi):
-        self._spi = networkSpi
-
-
-    def value(self, value):
-        self._spi.set_cs(value)
 
 
 if __name__ == "__main__":
@@ -20,7 +11,7 @@ if __name__ == "__main__":
 
     spi = NetworkSPI(host, port)
     crc = CRC16()
-    cs = dummyPin(spi)
+    cs = DummyNetworkSpiCSPin(spi)
 
     cs.value(1)
 
