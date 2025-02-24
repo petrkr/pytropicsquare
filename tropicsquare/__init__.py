@@ -7,8 +7,6 @@ from tropicsquare.constants.get_info_req import *
 from tropicsquare.constants.rsp_status import RSP_STATUS_REQ_OK, RSP_STATUS_RES_OK
 from tropicsquare.exceptions import *
 
-from cryptography.hazmat.primitives.ciphers.aead import AESGCM
-
 from hashlib import sha256
 from time import sleep
 
@@ -297,7 +295,7 @@ class TropicSquare:
         print("  KCMD: {}".format(kcmd.hex()))
         print("  KRES: {}".format(kres.hex()))
 
-        aesgcm = AESGCM(kauth)
+        aesgcm = self._aesgcm(kauth)
         ciphertext_with_tag = aesgcm.encrypt(nonce=b'\x00'*12, data=b'', associated_data=hash)
 
         tag = ciphertext_with_tag[-16:]
@@ -315,8 +313,8 @@ class TropicSquare:
         ck_hkdf_cmdres = None
         kauth = None
 
-        encrypt_key = AESGCM(kcmd)
-        decrypt_key = AESGCM(kres)
+        encrypt_key = self._aesgcm(kcmd)
+        decrypt_key = self._aesgcm(kres)
 
         self._secure_session = [ encrypt_key, decrypt_key ]
 
@@ -384,4 +382,8 @@ class TropicSquare:
 
 
     def _x25519_exchange(self, private_bytes, public_bytes):
+        raise NotImplementedError("Not implemented")
+
+
+    def _aesgcm(self, key):
         raise NotImplementedError("Not implemented")
