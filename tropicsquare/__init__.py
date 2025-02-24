@@ -330,8 +330,8 @@ class TropicSquare:
         aesgcm = AESGCM(kauth)
         ciphertext_with_tag = aesgcm.encrypt(nonce=b'\x00'*12, data=b'', associated_data=sha256hash.digest())
 
-        tag = ciphertext_with_tag[:16]
-        ciphertext = ciphertext_with_tag[16:]
+        tag = ciphertext_with_tag[-16:]
+        ciphertext = ciphertext_with_tag[:-16]
 
         print("Ciphertext:", ciphertext)
         print("THAuth", tag.hex())
