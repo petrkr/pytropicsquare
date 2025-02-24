@@ -9,8 +9,6 @@ from tropicsquare.exceptions import *
 
 from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey
 from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PublicKey
-from cryptography.hazmat.primitives.kdf.hkdf import HKDF
-from cryptography.hazmat.primitives import hashes
 
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
@@ -291,32 +289,10 @@ class TropicSquare:
         shared_secret_eh_st = ehpriv.exchange(X25519PublicKey.from_public_bytes(stpub))
         print("Shared secret EH vs ST: {}".format(shared_secret_eh_st.hex()))
 
-
-        ck_hkdf_eh_tseh = HKDF(algorithm=hashes.SHA256(),
-                     length=32,
-                     salt=PROTOCOL_NAME,
-                     info=None).derive(shared_secret_eh_tseh)
-
-        ck_hkdf_sh_tseh = HKDF(algorithm=hashes.SHA256(),
-                     length=32,
-                     salt=ck_hkdf_eh_tseh,
-                     info=None).derive(shared_secret_sh_tseh)
-
-        ck_hkdf_eh_st_kauth = HKDF(algorithm=hashes.SHA256(),
-                        length=64,
-                        salt=ck_hkdf_sh_tseh,
-                        info=None).derive(shared_secret_eh_st)
-
-        ck_hkdf_cmdres = ck_hkdf_eh_st_kauth[:32]
-        kauth = ck_hkdf_eh_st_kauth[32:]
-
-        hkdf_cmdres = HKDF(algorithm=hashes.SHA256(),
-                        length=64,
-                        salt=ck_hkdf_cmdres,
-                        info=None).derive(b'')
-
-        kcmd = hkdf_cmdres[:32]
-        kres = hkdf_cmdres[32:]
+        ck_hkdf_eh_tseh = self._hkdf(PROTOCOL_NAME, shared_secret_eh_tseh)
+        ck_hkdf_sh_tseh = self._hkdf(ck_hkdf_eh_tseh, shared_secret_sh_tseh)
+        ck_hkdf_cmdres, kauth = self._hkdf(ck_hkdf_sh_tseh, shared_secret_eh_st, 2)
+        kcmd, kres = self._hkdf(ck_hkdf_cmdres, b'', 2)
 
         print("HKDF EH TSEH: {}".format(ck_hkdf_eh_tseh.hex()))
         print("HKDF SH TSEH: {}".format(ck_hkdf_sh_tseh.hex()))
@@ -408,5 +384,10 @@ class TropicSquare:
     def _random(self, length):
         raise NotImplementedError("Not implemented")
 
+
     def _get_ephemeral_keypair(self):
+        raise NotImplementedError("Not implemented")
+
+
+    def _hkdf(self, salt, shared_secret, length):
         raise NotImplementedError("Not implemented")
