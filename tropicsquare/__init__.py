@@ -270,8 +270,9 @@ class TropicSquare:
 
         sha256hash = sha256(sha256hash.digest())
         sha256hash.update(tsehpub)
+        hash = sha256hash.digest()
 
-        print ("SHA256: {}".format(sha256hash.hexdigest()))
+        print ("SHA256: {}".format(hash.hex()))
 
         shared_secret_eh_tseh = self._x25519_exchange(ehpriv, tsehpub)
         shared_secret_sh_tseh = self._x25519_exchange(shpriv, tsehpub)
@@ -297,7 +298,7 @@ class TropicSquare:
         print("  KRES: {}".format(kres.hex()))
 
         aesgcm = AESGCM(kauth)
-        ciphertext_with_tag = aesgcm.encrypt(nonce=b'\x00'*12, data=b'', associated_data=sha256hash.digest())
+        ciphertext_with_tag = aesgcm.encrypt(nonce=b'\x00'*12, data=b'', associated_data=hash)
 
         tag = ciphertext_with_tag[-16:]
         ciphertext = ciphertext_with_tag[:-16]
