@@ -193,18 +193,18 @@ class TropicSquare:
     def start_secure_session(self, stpub, pkey_index, shpriv, shpub):
         ehpriv, ehpub = self._get_ephemeral_keypair()
 
-        print("STPub: {}".format(stpub))
+        print("STPub: {}".format(stpub.hex()))
         print("PKey Index: {}".format(pkey_index))
-        print("SHPriv: {}".format(shpriv))
-        print("SHPub: {}".format(shpub))
-        print("EHPriv: {}".format(ehpriv))
-        print("EHPub: {}".format(ehpub))
+        print("SHPriv: {}".format(shpriv.hex()))
+        print("SHPub: {}".format(shpub.hex()))
+        print("EHPriv: {}".format(ehpriv.hex()))
+        print("EHPub: {}".format(ehpub.hex()))
 
         # Handshake request
         tsehpub, tsauth = self._l2_handshake_req(ehpub, pkey_index)
 
-        print("TSEHPub: {}".format(tsehpub))
-        print("TSAuth: {}".format(tsauth))
+        print("TSEHPub: {}".format(tsehpub.hex()))
+        print("TSAuth: {}".format(tsauth.hex()))
 
         # Calculation magic
 
@@ -290,7 +290,9 @@ class TropicSquare:
         ciphertext = ciphertext_with_tag[:-16]
 
         print("Ciphertext:", ciphertext)
-        print("Tag:", tag)
+        print("THAuth", tag.hex())
+
+        print("THAuth == TSAuth: {}".format(tag == tsauth))
 
         return (tsehpub, tsauth)
 
