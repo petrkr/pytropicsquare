@@ -37,11 +37,18 @@ def main():
     print("RAW Certificate: {}".format(rawcert))
 
     cert = x509.load_der_x509_certificate(rawcert, default_backend())
-    pubkey = cert.public_key()
+    pubkey = cert.public_key().public_bytes(Encoding.Raw, PublicFormat.Raw)
+
 
     print("Cert Public Key (PyTropicSquare): {}".format(ts.public_key))
-    print("Cert Public Key (cryptography): {}".format(pubkey.public_bytes(Encoding.Raw, PublicFormat.Raw)))
+    print("Cert Public Key (cryptography): {}".format(pubkey))
 
+    print("Starting secure session...")
+    ts.start_secure_session(pubkey, pkey_index_0, bytes(sh0priv), bytes(sh0pub))
+
+
+    print("Log")
+    print(ts.get_log())
 
 if __name__ == "__main__":
     main()
