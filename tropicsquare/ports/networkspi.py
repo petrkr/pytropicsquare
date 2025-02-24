@@ -6,6 +6,9 @@ from random import randbytes
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat, PrivateFormat, NoEncryption
 from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey
 
+from cryptography.hazmat.primitives.kdf.hkdf import HKDF
+from cryptography.hazmat.primitives.hashes import SHA256
+
 
 class NetworkSPI:
     COMMAND_READ = b'\x01'
@@ -130,3 +133,15 @@ class TropicSquareNetworkSPI(TropicSquare):
         ehprivraw = ehpriv.private_bytes(Encoding.Raw, PrivateFormat.Raw, NoEncryption())
 
         return (ehprivraw, ehpubraw)
+
+
+    def _hkdf(self, salt, shared_secret, length = 1):
+        result = HKDF(algorithm=SHA256(),
+                    length=length * 32,
+                    salt=salt,
+                    info=None).derive(shared_secret)
+
+        if length > 1:
+            return [result[i*32:(i+1)*32] for i in range(length)]
+        else:
+            return result
