@@ -1,4 +1,3 @@
-import hashlib
 from random import getrandbits
 
 from tropicsquare import TropicSquare
