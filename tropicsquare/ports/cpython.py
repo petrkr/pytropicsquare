@@ -1,6 +1,5 @@
 
 from .. import TropicSquare
-import socket
 
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat, PrivateFormat, NoEncryption
 from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey, X25519PublicKey
@@ -61,6 +60,7 @@ class TropicSquareCPython(TropicSquare):
     def _x25519_exchange(self, private_bytes, public_bytes):
         priv = X25519PrivateKey.from_private_bytes(private_bytes)
         return priv.exchange(X25519PublicKey.from_public_bytes(public_bytes))
+
 
     def _aesgcm(self, key):
         return AESGCM(key)
