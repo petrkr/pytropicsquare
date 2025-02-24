@@ -273,14 +273,12 @@ class TropicSquare:
         print("HKDF EH ST")
         print("  CMDRES: {}".format(ck_hkdf_cmdres.hex()))
         print("  KAUTH: {}".format(kauth.hex()))
-
-        print("KCMD: {}".format(kcmd.hex()))
-        print("KRES: {}".format(kres.hex()))
+        print("HKDF CMDRES")
+        print("  KCMD: {}".format(kcmd.hex()))
+        print("  KRES: {}".format(kres.hex()))
 
         aesgcm = AESGCM(kauth)
         ciphertext_with_tag = aesgcm.encrypt(nonce=b'\x00'*12, data=b'', associated_data=sha256hash.digest())
-
-        print("Ciphertext with tag: {}".format(ciphertext_with_tag.hex()))
 
         tag = ciphertext_with_tag[-16:]
         ciphertext = ciphertext_with_tag[:-16]
@@ -290,7 +288,9 @@ class TropicSquare:
 
         print("THAuth == TSAuth: {}".format(tag == tsauth))
 
-        return (tsehpub, tsauth)
+        self._secure_session = [ kcmd, kres ]
+
+        return (kcmd, kres)
 
 
     def ping(self, data):
