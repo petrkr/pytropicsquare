@@ -20,8 +20,9 @@ class NetworkSPI:
 
 
     def __init__(self, host, port):
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.connect((host, port))
+        hostport = socket.getaddrinfo(host, port)
+        self.sock = socket.socket()
+        self.sock.connect(hostport[0][-1])
 
 
     def write_readinto(self, write_buf, read_buf):
@@ -29,7 +30,7 @@ class NetworkSPI:
         data = bytes(write_buf)
         length = len(data)
         packet = command + length.to_bytes(4, 'big') + data
-        self.sock.sendall(packet)
+        self.sock.send(packet)
         
         received = b''
         while len(received) < length:
@@ -45,7 +46,7 @@ class NetworkSPI:
         command = self.COMMAND_READINTO
         length = len(read_buf)
         packet = command + length.to_bytes(4, 'big')
-        self.sock.sendall(packet)
+        self.sock.send(packet)
         
         received = b''
         while len(received) < length:
@@ -61,7 +62,7 @@ class NetworkSPI:
     def read(self, length):
         command = self.COMMAND_READ
         packet = command + length.to_bytes(4, 'big')
-        self.sock.sendall(packet)
+        self.sock.send(packet)
         
         received = b''
         while len(received) < length:
@@ -77,14 +78,14 @@ class NetworkSPI:
         command = self.COMMAND_WRITE
         length = len(data)
         packet = command + length.to_bytes(4, "big") + data
-        self.sock.sendall(packet)
+        self.sock.send(packet)
 
 
     def set_cs(self, state: bool):
         """Sends a command (0x01) to set the chip select state.
            The state is sent as 1 byte (0 for low, 1 for high)."""
         command = self.COMMAND_CS_HIGH if state else self.COMMAND_CS_LOW
-        self.sock.sendall(command)
+        self.sock.send(command)
 
         ack = self.sock.recv(1)
         if ack != b'\x00':
