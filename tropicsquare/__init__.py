@@ -8,6 +8,7 @@ from tropicsquare.constants.rsp_status import RSP_STATUS_REQ_OK, RSP_STATUS_RES_
 from tropicsquare.exceptions import *
 
 from hashlib import sha256
+from time import sleep
 
 class TropicSquare:
     def __init__(self):
@@ -84,6 +85,8 @@ class TropicSquare:
 
         data = bytearray()
         data.extend(bytes(REQ_ID_GET_RESPONSE))
+
+        sleep(0.1)
 
         self._spi_cs(0)
         self._spi_write_readinto(data, data)
