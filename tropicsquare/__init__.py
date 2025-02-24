@@ -7,6 +7,13 @@ from tropicsquare.constants.get_info_req import *
 from tropicsquare.constants.rsp_status import RSP_STATUS_REQ_OK, RSP_STATUS_RES_OK
 from tropicsquare.exceptions import *
 
+from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey
+from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PublicKey
+from cryptography.hazmat.primitives.kdf.hkdf import HKDF
+from cryptography.hazmat.primitives import hashes
+
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+
 from hashlib import sha256
 from time import sleep
 
@@ -186,8 +193,18 @@ class TropicSquare:
     def start_secure_session(self, stpub, pkey_index, shpriv, shpub):
         ehpriv, ehpub = self._get_ephemeral_keypair()
 
+        print("STPub: {}".format(stpub))
+        print("PKey Index: {}".format(pkey_index))
+        print("SHPriv: {}".format(shpriv))
+        print("SHPub: {}".format(shpub))
+        print("EHPriv: {}".format(ehpriv))
+        print("EHPub: {}".format(ehpub))
+
         # Handshake request
         tsehpub, tsauth = self._l2_handshake_req(ehpub, pkey_index)
+
+        print("TSEHPub: {}".format(tsehpub))
+        print("TSAuth: {}".format(tsauth))
 
         # Calculation magic
 
@@ -208,6 +225,72 @@ class TropicSquare:
 
         sha256hash = sha256(sha256hash.digest())
         sha256hash.update(tsehpub)
+
+        print ("SHA256: {}".format(sha256hash.hexdigest()))
+
+        # TODO: Implement for platform specific
+        ehpriv = X25519PrivateKey.from_private_bytes(ehpriv)
+        shpriv = X25519PrivateKey.from_private_bytes(shpriv)
+
+        shared_secret_eh_tseh = ehpriv.exchange(X25519PublicKey.from_public_bytes(tsehpub))
+        print("Shared secret EH vs TSEH: {}".format(shared_secret_eh_tseh.hex()))
+
+        shared_secret_sh_tseh = shpriv.exchange(X25519PublicKey.from_public_bytes(tsehpub))
+        print("Shared secret SH vs ST: {}".format(shared_secret_sh_tseh.hex()))
+
+        shared_secret_eh_st = ehpriv.exchange(X25519PublicKey.from_public_bytes(stpub))
+        print("Shared secret EH vs ST: {}".format(shared_secret_eh_st.hex()))
+
+
+        hkdf_eh_tseh = HKDF(algorithm=hashes.SHA256(),
+                     length=32,
+                     salt=PROTOCOL_NAME,
+                     info=None).derive(shared_secret_eh_tseh)
+
+        hkdf_sh_tseh = HKDF(algorithm=hashes.SHA256(),
+                     length=32,
+                     salt=hkdf_eh_tseh,
+                     info=None).derive(shared_secret_sh_tseh)
+
+        hkdf_eh_st = HKDF(algorithm=hashes.SHA256(),
+                        length=32,
+                        salt=hkdf_sh_tseh,
+                        info=None).derive(shared_secret_eh_st)
+
+        hkdf_eh_st = HKDF(algorithm=hashes.SHA256(),
+                        length=64,
+                        salt=hkdf_sh_tseh,
+                        info=None).derive(shared_secret_eh_st)
+
+        output_1 = hkdf_eh_st[:32]
+        kauth = hkdf_eh_st[32:]
+
+        cmdres = HKDF(algorithm=hashes.SHA256(),
+                        length=64,
+                        salt=output_1,
+                        info=None).derive(b'')
+
+        kcmd = cmdres[:32]
+        kres = cmdres[32:]
+
+        print("HKDF EH TSEH: {}".format(hkdf_eh_tseh.hex()))
+        print("HKDF SH TSEH: {}".format(hkdf_sh_tseh.hex()))
+        print("HKDF EH ST: {}".format(output_1.hex()))
+        print("KAUTH: {}".format(kauth.hex()))
+
+        print("KCMD: {}".format(kcmd.hex()))
+        print("KRES: {}".format(kres.hex()))
+
+        aesgcm = AESGCM(kauth)
+        ciphertext_with_tag = aesgcm.encrypt(nonce=b'\x00'*12, data=b'', associated_data=sha256hash.digest())
+
+        print("Ciphertext with tag: {}".format(ciphertext_with_tag.hex()))
+
+        tag = ciphertext_with_tag[-16:]
+        ciphertext = ciphertext_with_tag[:-16]
+
+        print("Ciphertext:", ciphertext)
+        print("Tag:", tag)
 
         return (tsehpub, tsauth)
 
