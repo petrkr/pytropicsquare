@@ -288,6 +288,13 @@ class TropicSquare:
 
         print("THAuth == TSAuth: {}".format(tag == tsauth))
 
+        # Clear hanshake data
+        ck_hkdf_sh_tseh = None
+        ck_hkdf_eh_tseh = None
+        ck_hkdf_eh_st_kauth = None
+        ck_hkdf_cmdres = None
+        kauth = None
+
         self._secure_session = [ kcmd, kres ]
 
         return (kcmd, kres)
