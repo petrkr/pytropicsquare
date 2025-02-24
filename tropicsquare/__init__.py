@@ -7,9 +7,6 @@ from tropicsquare.constants.get_info_req import *
 from tropicsquare.constants.rsp_status import RSP_STATUS_REQ_OK, RSP_STATUS_RES_OK
 from tropicsquare.exceptions import *
 
-from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey
-from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PublicKey
-
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
 from hashlib import sha256
@@ -276,18 +273,14 @@ class TropicSquare:
 
         print ("SHA256: {}".format(sha256hash.hexdigest()))
 
-        # TODO: Implement for platform specific
-        ehpriv = X25519PrivateKey.from_private_bytes(ehpriv)
-        shpriv = X25519PrivateKey.from_private_bytes(shpriv)
+        shared_secret_eh_tseh = self._x25519_exchange(ehpriv, tsehpub)
+        shared_secret_sh_tseh = self._x25519_exchange(shpriv, tsehpub)
+        shared_secret_eh_st = self._x25519_exchange(ehpriv, stpub)
 
-        shared_secret_eh_tseh = ehpriv.exchange(X25519PublicKey.from_public_bytes(tsehpub))
-        print("Shared secret EH vs TSEH: {}".format(shared_secret_eh_tseh.hex()))
-
-        shared_secret_sh_tseh = shpriv.exchange(X25519PublicKey.from_public_bytes(tsehpub))
-        print("Shared secret SH vs ST: {}".format(shared_secret_sh_tseh.hex()))
-
-        shared_secret_eh_st = ehpriv.exchange(X25519PublicKey.from_public_bytes(stpub))
-        print("Shared secret EH vs ST: {}".format(shared_secret_eh_st.hex()))
+        print("Shared secrets")
+        print("  EH vs TSEH: {}".format(shared_secret_eh_tseh.hex()))
+        print("  SH vs ST: {}".format(shared_secret_sh_tseh.hex()))
+        print("  EH vs ST: {}".format(shared_secret_eh_st.hex()))
 
         ck_hkdf_eh_tseh = self._hkdf(PROTOCOL_NAME, shared_secret_eh_tseh)
         ck_hkdf_sh_tseh = self._hkdf(ck_hkdf_eh_tseh, shared_secret_sh_tseh)
@@ -390,4 +383,8 @@ class TropicSquare:
 
 
     def _hkdf(self, salt, shared_secret, length):
+        raise NotImplementedError("Not implemented")
+
+
+    def _x25519_exchange(self, private_bytes, public_bytes):
         raise NotImplementedError("Not implemented")

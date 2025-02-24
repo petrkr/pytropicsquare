@@ -4,7 +4,7 @@ import socket
 from random import randbytes
 
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat, PrivateFormat, NoEncryption
-from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey
+from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey, X25519PublicKey
 
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 from cryptography.hazmat.primitives.hashes import SHA256
@@ -145,3 +145,8 @@ class TropicSquareNetworkSPI(TropicSquare):
             return [result[i*32:(i+1)*32] for i in range(length)]
         else:
             return result
+
+
+    def _x25519_exchange(self, private_bytes, public_bytes):
+        priv = X25519PrivateKey.from_private_bytes(private_bytes)
+        return priv.exchange(X25519PublicKey.from_public_bytes(public_bytes))
