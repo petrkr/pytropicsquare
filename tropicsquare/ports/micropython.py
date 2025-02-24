@@ -1,4 +1,4 @@
-
+import hashlib
 from .. import TropicSquare
 
 
@@ -46,15 +46,15 @@ class TropicSquareMicroPython(TropicSquare):
         blocksize = 64
 
         if len(key) > blocksize:
-            key = uhashlib.sha256(key).digest()
+            key = hashlib.sha256(key).digest()
         # Pad key with zeros if it's shorter than blocksize
         if len(key) < blocksize:
             key = key + b'\x00' * (blocksize - len(key))
         # Create inner and outer padded keys
         o_key_pad = bytes([b ^ 0x5c for b in key])
         i_key_pad = bytes([b ^ 0x36 for b in key])
-        inner_hash = uhashlib.sha256(i_key_pad + message).digest()
-        return uhashlib.sha256(o_key_pad + inner_hash).digest()
+        inner_hash = hashlib.sha256(i_key_pad + message).digest()
+        return hashlib.sha256(o_key_pad + inner_hash).digest()
 
 
     def _hkdf_extract(self, salt, ikm):
@@ -62,7 +62,7 @@ class TropicSquareMicroPython(TropicSquare):
         HKDF-Extract step.
         If salt is empty, use a string of HashLen zeros.
         """
-        hash_len = uhashlib.sha256().digest_size
+        hash_len = hashlib.sha256().digest_size
         if salt is None or len(salt) == 0:
             salt = b'\x00' * hash_len
         return self._hmac_sha256(salt, ikm)
@@ -73,7 +73,7 @@ class TropicSquareMicroPython(TropicSquare):
         HKDF-Expand step.
         'info' is optional context and application specific information (can be empty).
         """
-        hash_len = uhashlib.sha256().digest_size
+        hash_len = hashlib.sha256().digest_size
         n = (length + hash_len - 1) // hash_len
         if n > 255:
             raise ValueError("Cannot expand to more than 255 * hash length bytes")
