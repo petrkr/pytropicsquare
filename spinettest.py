@@ -2,7 +2,7 @@ import sys
 from time import sleep
 
 from networkspi import NetworkSPI, DummyNetworkSpiCSPin
-from tropicsquare.crc16 import CRC16
+from tropicsquare.crc16 import CRC
 
 
 if __name__ == "__main__":
@@ -10,7 +10,6 @@ if __name__ == "__main__":
     port = int(sys.argv[2])
 
     spi = NetworkSPI(host, port)
-    crc = CRC16()
     cs = DummyNetworkSpiCSPin(spi)
 
     cs.value(1)
@@ -53,7 +52,7 @@ if __name__ == "__main__":
         data = None
 
     rescrc = spi.read(2)
-    calccrc = crc.crc16(resstatus.to_bytes(1) + reslen.to_bytes(1) + (data or b''))
+    calccrc = CRC.crc16(resstatus.to_bytes(1) + reslen.to_bytes(1) + (data or b''))
 
     print("Response data: {}".format(data))
     print("Response CRC (Recv): {}".format(rescrc))
