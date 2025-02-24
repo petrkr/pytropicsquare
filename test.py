@@ -5,7 +5,7 @@ from cryptography import x509
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
 
-from tropicsquare.ports.python import TropicSquarePython
+from tropicsquare.ports.cpython import TropicSquareCPython
 from networkspi import NetworkSPI, DummyNetworkSpiCSPin
 
 
@@ -17,7 +17,7 @@ def main():
     spi = NetworkSPI(host, port)
     cs = DummyNetworkSpiCSPin(spi)
 
-    ts = TropicSquarePython(spi, cs)
+    ts = TropicSquareCPython(spi, cs)
 
     print("Spect FW version: {}".format(ts.spect_fw_version))
     print("RISCV FW version: {}".format(ts.riscv_fw_version))

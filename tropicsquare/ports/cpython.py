@@ -11,7 +11,7 @@ from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 from cryptography.hazmat.primitives.hashes import SHA256
 
 
-class TropicSquarePython(TropicSquare):
+class TropicSquareCPython(TropicSquare):
     def __init__(self, spi, cs):
         self._spi = spi
         self._cs = cs
