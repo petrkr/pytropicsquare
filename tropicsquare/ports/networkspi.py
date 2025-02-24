@@ -125,7 +125,7 @@ class TropicSquareNetworkSPI(TropicSquare):
 
 
     def _get_ephemeral_keypair(self):
-        ehpriv = X25519PrivateKey.from_private_bytes(self._random(8))
+        ehpriv = X25519PrivateKey.generate()
         ehpubraw = ehpriv.public_key().public_bytes(Encoding.Raw, PublicFormat.Raw)
         ehprivraw = ehpriv.private_bytes(Encoding.Raw, PrivateFormat.Raw, NoEncryption())
 
