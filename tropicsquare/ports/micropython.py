@@ -139,7 +139,7 @@ class TropicSquareMicroPython(TropicSquare):
         HKDF-Extract step.
         If salt is empty, use a string of HashLen zeros.
         """
-        hash_len = hashlib.sha256().digest_size
+        hash_len = 32 # Hard coded for SHA-256
         if salt is None or len(salt) == 0:
             salt = b'\x00' * hash_len
         return self._hmac_sha256(salt, ikm)
@@ -150,7 +150,7 @@ class TropicSquareMicroPython(TropicSquare):
         HKDF-Expand step.
         'info' is optional context and application specific information (can be empty).
         """
-        hash_len = hashlib.sha256().digest_size
+        hash_len = 32 # Hard coded for SHA-256
         n = (length + hash_len - 1) // hash_len
         if n > 255:
             raise ValueError("Cannot expand to more than 255 * hash length bytes")
