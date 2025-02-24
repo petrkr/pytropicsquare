@@ -1,5 +1,5 @@
 import hashlib
-from random import randbytes
+from random import getrandbits
 
 from .. import TropicSquare
 
@@ -34,7 +34,10 @@ class TropicSquareMicroPython(TropicSquare):
 
 
     def _get_ephemeral_keypair(self):
-        ehpriv = randbytes(32)
+        ehpriv = b''
+        for _ in range(8):
+            ehpriv += getrandbits(32).to_bytes(4, "big")
+
         return (ehpriv, self._x25519_pubkey(ehpriv))
 
 
