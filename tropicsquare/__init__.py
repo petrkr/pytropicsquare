@@ -334,7 +334,7 @@ class TropicSquare:
         return self._l2_get_info_req(GET_INFO_FW_BANK)
 
 
-    def start_secure_session(self, stpub, pkey_index, shpriv, shpub):
+    def start_secure_session(self, pkey_index, shpriv, shpub):
         ehpriv, ehpub = self._get_ephemeral_keypair()
 
         # Handshake request
@@ -348,7 +348,7 @@ class TropicSquare:
         sha256hash.update(shpub)
 
         sha256hash = sha256(sha256hash.digest())
-        sha256hash.update(stpub)
+        sha256hash.update(self.public_key)
 
         sha256hash = sha256(sha256hash.digest())
         sha256hash.update(ehpub)
@@ -363,7 +363,7 @@ class TropicSquare:
 
         shared_secret_eh_tseh = self._x25519_exchange(ehpriv, tsehpub)
         shared_secret_sh_tseh = self._x25519_exchange(shpriv, tsehpub)
-        shared_secret_eh_st = self._x25519_exchange(ehpriv, stpub)
+        shared_secret_eh_st = self._x25519_exchange(ehpriv, self.public_key)
 
         ck_hkdf_eh_tseh = self._hkdf(PROTOCOL_NAME, shared_secret_eh_tseh)
         ck_hkdf_sh_tseh = self._hkdf(ck_hkdf_eh_tseh, shared_secret_sh_tseh)
