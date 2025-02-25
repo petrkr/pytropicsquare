@@ -52,6 +52,12 @@ def main():
     try:
         resp = ts.ping(b"Hello Tropic Square From MicroPython!")
         print("Ping: {}".format(resp))
+
+        resp = ts.ping(b"Second Ping")
+        print("Ping: {}".format(resp))
+
+        random = ts.get_random(10)
+        print("Random: {}".format(random))
     except Exception as e:
         print("Exception: {}".format(e))
 
