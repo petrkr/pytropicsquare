@@ -22,7 +22,7 @@ COMMAND_SIZE_LEN = 2
 
 # Format [Optional command Length, Command ID]
 # L3 Command IDs
-CMD_ID_PING = [0x01] # Dynamic length, send from API
+CMD_ID_PING = 0x01
 
 CMD_ID_PAIRING_KEY_WRITE = [0x24, 0x10]
 CMD_ID_PAIRING_KEY_READ = [0x03, 0x11]
@@ -39,6 +39,6 @@ CMD_ID_R_MEMDATA_WRITE = [0x40] # Dynamic length, send from API
 CMD_ID_R_MEMDATA_READ = [0x03, 0x41]
 CMD_ID_R_MEMDATA_ERASE = [0x03, 0x42]
 
-CMD_ID_RANDOM_VALUE = [0x02, 0x50]
+CMD_ID_RANDOM_VALUE = 0x50
 
 CMD_ECC_KEY_GENERATE = [0x04, 0x60]

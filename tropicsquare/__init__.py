@@ -414,7 +414,7 @@ class TropicSquare:
             raise TropicSquareNoSession("Secure session not started")
 
         request_data = bytearray()
-        request_data.extend(bytes(CMD_ID_PING))
+        request_data.append(CMD_ID_PING)
         request_data.extend(data)
         nonce = self._secure_session[2].to_bytes(12, "little")
 
