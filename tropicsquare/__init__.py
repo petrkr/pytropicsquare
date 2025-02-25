@@ -1,6 +1,6 @@
 # Version: 0.1
 
-from tropicsquare.crc16 import CRC
+from tropicsquare.crc import CRC
 from tropicsquare.constants import *
 from tropicsquare.constants.chip_status import *
 from tropicsquare.constants.get_info_req import *
