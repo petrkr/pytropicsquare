@@ -429,6 +429,15 @@ class TropicSquare:
         return result[3:]
 
 
+    def get_serial_code(self):
+        request_data = bytearray()
+        request_data.append(CMD_ID_SERIAL_CODE_GET)
+
+        result = self._call_command(request_data)
+
+        return result
+
+
     def _l2_transfer(self, data):
         pass
 
