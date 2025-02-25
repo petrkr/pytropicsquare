@@ -445,7 +445,29 @@ class TropicSquare:
         if self._secure_session is None:
             raise TropicSquareNoSession("Secure session not started")
 
-        raise NotImplementedError("Not implemented yet")
+        request_data = bytearray()
+        request_data.extend(bytes(CMD_ID_PING))
+        request_data.extend(data)
+
+        enc = self._secure_session[0].encrypt(nonce=b'\x00'*12, data=request_data, associated_data=b'')
+        ciphertext = enc[:-16]
+        tag = enc[-16:]
+
+        print("Ping")
+        print("  Request data:", request_data)
+        print("  Ciphertext:", ciphertext)
+        print("  Tag:", tag.hex())
+
+        result_cipher, result_tag = self._l2_encrypted_command(len(ciphertext), ciphertext, tag)
+
+        print("  Result cipher:", result_cipher)
+        print("  Result tag:", result_tag.hex())
+
+        decrypted = self._secure_session[1].decrypt(nonce=b'\x00'*12, data=result_cipher+result_tag, associated_data=b'')
+
+        print("  Decrypted:", decrypted)
+
+        return decrypted
 
 
     def get_random(self):
