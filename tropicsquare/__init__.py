@@ -173,17 +173,15 @@ class TropicSquare:
 
     def _l2_encrypted_command(self, command_size, command_ciphertext, command_tag):
         # 2 bytes: Command size
-        length = 2 + len(command_ciphertext) + len(command_tag)
+        length = COMMAND_SIZE_LEN + len(command_ciphertext) + len(command_tag)
 
         data = bytearray()
         data.extend(bytes(REQ_ID_ENCRYPTED_CMD_REQ))
-        data.extend(length.to_bytes(1, "big"))
-        data.extend(command_size.to_bytes(2, "little"))
+        data.append(length)
+        data.extend(command_size.to_bytes(COMMAND_SIZE_LEN, "little"))
         data.extend(command_ciphertext)
         data.extend(command_tag)
         data.extend(CRC.crc16(data))
-
-        print("Request data:", data.hex())
 
         self._spi_cs(0)
         self._spi_write_readinto(data, data)

@@ -18,6 +18,8 @@ REQ_ID_GET_RESPONSE = [0xAA] # Does not send length
 
 PROTOCOL_NAME = b'Noise_KK1_25519_AESGCM_SHA256\x00\x00\x00'
 
+COMMAND_SIZE_LEN = 2
+
 # Format [Optional command Length, Command ID]
 # L3 Command IDs
 CMD_ID_PING = [0x01] # Dynamic length, send from API
