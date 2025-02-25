@@ -426,7 +426,7 @@ class TropicSquare:
 
         self._secure_session = [ encrypt_key, decrypt_key ]
 
-        return (kcmd, kres)
+        return True
 
 
     def get_log(self):
