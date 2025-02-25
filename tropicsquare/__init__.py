@@ -171,6 +171,115 @@ class TropicSquare:
         return data
 
 
+    def _l2_encrypted_command(self, command_size, command_ciphertext, command_tag):
+        # 2 bytes: Command size
+        length = 2 + len(command_ciphertext) + len(command_tag)
+
+        data = bytearray()
+        data.extend(bytes(REQ_ID_ENCRYPTED_CMD_REQ))
+        data.extend(length.to_bytes(1, "big"))
+        data.extend(command_size.to_bytes(2, "little"))
+        data.extend(command_ciphertext)
+        data.extend(command_tag)
+        data.extend(CRC.crc16(data))
+
+        print("Request data:", data.hex())
+
+        self._spi_cs(0)
+        self._spi_write_readinto(data, data)
+        self._spi_cs(1)
+
+        chip_status = data[0]
+
+        if chip_status != CHIP_STATUS_READY:
+            raise TropicSquareError("Chip status is not ready (status: {})".format(hex(chip_status)))
+
+        # Get response 1
+
+        data = bytearray()
+        data.extend(bytes(REQ_ID_GET_RESPONSE))
+
+        self._spi_cs(0)
+        self._spi_write_readinto(data, data)
+
+        chip_status = data[0]
+        if chip_status != CHIP_STATUS_READY:
+            raise TropicSquareError("Chip status is not ready (status: {})".format(hex(chip_status)))
+
+        response = self._spi.read(2)
+
+        print("Chip status:", chip_status)
+        print("L2 Response:", response.hex())
+
+        response_status = response[0]
+        response_length = response[1]
+#        response_length = int.from_bytes(response[1:3], 'big')
+
+        # TODO: Chunked response probably here may occur
+        if response_length > 0:
+            data = self._spi.read(response_length)
+        else:
+            data = None
+
+        print("Response data:", data)
+
+        calccrc = CRC.crc16(response + (data or b''))
+        respcrc = self._spi.read(2)
+
+        self._spi_cs(1)
+
+        # GET RESPONSE 2
+        sleep(0.1)
+
+        data = bytearray()
+        data.extend(bytes(REQ_ID_GET_RESPONSE))
+
+        self._spi_cs(0)
+        self._spi_write_readinto(data, data)
+
+        chip_status = data[0]
+        if chip_status != CHIP_STATUS_READY:
+            raise TropicSquareError("Chip status is not ready (status: {})".format(hex(chip_status)))
+
+        response = self._spi.read(2)
+
+        print("Chip status:", chip_status)
+        print("L2 Response:", response.hex())
+
+        response_status = response[0]
+        response_length = response[1]
+#        response_length = int.from_bytes(response[1:3], 'big')
+
+        # TODO: Chunked response probably here may occur
+        if response_length > 0:
+            data = self._spi.read(response_length)
+        else:
+            data = None
+
+        print("Response data:", data)
+
+        calccrc = CRC.crc16(response + (data or b''))
+        respcrc = self._spi.read(2)
+
+        self._spi_cs(1)
+
+        if respcrc != calccrc:
+            raise TropicSquareCRCError("CRC mismatch")
+
+        if response_status not in [RSP_STATUS_REQ_OK, RSP_STATUS_RES_OK]:
+            raise TropicSquareError("Response status is not OK (status: {})".format(hex(response_status)))
+
+        command_size = int.from_bytes(data[0:2], "little")
+        command_ciphertext = data[2:-16]
+        command_tag = data[-16:]
+
+        if command_size != len(command_ciphertext):
+            raise TropicSquareError("Command size mismatch")
+
+
+        return (command_ciphertext, command_tag)
+
+
     @property
     def certificate(self):
         if self._certificate:
