@@ -221,6 +221,13 @@ class TropicSquare:
 
         self._spi_cs(1)
 
+        if respcrc != calccrc:
+            raise TropicSquareCRCError("CRC mismatch")
+
+        if response_status not in [RSP_STATUS_REQ_OK, RSP_STATUS_RES_OK]:
+            raise TropicSquareError("Response status is not OK (status: {})".format(hex(response_status)))
+
+
         # GET RESPONSE 2
 
         data = bytearray()
