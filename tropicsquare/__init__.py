@@ -379,6 +379,9 @@ class TropicSquare:
         ck_hkdf_cmdres = None
         kauth = None
 
+        if tag != tsauth:
+            raise TropicSquareError("Tauth mismatch, handshake failed")
+
         encrypt_key = self._aesgcm(kcmd)
         decrypt_key = self._aesgcm(kres)
 
