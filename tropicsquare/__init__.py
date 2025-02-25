@@ -273,6 +273,56 @@ class TropicSquare:
         return (command_ciphertext, command_tag)
 
 
+    def _l2_encrypted_session_abt(self):
+        data = bytearray()
+        data.extend(bytes(REQ_ID_ENCRYPTED_SESSION_ABT))
+        data.extend(CRC.crc16(data))
+
+        self._spi_cs(0)
+        self._spi_write_readinto(data, data)
+        self._spi_cs(1)
+
+        chip_status = data[0]
+
+        if chip_status != CHIP_STATUS_READY:
+            raise TropicSquareError("Chip status is not ready (status: {})".format(hex(chip_status)))
+
+        data = bytearray()
+        data.extend(bytes(REQ_ID_GET_RESPONSE))
+
+        sleep(0.1)
+
+        self._spi_cs(0)
+        self._spi_write_readinto(data, data)
+
+        chip_status = data[0]
+        if chip_status != CHIP_STATUS_READY:
+            raise TropicSquareError("Chip status is not ready (status: {})".format(hex(chip_status)))
+
+        response = self._spi.read(2)
+
+        response_status = response[0]
+        response_length = response[1]
+
+        if response_length > 0:
+            data = self._spi.read(response_length)
+        else:
+            data = None
+
+        calccrc = CRC.crc16(response + (data or b''))
+        respcrc = self._spi.read(2)
+
+        self._spi_cs(1)
+
+        if respcrc != calccrc:
+            raise TropicSquareCRCError("CRC mismatch")
+
+        if response_status not in [RSP_STATUS_REQ_OK, RSP_STATUS_RES_OK]:
+            raise TropicSquareError("Response status is not OK (status: {})".format(hex(response_status)))
+
+        return True
+
+
     @property
     def certificate(self):
         if self._certificate:
@@ -392,6 +442,14 @@ class TropicSquare:
         self._secure_session = [ encrypt_key, decrypt_key, 0 ]
 
         return True
+
+
+    def abort_secure_session(self):
+        if self._l2_encrypted_session_abt():
+            self._secure_session = None
+            return True
+
+        return False
 
 
     def get_log(self):
