@@ -354,10 +354,11 @@ class TropicSquare:
         sha256hash.update(ehpub)
 
         sha256hash = sha256(sha256hash.digest())
-        sha256hash.update(pkey_index.to_bytes(1, "big"))
+        sha256hash.update(pkey_index.to_bytes(1))
 
         sha256hash = sha256(sha256hash.digest())
         sha256hash.update(tsehpub)
+
         hash = sha256hash.digest()
 
         shared_secret_eh_tseh = self._x25519_exchange(ehpriv, tsehpub)
@@ -369,13 +370,16 @@ class TropicSquare:
         ck_hkdf_cmdres, kauth = self._hkdf(ck_hkdf_sh_tseh, shared_secret_eh_st, 2)
         kcmd, kres = self._hkdf(ck_hkdf_cmdres, b'', 2)
 
-        aesgcm = self._aesgcm(kauth)
-        ciphertext_with_tag = aesgcm.encrypt(nonce=b'\x00'*12, data=b'', associated_data=hash)
+        ciphertext_with_tag = self._aesgcm(kauth).encrypt(nonce=b'\x00'*12, data=b'', associated_data=hash)
         tag = ciphertext_with_tag[-16:]
 
         # Clear hanshake data
-        ck_hkdf_sh_tseh = None
+        shared_secret_eh_tseh = None
+        shared_secret_sh_tseh = None
+        shared_secret_eh_st = None
+
         ck_hkdf_eh_tseh = None
+        ck_hkdf_sh_tseh = None
         ck_hkdf_cmdres = None
         kauth = None
 
