@@ -337,21 +337,10 @@ class TropicSquare:
     def start_secure_session(self, stpub, pkey_index, shpriv, shpub):
         ehpriv, ehpub = self._get_ephemeral_keypair()
 
-        print("STPub: {}".format(stpub.hex()))
-        print("PKey Index: {}".format(pkey_index))
-        print("SHPriv: {}".format(shpriv.hex()))
-        print("SHPub: {}".format(shpub.hex()))
-        print("EHPriv: {}".format(ehpriv.hex()))
-        print("EHPub: {}".format(ehpub.hex()))
-
         # Handshake request
         tsehpub, tsauth = self._l2_handshake_req(ehpub, pkey_index)
 
-        print("TSEHPub: {}".format(tsehpub.hex()))
-        print("TSAuth: {}".format(tsauth.hex()))
-
         # Calculation magic
-
         sha256hash = sha256()
         sha256hash.update(PROTOCOL_NAME)
 
@@ -371,46 +360,22 @@ class TropicSquare:
         sha256hash.update(tsehpub)
         hash = sha256hash.digest()
 
-        print ("SHA256: {}".format(hash.hex()))
-
         shared_secret_eh_tseh = self._x25519_exchange(ehpriv, tsehpub)
         shared_secret_sh_tseh = self._x25519_exchange(shpriv, tsehpub)
         shared_secret_eh_st = self._x25519_exchange(ehpriv, stpub)
-
-        print("Shared secrets")
-        print("  EH vs TSEH: {}".format(shared_secret_eh_tseh.hex()))
-        print("  SH vs ST: {}".format(shared_secret_sh_tseh.hex()))
-        print("  EH vs ST: {}".format(shared_secret_eh_st.hex()))
 
         ck_hkdf_eh_tseh = self._hkdf(PROTOCOL_NAME, shared_secret_eh_tseh)
         ck_hkdf_sh_tseh = self._hkdf(ck_hkdf_eh_tseh, shared_secret_sh_tseh)
         ck_hkdf_cmdres, kauth = self._hkdf(ck_hkdf_sh_tseh, shared_secret_eh_st, 2)
         kcmd, kres = self._hkdf(ck_hkdf_cmdres, b'', 2)
 
-        print("HKDF EH TSEH: {}".format(ck_hkdf_eh_tseh.hex()))
-        print("HKDF SH TSEH: {}".format(ck_hkdf_sh_tseh.hex()))
-        print("HKDF EH ST")
-        print("  CMDRES: {}".format(ck_hkdf_cmdres.hex()))
-        print("  KAUTH: {}".format(kauth.hex()))
-        print("HKDF CMDRES")
-        print("  KCMD: {}".format(kcmd.hex()))
-        print("  KRES: {}".format(kres.hex()))
-
         aesgcm = self._aesgcm(kauth)
         ciphertext_with_tag = aesgcm.encrypt(nonce=b'\x00'*12, data=b'', associated_data=hash)
-
         tag = ciphertext_with_tag[-16:]
-        ciphertext = ciphertext_with_tag[:-16]
-
-        print("Ciphertext:", ciphertext)
-        print("THAuth", tag.hex())
-
-        print("THAuth == TSAuth: {}".format(tag == tsauth))
 
         # Clear hanshake data
         ck_hkdf_sh_tseh = None
         ck_hkdf_eh_tseh = None
-        ck_hkdf_eh_st_kauth = None
         ck_hkdf_cmdres = None
         kauth = None
 
