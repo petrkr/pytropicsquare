@@ -4,7 +4,8 @@ from tropicsquare.crc import CRC
 from tropicsquare.constants import *
 from tropicsquare.constants.chip_status import *
 from tropicsquare.constants.get_info_req import *
-from tropicsquare.constants.rsp_status import RSP_STATUS_REQ_OK, RSP_STATUS_RES_OK
+from tropicsquare.constants.rsp_status import RSP_STATUS_REQ_OK, RSP_STATUS_RES_OK, RSP_STATUS_REQ_CONT
+from tropicsquare.constants.cmd_result import *
 from tropicsquare.exceptions import *
 
 from hashlib import sha256
@@ -441,9 +442,10 @@ class TropicSquare:
         result_cipher, result_tag = self._l2_encrypted_command(len(ciphertext), ciphertext, tag)
         decrypted = self._secure_session[1].decrypt(nonce=b'\x00'*12, data=result_cipher+result_tag, associated_data=b'')
 
-        print("  Decrypted:", decrypted)
+        if decrypted[0] != CMD_RESULT_OK:
+            raise TropicSquareError("Command failed with result: {}".format(hex(decrypted[0])))
 
-        return decrypted
+        return decrypted[1:]
 
 
     def get_random(self):
