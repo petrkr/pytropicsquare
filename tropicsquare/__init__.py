@@ -206,12 +206,8 @@ class TropicSquare:
 
         response = self._spi.read(2)
 
-        print("Chip status:", chip_status)
-        print("L2 Response:", response.hex())
-
         response_status = response[0]
         response_length = response[1]
-#        response_length = int.from_bytes(response[1:3], 'big')
 
         # TODO: Chunked response probably here may occur
         if response_length > 0:
@@ -219,15 +215,12 @@ class TropicSquare:
         else:
             data = None
 
-        print("Response data:", data)
-
         calccrc = CRC.crc16(response + (data or b''))
         respcrc = self._spi.read(2)
 
         self._spi_cs(1)
 
         # GET RESPONSE 2
-        sleep(0.1)
 
         data = bytearray()
         data.extend(bytes(REQ_ID_GET_RESPONSE))
@@ -241,20 +234,14 @@ class TropicSquare:
 
         response = self._spi.read(2)
 
-        print("Chip status:", chip_status)
-        print("L2 Response:", response.hex())
-
         response_status = response[0]
         response_length = response[1]
-#        response_length = int.from_bytes(response[1:3], 'big')
 
         # TODO: Chunked response probably here may occur
         if response_length > 0:
             data = self._spi.read(response_length)
         else:
             data = None
-
-        print("Response data:", data)
 
         calccrc = CRC.crc16(response + (data or b''))
         respcrc = self._spi.read(2)
@@ -451,16 +438,7 @@ class TropicSquare:
         ciphertext = enc[:-16]
         tag = enc[-16:]
 
-        print("Ping")
-        print("  Request data:", request_data)
-        print("  Ciphertext:", ciphertext)
-        print("  Tag:", tag.hex())
-
         result_cipher, result_tag = self._l2_encrypted_command(len(ciphertext), ciphertext, tag)
-
-        print("  Result cipher:", result_cipher)
-        print("  Result tag:", result_tag.hex())
-
         decrypted = self._secure_session[1].decrypt(nonce=b'\x00'*12, data=result_cipher+result_tag, associated_data=b'')
 
         print("  Decrypted:", decrypted)
