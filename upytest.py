@@ -37,7 +37,7 @@ def main():
     print("Cert Public Key: {}".format(ts.public_key))
 
     print("Starting secure session...")
-    ts.start_secure_session(ts.public_key, pkey_index_0, bytes(sh0priv), bytes(sh0pub))
+    ts.start_secure_session(pkey_index_0, bytes(sh0priv), bytes(sh0pub))
 
 
     try:
