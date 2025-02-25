@@ -47,7 +47,13 @@ def main():
     print("Cert Public Key (cryptography): {}".format(pubkey))
 
     print("Starting secure session...")
-    ts.start_secure_session(pubkey, pkey_index_0, bytes(sh0priv), bytes(sh0pub))
+    ts.start_secure_session(ts.public_key, pkey_index_0, bytes(sh0priv), bytes(sh0pub))
+
+    try:
+        resp = ts.ping(b"Hello Tropic Square From MicroPython!")
+        print("Ping: {}".format(resp))
+    except Exception as e:
+        print("Exception: {}".format(e))
 
 
     print("Log")
