@@ -419,10 +419,10 @@ class TropicSquare:
         return result
 
 
-    def get_random(self, length):
+    def get_random(self, nbytes):
         request_data = bytearray()
         request_data.append(CMD_ID_RANDOM_VALUE)
-        request_data.extend(length.to_bytes(1))
+        request_data.extend(nbytes.to_bytes(1))
 
         result = self._call_command(request_data)
 
