@@ -2,7 +2,7 @@ import sys
 from time import sleep
 
 from networkspi import NetworkSPI, DummyNetworkSpiCSPin
-from tropicsquare.crc16 import CRC
+from tropicsquare.crc import CRC
 
 
 if __name__ == "__main__":
