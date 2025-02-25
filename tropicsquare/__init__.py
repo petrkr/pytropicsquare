@@ -389,7 +389,7 @@ class TropicSquare:
         encrypt_key = self._aesgcm(kcmd)
         decrypt_key = self._aesgcm(kres)
 
-        self._secure_session = [ encrypt_key, decrypt_key ]
+        self._secure_session = [ encrypt_key, decrypt_key, 0 ]
 
         return True
 
@@ -405,6 +405,9 @@ class TropicSquare:
 
         return log.decode("utf-8")
 
+    ###############
+    # L3 Commands #
+    ###############
 
     def ping(self, data):
         if self._secure_session is None:
@@ -413,16 +416,19 @@ class TropicSquare:
         request_data = bytearray()
         request_data.extend(bytes(CMD_ID_PING))
         request_data.extend(data)
+        nonce = self._secure_session[2].to_bytes(12, "little")
 
-        enc = self._secure_session[0].encrypt(nonce=b'\x00'*12, data=request_data, associated_data=b'')
+        enc = self._secure_session[0].encrypt(nonce=nonce, data=request_data, associated_data=b'')
         ciphertext = enc[:-16]
         tag = enc[-16:]
 
         result_cipher, result_tag = self._l2_encrypted_command(len(ciphertext), ciphertext, tag)
-        decrypted = self._secure_session[1].decrypt(nonce=b'\x00'*12, data=result_cipher+result_tag, associated_data=b'')
+        decrypted = self._secure_session[1].decrypt(nonce=nonce, data=result_cipher+result_tag, associated_data=b'')
 
         if decrypted[0] != CMD_RESULT_OK:
             raise TropicSquareError("Command failed with result: {}".format(hex(decrypted[0])))
+
+        self._secure_session[2] += 1
 
         return decrypted[1:]
 
