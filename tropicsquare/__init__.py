@@ -551,6 +551,21 @@ class TropicSquare:
         return int.from_bytes(result[3:], "little")
 
 
+    def mac_and_destroy(self, slot, data):
+        if slot > MAC_AND_DESTROY_MAX:
+            raise ValueError("Slot is larger than ECC_MAX_KEYS")
+
+        request_data = bytearray()
+        request_data.append(CMD_ID_MAC_AND_DESTROY)
+        request_data.extend(slot.to_bytes(MEM_ADDRESS_SIZE, "little"))
+        request_data.extend(b'M') # Padding dummy data
+        request_data.extend(data)
+
+        result = self._call_command(request_data)
+
+        return result[3:]
+
+
     def _call_command(self, data):
         if self._secure_session is None:
             raise TropicSquareNoSession("Secure session not started")
