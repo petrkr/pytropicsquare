@@ -46,7 +46,7 @@ class TropicSquare:
         if respcrc != calccrc:
             raise TropicSquareCRCError("CRC mismatch")
 
-        if response_status not in [RSP_STATUS_REQ_OK, RSP_STATUS_RES_OK, RSP_STATUS_RES_CONT]:
+        if response_status not in [RSP_STATUS_REQ_OK, RSP_STATUS_RES_OK, RSP_STATUS_RES_CONT, RSP_STATUS_REQ_CONT]:
             raise TropicSquareError("Response status is not OK (status: {})".format(hex(response_status)))
 
         if response_status == RSP_STATUS_RES_CONT:
@@ -116,30 +116,36 @@ class TropicSquare:
 
 
     def _l2_encrypted_command(self, command_size, command_ciphertext, command_tag):
-        # 2 bytes: Command size
-        length = COMMAND_SIZE_LEN + len(command_ciphertext) + len(command_tag)
+        def _chunk_data(data, chunk_size=128):
+            for i in range(0, len(data), chunk_size):
+                yield (data[i:i+chunk_size])
 
-        data = bytearray()
-        data.extend(bytes(REQ_ID_ENCRYPTED_CMD_REQ))
-        data.append(length)
-        data.extend(command_size.to_bytes(COMMAND_SIZE_LEN, "little"))
-        data.extend(command_ciphertext)
-        data.extend(command_tag)
-        data.extend(CRC.crc16(data))
+        # L3 Data to chunk
+        l3data = bytearray()
+        l3data.extend(command_size.to_bytes(COMMAND_SIZE_LEN, "little"))
+        l3data.extend(command_ciphertext)
+        l3data.extend(command_tag)
 
-        self._spi_cs(0)
-        self._spi_write_readinto(data, data)
-        self._spi_cs(1)
+        for chunk in _chunk_data(l3data):
+            data = bytearray()
+            data.extend(bytes(REQ_ID_ENCRYPTED_CMD_REQ))
+            data.append(len(chunk))
+            data.extend(chunk)
+            data.extend(CRC.crc16(data))
 
-        chip_status = data[0]
+            self._spi_cs(0)
+            self._spi_write_readinto(data, data)
+            self._spi_cs(1)
 
-        if chip_status != CHIP_STATUS_READY:
-            raise TropicSquareError("Chip status is not ready (status: {})".format(hex(chip_status)))
+            chip_status = data[0]
 
-        # Get response 1
-        self._l2_get_response()
+            if chip_status != CHIP_STATUS_READY:
+                raise TropicSquareError("Chip status is not ready (status: {})".format(hex(chip_status)))
 
-        # GET RESPONSE 2
+            # Get response
+            self._l2_get_response()
+
+        # GET final response
         data = self._l2_get_response()
 
         command_size = int.from_bytes(data[0:2], "little")
