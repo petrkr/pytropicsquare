@@ -7,3 +7,6 @@ CMD_RESULT_INVALID_CMD = 0x02
 # Resutls for memory commands
 CMD_RESULT_MEM_WRITE_FAIL = 0x10
 CMD_RESULT_MEM_SLOT_EXPIRED = 0x11
+
+# Results for ECC commands
+CMD_RESULT_ECC_INVALID_KEY  = 0x12

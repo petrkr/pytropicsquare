@@ -405,6 +405,73 @@ class TropicSquare:
         return True
 
 
+    def ecc_key_generate(self, slot, curve):
+        if slot > ECC_MAX_KEYS:
+            raise ValueError("Slot is larger than ECC_MAX_KEYS")
+
+        if curve not in [ECC_CURVE_P256, ECC_CURVE_ED25519]:
+            raise ValueError("Invalid curve")
+
+
+        request_data = bytearray()
+        request_data.append(CMD_ID_ECC_KEY_GENERATE)
+        request_data.extend(slot.to_bytes(MEM_ADDRESS_SIZE, "little"))
+        request_data.append(curve)
+
+        self._call_command(request_data)
+
+        return True
+
+
+    def ecc_key_store(self, slot, curve, key):
+        if slot > ECC_MAX_KEYS:
+            raise ValueError("Slot is larger than ECC_MAX_KEYS")
+
+        if curve not in [ECC_CURVE_P256, ECC_CURVE_ED25519]:
+            raise ValueError("Invalid curve")
+
+        request_data = bytearray()
+        request_data.append(CMD_ID_ECC_KEY_STORE)
+        request_data.extend(slot.to_bytes(MEM_ADDRESS_SIZE, "little"))
+        request_data.append(curve)
+        request_data.extend(b'\x00'*12) # Padding dummy data (maybe do random?)
+        request_data.extend(key)
+
+        self._call_command(request_data)
+
+        return True
+
+
+    def ecc_key_read(self, slot):
+        if slot > ECC_MAX_KEYS:
+            raise ValueError("Slot is larger than ECC_MAX_KEYS")
+
+        request_data = bytearray()
+        request_data.append(CMD_ID_ECC_KEY_READ)
+        request_data.extend(slot.to_bytes(MEM_ADDRESS_SIZE, "little"))
+
+        result = self._call_command(request_data)
+
+        curve = result[0]
+        origin = result[1]
+        pubkey = result[15:]
+
+        return curve, origin, pubkey
+
+
+    def ecc_key_erase(self, slot):
+        if slot > ECC_MAX_KEYS:
+            raise ValueError("Slot is larger than ECC_MAX_KEYS")
+
+        request_data = bytearray()
+        request_data.append(CMD_ID_ECC_KEY_ERASE)
+        request_data.extend(slot.to_bytes(MEM_ADDRESS_SIZE, "little"))
+
+        self._call_command(request_data)
+
+        return True
+
+
     def _call_command(self, data):
         if self._secure_session is None:
             raise TropicSquareNoSession("Secure session not started")
