@@ -472,6 +472,42 @@ class TropicSquare:
         return True
 
 
+    def ecdsa_sign(self, slot, hash):
+        if slot > ECC_MAX_KEYS:
+            raise ValueError("Slot is larger than ECC_MAX_KEYS")
+
+        request_data = bytearray()
+        request_data.append(CMD_ID_ECDSA_SIGN)
+        request_data.extend(slot.to_bytes(MEM_ADDRESS_SIZE, "little"))
+        request_data.extend(b'\x00'*13) # Padding dummy data (maybe do random?)
+        request_data.extend(hash)
+
+        result = self._call_command(request_data)
+
+        sign_r = result[15:47]
+        sign_s = result[47:]
+
+        return sign_r, sign_s
+
+
+    def eddsa_sign(self, slot, message):
+        if slot > ECC_MAX_KEYS:
+            raise ValueError("Slot is larger than ECC_MAX_KEYS")
+
+        request_data = bytearray()
+        request_data.append(CMD_ID_EDDSA_SIGN)
+        request_data.extend(slot.to_bytes(MEM_ADDRESS_SIZE, "little"))
+        request_data.extend(b'\x00'*13) # Padding dummy data (maybe do random?)
+        request_data.extend(message)
+
+        result = self._call_command(request_data)
+
+        sign_r = result[15:47]
+        sign_s = result[47:]
+
+        return sign_r, sign_s
+
+
     def _call_command(self, data):
         if self._secure_session is None:
             raise TropicSquareNoSession("Secure session not started")
