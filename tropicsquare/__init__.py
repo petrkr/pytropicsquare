@@ -370,6 +370,41 @@ class TropicSquare:
         return result[3:]
 
 
+    def mem_data_read(self, slot):
+        request_data = bytearray()
+        request_data.append(CMD_ID_R_MEMDATA_READ)
+        request_data.extend(slot.to_bytes(MEM_ADDRESS_SIZE, "little"))
+
+        result = self._call_command(request_data)
+
+        return result[3:]
+
+
+    def mem_data_write(self, data, slot=0):
+        if len(data) > MEM_DATA_MAX_SIZE:
+            raise ValueError("Data size is larger than MEM_DATA_MAX_SIZE")
+
+        request_data = bytearray()
+        request_data.append(CMD_ID_R_MEMDATA_WRITE)
+        request_data.extend(slot.to_bytes(MEM_ADDRESS_SIZE, "little"))
+        request_data.extend(b'M') # Padding dummy data
+        request_data.extend(data)
+
+        self._call_command(request_data)
+
+        return True
+
+
+    def mem_data_erase(self, slot):
+        request_data = bytearray()
+        request_data.append(CMD_ID_R_MEMDATA_ERASE)
+        request_data.extend(slot.to_bytes(MEM_ADDRESS_SIZE, "little"))
+
+        self._call_command(request_data)
+
+        return True
+
+
     def _call_command(self, data):
         if self._secure_session is None:
             raise TropicSquareNoSession("Secure session not started")
