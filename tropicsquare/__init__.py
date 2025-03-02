@@ -350,8 +350,24 @@ class TropicSquare:
         return result
 
 
-    def _l2_transfer(self, data):
-        pass
+    def r_config_read(self, address):
+        request_data = bytearray()
+        request_data.append(CMD_ID_R_CFG_READ)
+        request_data.extend(address.to_bytes(CFG_ADDRESS_SIZE, "little"))
+
+        result = self._call_command(request_data)
+
+        return result[3:]
+
+
+    def i_config_read(self, address):
+        request_data = bytearray()
+        request_data.append(CMD_ID_I_CFG_READ)
+        request_data.extend(address.to_bytes(CFG_ADDRESS_SIZE, "little"))
+
+        result = self._call_command(request_data)
+
+        return result[3:]
 
 
     def _call_command(self, data):
