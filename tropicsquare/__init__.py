@@ -90,6 +90,8 @@ class TropicSquare:
         if chip_status != CHIP_STATUS_READY:
             raise TropicSquareError("Chip status is not ready (status: {})".format(hex(chip_status)))
 
+        sleep(0.1) # Wait for the chip to process the handshake
+
         data = self._l2_get_response()
 
         tsehpub = data[0:32]
