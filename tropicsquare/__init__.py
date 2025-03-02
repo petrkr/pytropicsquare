@@ -510,6 +510,47 @@ class TropicSquare:
         return sign_r, sign_s
 
 
+    def mcounter_init(self, index, value):
+        if index > MCOUNTER_MAX:
+            raise ValueError("Index is larger than MCOUNTER_MAX")
+
+        request_data = bytearray()
+        request_data.append(CMD_ID_MCOUNTER_INIT)
+        request_data.extend(index.to_bytes(2, "little"))
+        request_data.extend(b'A') # Padding dummy data
+        request_data.extend(value.to_bytes(4, "little"))
+
+        self._call_command(request_data)
+
+        return True
+
+
+    def mcounter_update(self, index):
+        if index > MCOUNTER_MAX:
+            raise ValueError("Index is larger than MCOUNTER_MAX")
+
+        request_data = bytearray()
+        request_data.append(CMD_ID_MCOUNTER_UPDATE)
+        request_data.extend(index.to_bytes(2, "little"))
+
+        self._call_command(request_data)
+
+        return True
+
+
+    def mcounter_get(self, index):
+        if index > MCOUNTER_MAX:
+            raise ValueError("Index is larger than MCOUNTER_MAX")
+
+        request_data = bytearray()
+        request_data.append(CMD_ID_MCOUNTER_GET)
+        request_data.extend(index.to_bytes(2, "little"))
+
+        result = self._call_command(request_data)
+
+        return int.from_bytes(result[3:], "little")
+
+
     def _call_command(self, data):
         if self._secure_session is None:
             raise TropicSquareNoSession("Secure session not started")
