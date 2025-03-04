@@ -30,14 +30,7 @@ def main():
 
 
 #    with open("tropic.crt", "rb") as f:
-#        rawcert = f.read()
-
-    rawcert = ts.certificate
-    print("RAW Certificate: {}".format(rawcert))
-
-    cert = x509.load_der_x509_certificate(rawcert, default_backend())
-    pubkey = cert.public_key().public_bytes(Encoding.Raw, PublicFormat.Raw)
-
+#        ts._certificate = f.read()
 
     print("RAW Certificate: {}".format(ts.certificate))
     print("Cert Public Key (PyTropicSquare): {}".format(ts.public_key))
