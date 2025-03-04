@@ -1,10 +1,6 @@
 
 import sys
 
-from cryptography import x509
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
-
 from tropicsquare.ports.cpython import TropicSquareCPython
 from networkspi import NetworkSPI, DummyNetworkSpiCSPin
 
@@ -43,21 +39,50 @@ def main():
     pubkey = cert.public_key().public_bytes(Encoding.Raw, PublicFormat.Raw)
 
 
+    print("RAW Certificate: {}".format(ts.certificate))
     print("Cert Public Key (PyTropicSquare): {}".format(ts.public_key))
-    print("Cert Public Key (cryptography): {}".format(pubkey))
 
     print("Starting secure session...")
     ts.start_secure_session(pkey_index_0, bytes(sh0priv), bytes(sh0pub))
 
+    #resp = ts.ping(b"Very long ping! Chunk required..." * 5)
+    #print("Ping: {}".format(resp))
+
+    #print("ECC Pubkey #0: {}".format(ts.ecc_key_read(0)[2].hex()))
+    #print("ECC Pubkey #1: {}".format(ts.ecc_key_read(1)[2].hex()))
+
+    #sign = ts.eddsa_sign(0, b"Hello Tropic Square From MicroPython!")
+    #print("Sign message by key #0")
+    #print("  R: {}".format(sign[0].hex()))
+    #print("  S: {}".format(sign[1].hex()))
+
+    # SHA256 of "Ahoj"
+    #sign = ts.ecdsa_sign(1, b'\xd2z\x7f\x03\x8bq^\x0b\x8aC\x8a\tpN1\x02\x15\nAX\xa7\xf17+\xb6\xe0\xe6X\xc0\x0e|\n')
+    #print("Sign hash by key #1")
+    #print("  R: {}".format(sign[0].hex()))
+    #print("  S: {}".format(sign[1].hex()))
+
+    #print("Initialzize monotonic counter by number 3")
+    #ts.mcounter_init(0, 3)
+
+    #print("Counter value: {}".format(ts.mcounter_get(0)))
+
+    #print("Update monotonic counter")
+    #ts.mcounter_update(0)
+    #print("Counter value: {}".format(ts.mcounter_get(0)))
+
     try:
-        resp = ts.ping(b"Hello Tropic Square From MicroPython!")
-        print("Ping: {}".format(resp))
+        pass
+        #resp = ts.ping(b"Hello Tropic Square From MicroPython!")
+        #print("Ping: {}".format(resp))
 
-        resp = ts.ping(b"Second Ping")
-        print("Ping: {}".format(resp))
+        #resp = ts.ping(b"Second Ping")
+        #print("Ping: {}".format(resp))
 
-        random = ts.get_random(10)
-        print("Random: {}".format(random))
+        #for _ in range(4):
+        #    random = ts.get_random(1)
+        #    print("Random: {}".format(random))
+
     except Exception as e:
         print("Exception: {}".format(e))
 
