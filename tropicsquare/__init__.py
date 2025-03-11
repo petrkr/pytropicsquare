@@ -23,7 +23,7 @@ class TropicSquare:
     def _l2_get_response(self):
         chip_status = CHIP_STATUS_NOT_READY
 
-        while not chip_status:
+        for _ in range(MAX_RETRIES):
             data = bytearray()
             data.extend(bytes(REQ_ID_GET_RESPONSE))
 
@@ -31,38 +31,46 @@ class TropicSquare:
             self._spi_write_readinto(data, data)
             chip_status = data[0]
 
-            if not chip_status:
+            if chip_status in [CHIP_STATUS_NOT_READY, CHIP_STATUS_BUSY]:
                 self._spi_cs(1)
+                continue
+
+            if chip_status & CHIP_STATUS_ALARM:
+                self._spi_cs(1)
+                raise TropicSquareError("Chip is in alarm")
+
+            response = self._spi.read(2)
+
+            response_status = response[0]
+            response_length = response[1]
+
+            # If response status is 0xFF, it means that the chip is busy
+            if response_status == 0xFF:
+                continue
+
+            if response_length > 0:
+                data = self._spi.read(response_length)
+            else:
+                data = None
+
+            calccrc = CRC.crc16(response + (data or b''))
+            respcrc = self._spi.read(2)
+
+            self._spi_cs(1)
+
+            if response_status not in [RSP_STATUS_REQ_OK, RSP_STATUS_RES_OK, RSP_STATUS_RES_CONT, RSP_STATUS_REQ_CONT]:
+                raise TropicSquareError("Response status is not OK (status: {})".format(hex(response_status)))
+
+            if respcrc != calccrc:
+                raise TropicSquareCRCError("CRC mismatch ({}<!=>{})".format(calccrc.hex(), respcrc.hex()))
+
+            if response_status == RSP_STATUS_RES_CONT:
+                data += self._l2_get_response()
+
+            return data
 
 
-        if chip_status != CHIP_STATUS_READY:
-            raise TropicSquareError("Chip status is not ready (status: {})".format(hex(chip_status)))
-
-        response = self._spi.read(2)
-
-        response_status = response[0]
-        response_length = response[1]
-
-        if response_length > 0:
-            data = self._spi.read(response_length)
-        else:
-            data = None
-
-        calccrc = CRC.crc16(response + (data or b''))
-        respcrc = self._spi.read(2)
-
-        self._spi_cs(1)
-
-        if respcrc != calccrc:
-            raise TropicSquareCRCError("CRC mismatch")
-
-        if response_status not in [RSP_STATUS_REQ_OK, RSP_STATUS_RES_OK, RSP_STATUS_RES_CONT, RSP_STATUS_REQ_CONT]:
-            raise TropicSquareError("Response status is not OK (status: {})".format(hex(response_status)))
-
-        if response_status == RSP_STATUS_RES_CONT:
-            data += self._l2_get_response()
-
-        return data
+        raise TropicSquareError("Chip is busy")
 
 
     def _l2_get_info_req(self, object_id, req_data_chunk = GET_INFO_DATA_CHUNK_0_127):
