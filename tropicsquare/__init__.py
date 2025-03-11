@@ -13,7 +13,6 @@ from tropicsquare.constants.cmd_result import *
 from tropicsquare.exceptions import *
 
 from hashlib import sha256
-from time import sleep
 
 class TropicSquare:
     def __init__(self):
@@ -22,13 +21,20 @@ class TropicSquare:
 
 
     def _l2_get_response(self, lastresponse=None):
-        data = bytearray()
-        data.extend(bytes(REQ_ID_GET_RESPONSE))
+        chip_status = CHIP_STATUS_NOT_READY
 
-        self._spi_cs(0)
-        self._spi_write_readinto(data, data)
+        while not chip_status:
+            data = bytearray()
+            data.extend(bytes(REQ_ID_GET_RESPONSE))
 
-        chip_status = data[0]
+            self._spi_cs(0)
+            self._spi_write_readinto(data, data)
+            chip_status = data[0]
+
+            if not chip_status:
+                self._spi_cs(1)
+
+
         if chip_status != CHIP_STATUS_READY:
             raise TropicSquareError("Chip status is not ready (status: {})".format(hex(chip_status)))
 
@@ -93,8 +99,6 @@ class TropicSquare:
 
         if chip_status != CHIP_STATUS_READY:
             raise TropicSquareError("Chip status is not ready (status: {})".format(hex(chip_status)))
-
-        sleep(0.1) # Wait for the chip to process the handshake
 
         data = self._l2_get_response()
 
