@@ -231,12 +231,14 @@ class TropicSquare:
 
     @property
     def riscv_fw_version(self):
-        return self._l2_get_info_req(GET_INFO_RISCV_FW_VERSION)
+        data = self._l2_get_info_req(GET_INFO_RISCV_FW_VERSION)
+        return (data[3], data[2], data[1], data[0])
 
 
     @property
     def spect_fw_version(self):
-        return self._l2_get_info_req(GET_INFO_SPECT_FW_VERSION)
+        data = self._l2_get_info_req(GET_INFO_SPECT_FW_VERSION)
+        return (data[3], data[2], data[1], data[0])
 
 
     @property
