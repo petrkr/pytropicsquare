@@ -183,6 +183,50 @@ class TropicSquare:
         return True
 
 
+    def _l2_sleep_req(self, sleep_mode):
+        if sleep_mode not in [SLEEP_MODE_SLEEP, SLEEP_MODE_DEEP_SLEEP]:
+            raise ValueError("Invalid sleep mode")
+
+        data = bytearray()
+        data.extend(bytes(REQ_ID_SLEEP_REQ))
+        data.append(sleep_mode)
+        data.extend(CRC.crc16(data))
+
+        self._spi_cs(0)
+        self._spi_write_readinto(data, data)
+        self._spi_cs(1)
+
+        chip_status = data[0]
+
+        if chip_status != CHIP_STATUS_READY:
+            raise TropicSquareError("Chip status is not ready (status: {})".format(hex(chip_status)))
+
+        self._l2_get_response()
+        return True
+
+
+    def _l2_startup_req(self, startup_id):
+        if startup_id not in [STARTUP_REBOOT, STARTUP_MAINTENANCE_REBOOT]:
+            raise ValueError("Invalid sleep mode")
+
+        data = bytearray()
+        data.extend(bytes(REQ_ID_STARTUP_REQ))
+        data.append(startup_id)
+        data.extend(CRC.crc16(data))
+
+        self._spi_cs(0)
+        self._spi_write_readinto(data, data)
+        self._spi_cs(1)
+
+        chip_status = data[0]
+
+        if chip_status != CHIP_STATUS_READY:
+            raise TropicSquareError("Chip status is not ready (status: {})".format(hex(chip_status)))
+
+        self._l2_get_response()
+        return True
+
+
     @property
     def certificate(self):
         if self._certificate:
