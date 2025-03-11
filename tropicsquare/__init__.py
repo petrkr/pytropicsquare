@@ -20,7 +20,7 @@ class TropicSquare:
         self._certificate = None
 
 
-    def _l2_get_response(self, lastresponse=None):
+    def _l2_get_response(self):
         chip_status = CHIP_STATUS_NOT_READY
 
         while not chip_status:
@@ -60,7 +60,7 @@ class TropicSquare:
             raise TropicSquareError("Response status is not OK (status: {})".format(hex(response_status)))
 
         if response_status == RSP_STATUS_RES_CONT:
-            data += self._l2_get_response(data)
+            data += self._l2_get_response()
 
         return data
 
