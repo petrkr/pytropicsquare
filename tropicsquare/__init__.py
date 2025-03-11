@@ -386,7 +386,7 @@ class TropicSquare:
         return result[3:]
 
 
-    def mem_data_write(self, data, slot=0):
+    def mem_data_write(self, data, slot):
         if len(data) > MEM_DATA_MAX_SIZE:
             raise ValueError("Data size is larger than MEM_DATA_MAX_SIZE")
 
