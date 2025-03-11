@@ -629,10 +629,10 @@ class TropicSquare:
         result_cipher, result_tag = self._l2_encrypted_command(len(ciphertext), ciphertext, tag)
         decrypted = self._secure_session[1].decrypt(nonce=nonce, data=result_cipher+result_tag, associated_data=b'')
 
+        self._secure_session[2] += 1
+
         if decrypted[0] != CMD_RESULT_OK:
             raise TropicSquareError("Command failed with result: {}".format(hex(decrypted[0])))
-
-        self._secure_session[2] += 1
 
         return decrypted[1:]
 
