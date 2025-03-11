@@ -2,7 +2,7 @@
 import sys
 
 from tropicsquare.ports.micropython import TropicSquareMicroPython
-from networkspi import NetworkSPI, DummyNetworkSpiCSPin
+from machine import SPI, Pin
 
 
 # Default factory pairing keys
@@ -12,11 +12,8 @@ sh0pub  = [0xe7,0xf7,0x35,0xba,0x19,0xa3,0x3f,0xd6,0x73,0x23,0xab,0x37,0x26,0x2d
 
 
 def main():
-    host = sys.argv[1]
-    port = sys.argv[2]
-
-    spi = NetworkSPI(host.encode(), port)
-    cs = DummyNetworkSpiCSPin(spi)
+    spi = SPI(1, baudrate=1_000_000, polarity=0, phase=0, sck=Pin(18), mosi=Pin(23), miso=Pin(19))
+    cs = Pin(5, Pin.OUT)
 
     ts = TropicSquareMicroPython(spi, cs)
 
@@ -29,16 +26,11 @@ def main():
         print("Exception: {}".format(e))
 
 
-    # Hack inject certifiate from storage, speedsup debugging
-#    with open("tropic.crt", "rb") as f:
-#        ts._certificate = f.read()
-
     print("RAW Certificate: {}".format(ts.certificate))
     print("Cert Public Key: {}".format(ts.public_key))
 
     print("Starting secure session...")
     ts.start_secure_session(pkey_index_0, bytes(sh0priv), bytes(sh0pub))
-
 
     try:
         resp = ts.ping(b"Hello Tropic Square From MicroPython!")
