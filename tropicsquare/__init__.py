@@ -240,7 +240,12 @@ class TropicSquare:
 
 
     @property
-    def certificate(self):
+    def certificate(self) -> bytes:
+        """Get X509 certificate from the chip
+
+        Returns:
+            bytes: X509 certificate
+        """
         if self._certificate:
             return self._certificate
 
@@ -259,7 +264,14 @@ class TropicSquare:
 
 
     @property
-    def public_key(self):
+    def public_key(self) -> bytes:
+        """Get public key from the X509 certificate
+
+        In case certificate is not loaded before, it will load also certificate
+
+        Returns:
+            bytes: Public key
+        """
         if self._certificate is None:
             cert = self.certificate
         else :
@@ -281,18 +293,28 @@ class TropicSquare:
 
 
     @property
-    def chipid(self):
+    def chipid(self) -> bytes:
         return self._l2_get_info_req(GET_INFO_CHIPID)
 
 
     @property
-    def riscv_fw_version(self):
+    def riscv_fw_version(self) -> tuple:
+        """Get RISCV firmware version
+
+        Returns:
+            tuple: Firmware version (major, minor, patch, release)
+        """
         data = self._l2_get_info_req(GET_INFO_RISCV_FW_VERSION)
         return (data[3], data[2], data[1], data[0])
 
 
     @property
-    def spect_fw_version(self):
+    def spect_fw_version(self) -> tuple:
+        """Get SPECT firmware version
+
+        Returns:
+            tuple: Firmware version (major, minor, patch, release)
+        """
         data = self._l2_get_info_req(GET_INFO_SPECT_FW_VERSION)
         return (data[3], data[2], data[1], data[0])
 
@@ -302,7 +324,20 @@ class TropicSquare:
         return self._l2_get_info_req(GET_INFO_FW_BANK)
 
 
-    def start_secure_session(self, pkey_index, shpriv, shpub):
+    def start_secure_session(self, pkey_index : int, shpriv : bytes, shpub : bytes) -> bool:
+        """Initialize secure session for L3 commands
+
+        Args:
+            phkey_index (int): Pairing key index
+            shpriv (bytes): Pairing private key
+            shpub (bytes): Pairing public key
+
+        Returns:
+            bool: True if secure session was established
+
+        Raises:
+            TropicSquareError: If secure session handshake failed
+        """
         ehpriv, ehpub = self._get_ephemeral_keypair()
 
         # Handshake request
@@ -362,7 +397,12 @@ class TropicSquare:
         return True
 
 
-    def abort_secure_session(self):
+    def abort_secure_session(self) -> bool:
+        """Abort secure session
+
+        Returns:
+            bool: True if secure session was aborted
+        """
         if self._l2_encrypted_session_abt():
             self._secure_session = None
             return True
@@ -370,7 +410,12 @@ class TropicSquare:
         return False
 
 
-    def get_log(self):
+    def get_log(self) -> str:
+        """Get log from the RISC Firmware
+
+        Returns:
+            str: Log message
+        """
         log = b''
         while True:
             part = self._l2_get_log()
@@ -385,7 +430,15 @@ class TropicSquare:
     # L3 Commands #
     ###############
 
-    def ping(self, data):
+    def ping(self, data : bytes) -> bytes:
+        """Returns data back
+
+        Args:
+            data (bytes): Data to send
+
+        Returns:
+            bytes: Data from input
+        """
         request_data = bytearray()
         request_data.append(CMD_ID_PING)
         request_data.extend(data)
@@ -395,7 +448,15 @@ class TropicSquare:
         return result
 
 
-    def get_random(self, nbytes):
+    def get_random(self, nbytes : int) -> bytes:
+        """Get random bytes
+
+        Args:
+            nbytes (int): Number of bytes to generate
+
+        Returns:
+            bytes: Random bytes
+        """
         request_data = bytearray()
         request_data.append(CMD_ID_RANDOM_VALUE)
         request_data.extend(nbytes.to_bytes(1))
@@ -434,7 +495,15 @@ class TropicSquare:
         return result[3:]
 
 
-    def mem_data_read(self, slot):
+    def mem_data_read(self, slot : int) -> bytes:
+        """Read data from memory slot
+
+        Args:
+            slot (int): Memory slot
+
+        Returns:
+            bytes: Data from memory slot
+        """
         request_data = bytearray()
         request_data.append(CMD_ID_R_MEMDATA_READ)
         request_data.extend(slot.to_bytes(MEM_ADDRESS_SIZE, "little"))
@@ -444,7 +513,19 @@ class TropicSquare:
         return result[3:]
 
 
-    def mem_data_write(self, data, slot):
+    def mem_data_write(self, data : bytes, slot : int) -> bool:
+        """Write data to memory slot
+
+        Args:
+            data (bytes): Data to write (Maximum 444 bytes)
+            slot (int): Memory slot
+
+        Returns:
+            bool: True if data was written
+
+        Raises:
+            ValueError: If data size is larger than 444
+        """
         if len(data) > MEM_DATA_MAX_SIZE:
             raise ValueError("Data size is larger than MEM_DATA_MAX_SIZE")
 
@@ -459,7 +540,15 @@ class TropicSquare:
         return True
 
 
-    def mem_data_erase(self, slot):
+    def mem_data_erase(self, slot : int) -> bool:
+        """Erase memory slot
+
+        Args:
+            slot (int): Memory slot
+
+        Returns:
+            bool: True if data was erased
+        """
         request_data = bytearray()
         request_data.append(CMD_ID_R_MEMDATA_ERASE)
         request_data.extend(slot.to_bytes(MEM_ADDRESS_SIZE, "little"))
@@ -469,7 +558,19 @@ class TropicSquare:
         return True
 
 
-    def ecc_key_generate(self, slot, curve):
+    def ecc_key_generate(self, slot : int, curve : int) -> bool:
+        """Generate ECC key
+
+        Args:
+            slot (int): Slot for key
+            curve (int): Curve (ECC_CURVE_P256 or ECC_CURVE_ED25519)
+
+        Returns:
+            bool: True if key was generated
+
+        Raises:
+            ValueError: If slot is larger than ECC_MAX_KEYS or curve is invalid
+        """
         if slot > ECC_MAX_KEYS:
             raise ValueError("Slot is larger than ECC_MAX_KEYS")
 
@@ -487,7 +588,20 @@ class TropicSquare:
         return True
 
 
-    def ecc_key_store(self, slot, curve, key):
+    def ecc_key_store(self, slot : int, curve : int, key : bytes) -> bytes:
+        """Store own ECC key
+
+        Args:
+            slot (int): Slot for key
+            curve (int): Curve (ECC_CURVE_P256 or ECC_CURVE_ED25519)
+            key (bytes): Private key
+
+        Returns:
+            bool: True if key was stored
+
+        Raises:
+            ValueError: If slot is larger than ECC_MAX_KEYS or curve is invalid
+        """
         if slot > ECC_MAX_KEYS:
             raise ValueError("Slot is larger than ECC_MAX_KEYS")
 
@@ -506,7 +620,18 @@ class TropicSquare:
         return True
 
 
-    def ecc_key_read(self, slot):
+    def ecc_key_read(self, slot : int) -> tuple:
+        """Read ECC key
+
+        Args:
+            slot (int): Slot for key
+
+        Returns:
+            tuple: Curve, origin, public key
+
+        Raises:
+            ValueError: If slot is larger than ECC_MAX_KEYS
+        """
         if slot > ECC_MAX_KEYS:
             raise ValueError("Slot is larger than ECC_MAX_KEYS")
 
@@ -523,7 +648,18 @@ class TropicSquare:
         return curve, origin, pubkey
 
 
-    def ecc_key_erase(self, slot):
+    def ecc_key_erase(self, slot : int) -> bool:
+        """Erase ECC key
+
+        Args:
+            slot (int): Slot for key
+
+        Returns:
+            bool: True if key was erased
+
+        Raises:
+            ValueError: If slot is larger than ECC_MAX_KEYS
+        """
         if slot > ECC_MAX_KEYS:
             raise ValueError("Slot is larger than ECC_MAX_KEYS")
 
@@ -536,7 +672,16 @@ class TropicSquare:
         return True
 
 
-    def ecdsa_sign(self, slot, hash):
+    def ecdsa_sign(self, slot : int, hash : bytes) -> tuple:
+        """Sign hash with ECC key
+
+        Args:
+            slot (int): Slot with ECC key (ECC_CURVE_P256)
+            hash (bytes): Hash to sign
+
+        Returns:
+            tuple: R and S values of the signature
+        """
         if slot > ECC_MAX_KEYS:
             raise ValueError("Slot is larger than ECC_MAX_KEYS")
 
@@ -554,7 +699,16 @@ class TropicSquare:
         return sign_r, sign_s
 
 
-    def eddsa_sign(self, slot, message):
+    def eddsa_sign(self, slot : int, message : bytes) -> tuple:
+        """Sign message with ECC key
+
+        Args:
+            slot (int): Slot with ECC key (ECC_CURVE_ED25519)
+            message (bytes): Message
+
+        Returns:
+            tuple: R and S values of the signature
+        """
         if slot > ECC_MAX_KEYS:
             raise ValueError("Slot is larger than ECC_MAX_KEYS")
 
@@ -572,7 +726,16 @@ class TropicSquare:
         return sign_r, sign_s
 
 
-    def mcounter_init(self, index, value):
+    def mcounter_init(self, index : int, value : int) -> bool:
+        """Initialize monotonic counter
+
+        Args:
+            index (int): Counter index
+            value (int): Initial value
+
+        Returns:
+            bool: True if counter was initialized
+        """
         if index > MCOUNTER_MAX:
             raise ValueError("Index is larger than MCOUNTER_MAX")
 
@@ -587,7 +750,15 @@ class TropicSquare:
         return True
 
 
-    def mcounter_update(self, index):
+    def mcounter_update(self, index : int) -> bool:
+        """Decrement monotonic counter
+
+        Args:
+            index (int): Counter index
+
+        Returns:
+            bool: True if counter was updated
+        """
         if index > MCOUNTER_MAX:
             raise ValueError("Index is larger than MCOUNTER_MAX")
 
@@ -600,7 +771,15 @@ class TropicSquare:
         return True
 
 
-    def mcounter_get(self, index):
+    def mcounter_get(self, index : int) -> int:
+        """Get monotonic counter value
+
+        Args:
+            index (int): Counter index
+
+        Returns:
+            int: Counter value
+        """
         if index > MCOUNTER_MAX:
             raise ValueError("Index is larger than MCOUNTER_MAX")
 
