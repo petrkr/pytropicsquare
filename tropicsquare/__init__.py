@@ -14,6 +14,8 @@ from tropicsquare.exceptions import *
 
 from hashlib import sha256
 
+from time import sleep
+
 class TropicSquare:
     def __init__(self):
         self._secure_session = None
@@ -33,6 +35,7 @@ class TropicSquare:
 
             if chip_status in [CHIP_STATUS_NOT_READY, CHIP_STATUS_BUSY]:
                 self._spi_cs(1)
+                sleep(0.025)
                 continue
 
             if chip_status & CHIP_STATUS_ALARM:
@@ -46,6 +49,7 @@ class TropicSquare:
 
             # If response status is 0xFF, it means that the chip is busy
             if response_status == 0xFF:
+                sleep(0.025)
                 continue
 
             if response_length > 0:
