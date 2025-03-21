@@ -283,17 +283,16 @@ class TropicSquare:
 
         # Find signature for X25519 public key
         # 0x65, 0x6e, 0x03 and 0x21
-        def _parse_public_key(cert):
-            for i in range(len(cert)):
-                if cert[i] == 0x65:
-                    if cert[i+1] == 0x6e and \
-                       cert[i+2] == 0x03 and \
-                       cert[i+3] == 0x21:
-                        # Found it
-                        # Plus 5 bytes to skip the signature
-                        return cert[i+5:i+5+32]
+        for i in range(len(cert)):
+            if cert[i] == 0x65:
+                if cert[i+1] == 0x6e and \
+                    cert[i+2] == 0x03 and \
+                    cert[i+3] == 0x21:
+                    # Found it
+                    # Plus 5 bytes to skip the signature
+                    return cert[i+5:i+5+32]
 
-        return _parse_public_key(cert)
+        return None
 
 
     @property
