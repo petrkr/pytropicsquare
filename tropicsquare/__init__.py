@@ -360,7 +360,7 @@ class TropicSquare:
         sha256hash.update(ehpub)
 
         sha256hash = sha256(sha256hash.digest())
-        sha256hash.update(pkey_index.to_bytes(1))
+        sha256hash.update(pkey_index.to_bytes(1, "little"))
 
         sha256hash = sha256(sha256hash.digest())
         sha256hash.update(tsehpub)
@@ -462,7 +462,7 @@ class TropicSquare:
         """
         request_data = bytearray()
         request_data.append(CMD_ID_RANDOM_VALUE)
-        request_data.extend(nbytes.to_bytes(1))
+        request_data.extend(nbytes.to_bytes(1, "little"))
 
         result = self._call_command(request_data)
 
