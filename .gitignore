@@ -4,6 +4,9 @@ __pycache__/
 *$py.class
 *.mpy
 
+#
+docs/html
+
 # C extensions
 *.so
 
