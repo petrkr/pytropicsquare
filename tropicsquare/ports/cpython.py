@@ -59,7 +59,7 @@ class TropicSquareCPython(TropicSquare):
 
     def _x25519_exchange(self, private_bytes, public_bytes):
         priv = X25519PrivateKey.from_private_bytes(private_bytes)
-        return priv.exchange(X25519PublicKey.from_public_bytes(public_bytes))
+        return priv.exchange(X25519PublicKey.from_public_bytes(bytes(public_bytes)))
 
 
     def _aesgcm(self, key):
