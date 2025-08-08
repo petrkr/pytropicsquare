@@ -11,6 +11,7 @@ from tropicsquare.constants.get_info_req import *
 from tropicsquare.constants.rsp_status import RSP_STATUS_REQ_OK, RSP_STATUS_RES_OK, RSP_STATUS_REQ_CONT, RSP_STATUS_RES_CONT
 from tropicsquare.constants.cmd_result import *
 from tropicsquare.exceptions import *
+from tropicsquare.error_mapping import raise_for_cmd_result, raise_for_response_status
 
 from hashlib import sha256
 
@@ -40,7 +41,7 @@ class TropicSquare:
 
             if chip_status & CHIP_STATUS_ALARM:
                 self._spi_cs(1)
-                raise TropicSquareError("Chip is in alarm")
+                raise TropicSquareAlarmError("Chip is in alarm state")
 
             response = self._spi.read(2)
 
@@ -62,8 +63,7 @@ class TropicSquare:
 
             self._spi_cs(1)
 
-            if response_status not in [RSP_STATUS_REQ_OK, RSP_STATUS_RES_OK, RSP_STATUS_RES_CONT, RSP_STATUS_REQ_CONT]:
-                raise TropicSquareError("Response status is not OK (status: {})".format(hex(response_status)))
+            raise_for_response_status(response_status)
 
             if respcrc != calccrc:
                 raise TropicSquareCRCError("CRC mismatch ({}<!=>{})".format(calccrc.hex(), respcrc.hex()))
@@ -74,7 +74,7 @@ class TropicSquare:
             return data
 
 
-        raise TropicSquareError("Chip is busy")
+        raise TropicSquareTimeoutError("Chip communication timeout - chip remains busy")
 
 
     def _l2_get_info_req(self, object_id, req_data_chunk = GET_INFO_DATA_CHUNK_0_127):
@@ -175,7 +175,7 @@ class TropicSquare:
         command_tag = data[-16:]
 
         if command_size != len(command_ciphertext):
-            raise TropicSquareError("Command size mismatch")
+            raise TropicSquareResponseError("Command size mismatch in response")
 
 
         return (command_ciphertext, command_tag)
@@ -390,7 +390,7 @@ class TropicSquare:
         kauth = None
 
         if tag != tsauth:
-            raise TropicSquareError("Tauth mismatch, handshake failed")
+            raise TropicSquareHandshakeError("Authentication tag mismatch - handshake failed")
 
         encrypt_key = self._aesgcm(kcmd)
         decrypt_key = self._aesgcm(kres)
@@ -530,7 +530,7 @@ class TropicSquare:
             ValueError: If data size is larger than 444
         """
         if len(data) > MEM_DATA_MAX_SIZE:
-            raise ValueError("Data size is larger than MEM_DATA_MAX_SIZE")
+            raise ValueError(f"Data size ({len(data)} bytes) exceeds maximum allowed size ({MEM_DATA_MAX_SIZE} bytes)")
 
         request_data = bytearray()
         request_data.append(CMD_ID_R_MEMDATA_WRITE)
@@ -825,8 +825,7 @@ class TropicSquare:
 
         self._secure_session[2] += 1
 
-        if decrypted[0] != CMD_RESULT_OK:
-            raise TropicSquareError("Command failed with result: {}".format(hex(decrypted[0])))
+        raise_for_cmd_result(decrypted[0])
 
         return decrypted[1:]
 
