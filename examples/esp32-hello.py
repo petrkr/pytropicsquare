@@ -2,6 +2,7 @@
 import sys
 
 from tropicsquare.ports.micropython import TropicSquareMicroPython
+from tropicsquare.exceptions import *
 from machine import SPI, Pin
 
 
@@ -17,30 +18,52 @@ def main():
 
     ts = TropicSquareMicroPython(spi, cs)
 
-    print("Spect FW version: {}".format(ts.spect_fw_version))
-    print("RISCV FW version: {}".format(ts.riscv_fw_version))
-    print("Chip ID: {}".format(ts.chipid))
     try:
-        print("FW Bank: {}".format(ts.fw_bank))
-    except Exception as e:
-        print("Exception: {}".format(e))
+        # Get chip information
+        print("Spect FW version: {}".format(ts.spect_fw_version))
+        print("RISCV FW version: {}".format(ts.riscv_fw_version))
+        print("Chip ID: {}".format(ts.chipid.hex()))
 
+        try:
+            print("FW Bank: {}".format(ts.fw_bank))
+        except TropicSquareError as e:
+            print("FW Bank unavailable: {}".format(e))
 
-    print("RAW Certificate: {}".format(ts.certificate))
-    print("Cert Public Key: {}".format(ts.public_key))
+        print("RAW Certificate: {}".format(ts.certificate.hex()))
+        print("Cert Public Key: {}".format(ts.public_key.hex()))
 
-    print("Starting secure session...")
-    ts.start_secure_session(pkey_index_0, bytes(sh0priv), bytes(sh0pub))
+        # Start secure session
+        print("Starting secure session...")
+        ts.start_secure_session(pkey_index_0, bytes(sh0priv), bytes(sh0pub))
+        print("Secure session established!")
 
-    try:
+        # Test ping command
         resp = ts.ping(b"Hello Tropic Square From MicroPython!")
-        print("Ping: {}".format(resp))
+        print("Ping response: {}".format(resp))
+
+        # Get device log
+        print("Device log:")
+        print(ts.get_log())
+
+    except TropicSquareAlarmError as e:
+        print("ALARM: Chip is in alarm state: {}".format(e))
+    except TropicSquareHandshakeError as e:
+        print("HANDSHAKE ERROR: {}".format(e))
+    except TropicSquareTimeoutError as e:
+        print("TIMEOUT: {}".format(e))
+    except TropicSquareCRCError as e:
+        print("CRC ERROR: {}".format(e))
+    except TropicSquareError as e:
+        print("TROPICSQUARE ERROR: {}".format(e))
     except Exception as e:
-        print("Exception: {}".format(e))
-
-
-    print("Log")
-    print(ts.get_log())
+        print("UNEXPECTED ERROR: {}".format(e))
+    finally:
+        # Always try to clean up session
+        try:
+            ts.abort_secure_session()
+            print("Session terminated")
+        except:
+            pass
 
 
 if __name__ == "__main__":
