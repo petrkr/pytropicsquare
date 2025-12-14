@@ -15,6 +15,7 @@ PyTropicSquare provides a comprehensive Python interface for the TROPIC01 secure
   - EdDSA signing (Ed25519 curve)
   - ECC key generation and management
 - **Secure Storage**: Memory slots for data storage (up to 444 bytes per slot)
+- **Chip Identification**: Parsed chip ID with manufacturing details (package type, fab location, serial number, wafer coordinates)
 - **Additional Features**:
   - True random number generation
   - Monotonic counters
@@ -46,7 +47,10 @@ from tropicsquare import TropicSquare
 ts = TropicSquare(spi, cs_pin)
 
 # Get chip information
-print(f"Chip ID: {ts.chipid.hex()}")
+chip_id = ts.chipid
+print(chip_id)  # Human-readable output
+print(f"Package: {chip_id.package_type_name}")
+print(f"Fabrication: {chip_id.fab_name}")
 print(f"SPECT FW: {ts.spect_fw_version}")
 print(f"RISC-V FW: {ts.riscv_fw_version}")
 
@@ -62,6 +66,40 @@ ts.ecc_key_generate(slot=0, curve=ECC_CURVE_ED25519)
 signature = ts.eddsa_sign(slot=0, message=b"Sign this message")
 ```
 
+## Chip Information
+
+The library provides detailed chip identification and manufacturing data through parsed structures:
+
+```python
+# Get parsed chip ID
+chip_id = ts.chipid
+
+# Access chip information
+print(chip_id)  # Multi-line human-readable output
+
+# Individual fields
+print(f"Package Type: {chip_id.package_type_name}")      # "QFN32", "Bare Silicon"
+print(f"Silicon Revision: {chip_id.silicon_rev}")        # e.g., "ACAB"
+print(f"Fabrication Facility: {chip_id.fab_name}")       # "EPS Brno", "Tropic Square Lab"
+print(f"Part Number ID: 0x{chip_id.part_number_id:03X}")
+print(f"HSM Version: {'.'.join(map(str, chip_id.hsm_version))}")
+print(f"Batch ID: {chip_id.batch_id.hex()}")
+
+# Serial number details
+sn = chip_id.serial_number
+print(f"Serial Number: 0x{sn.sn:02X}")
+print(f"Fab ID: 0x{sn.fab_id:03X}")
+print(f"Wafer ID: 0x{sn.wafer_id:02X}")
+print(f"Wafer Coordinates: ({sn.x_coord}, {sn.y_coord})")
+print(f"Lot ID: {sn.lot_id.hex()}")
+
+# Export to dictionary (useful for JSON serialization)
+chip_dict = chip_id.to_dict()
+
+# Access raw bytes if needed
+raw_chip_id = chip_id.raw  # 128 bytes
+```
+
 ## Architecture
 
 The library is structured in three protocol layers:
@@ -75,8 +113,17 @@ The library is structured in three protocol layers:
 ### Core Classes
 
 - `TropicSquare`: Abstract base class with protocol implementation
-- `TropicSquareCPython`: CPython implementation 
+- `TropicSquareCPython`: CPython implementation
 - `TropicSquareMicroPython`: MicroPython implementation
+
+### Chip Information Classes
+
+- `ChipId`: Parsed chip identification structure (128 bytes)
+  - Properties: `package_type_name`, `fab_name`, `silicon_rev`, `serial_number`, `hsm_version`, `prog_version`, `batch_id`, and more
+  - Methods: `to_dict()` for JSON export, `__str__()` for human-readable output
+- `SerialNumber`: Chip serial number with manufacturing details (16 bytes)
+  - Properties: `sn`, `fab_id`, `part_number_id`, `wafer_id`, `x_coord`, `y_coord`, `lot_id`
+  - Methods: `to_dict()` for JSON export
 
 ### Key Methods
 
