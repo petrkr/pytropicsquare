@@ -3,6 +3,7 @@ import sys
 
 from tropicsquare.ports.cpython import TropicSquareCPython
 from tropicsquare.exceptions import *
+from tropicsquare.session import SecureSession
 from uartspi import UartSPI, TropicUartSpiCS
 
 pkey_index_0 = 0x00 # Slot 0
@@ -29,7 +30,7 @@ def main():
         print("Chip ID: {}".format(ts.chipid.hex()))
         print("Spect FW version: {}".format(ts.spect_fw_version))
         print("RISCV FW version: {}".format(ts.riscv_fw_version))
-        
+
         try:
             print("FW Bank: {}".format(ts.fw_bank))
         except TropicSquareError as e:
@@ -38,59 +39,63 @@ def main():
         print("RAW Certificate: {}".format(ts.certificate.hex()))
         print("Cert Public Key: {}".format(ts.public_key.hex()))
 
+        # Use session context manager for all secure operations
         print("Starting secure session with context manager...")
-        ts.start_secure_session(pkey_index_0, bytes(sh0priv), bytes(sh0pub))
-        print("Secure session established!")
+        with SecureSession(ts, pkey_index_0, bytes(sh0priv), bytes(sh0pub)) as secure_ts:
+            print("Secure session established!")
 
-        # Test ping with long message (chunk required)
-        resp = ts.ping(b"Very long ping! Chunk required..." * 5)
-        print("Ping response: {}".format(resp))
+            # Test ping with long message (chunk required)
+            resp = secure_ts.ping(b"Very long ping! Chunk required..." * 5)
+            print("Ping response: {}".format(resp))
 
-        # Test ECC key operations
-        try:
-            print("ECC Pubkey #0: {}".format(ts.ecc_key_read(0)[2].hex()))
-            print("ECC Pubkey #1: {}".format(ts.ecc_key_read(1)[2].hex()))
-        except TropicSquareECCError as e:
-            print("ECC key read error: {}".format(e))
+            # Test ECC key operations
+            try:
+                print("ECC Pubkey #0: {}".format(secure_ts.ecc_key_read(0)[2].hex()))
+                print("ECC Pubkey #1: {}".format(secure_ts.ecc_key_read(1)[2].hex()))
+            except TropicSquareECCError as e:
+                print("ECC key read error: {}".format(e))
 
-        # Test signing operations
-        try:
-            sign = ts.eddsa_sign(0, b"Hello Tropic Square From CPython!")
-            print("EdDSA signature by key #0:")
-            print("  R: {}".format(sign[0].hex()))
-            print("  S: {}".format(sign[1].hex()))
-        except TropicSquareECCError as e:
-            print("EdDSA signing error: {}".format(e))
+            # Test signing operations
+            try:
+                sign = secure_ts.eddsa_sign(0, b"Hello Tropic Square From CPython!")
+                print("EdDSA signature by key #0:")
+                print("  R: {}".format(sign[0].hex()))
+                print("  S: {}".format(sign[1].hex()))
+            except TropicSquareECCError as e:
+                print("EdDSA signing error: {}".format(e))
 
-        # Test ECDSA with SHA256 of "Ahoj"
-        try:
-            sign = ts.ecdsa_sign(1, b'\xd2z\x7f\x03\x8bq^\x0b\x8aC\x8a\tpN1\x02\x15\nAX\xa7\xf17+\xb6\xe0\xe6X\xc0\x0e|\n')
-            print("ECDSA signature by key #1:")
-            print("  R: {}".format(sign[0].hex()))
-            print("  S: {}".format(sign[1].hex()))
-        except TropicSquareECCError as e:
-            print("ECDSA signing error: {}".format(e))
+            # Test ECDSA with SHA256 of "Ahoj"
+            try:
+                sign = secure_ts.ecdsa_sign(1, b'\xd2z\x7f\x03\x8bq^\x0b\x8aC\x8a\tpN1\x02\x15\nAX\xa7\xf17+\xb6\xe0\xe6X\xc0\x0e|\n')
+                print("ECDSA signature by key #1:")
+                print("  R: {}".format(sign[0].hex()))
+                print("  S: {}".format(sign[1].hex()))
+            except TropicSquareECCError as e:
+                print("ECDSA signing error: {}".format(e))
 
-        # Test monotonic counter
-        print("Initializing monotonic counter #0 with value 3")
-        ts.mcounter_init(0, 3)
-        print("Counter value: {}".format(ts.mcounter_get(0)))
+            # Test monotonic counter
+            print("Initializing monotonic counter #0 with value 3")
+            secure_ts.mcounter_init(0, 3)
+            print("Counter value: {}".format(secure_ts.mcounter_get(0)))
 
-        print("Updating monotonic counter")
-        ts.mcounter_update(0)
-        print("Counter value after update: {}".format(ts.mcounter_get(0)))
+            print("Updating monotonic counter")
+            secure_ts.mcounter_update(0)
+            print("Counter value after update: {}".format(secure_ts.mcounter_get(0)))
 
-        # Test random number generation
-        try:
-            for i in range(4):
-                random = ts.get_random(4)
-                print("Random #{}: {}".format(i+1, random.hex()))
-        except TropicSquareError as e:
-            print("Random generation error: {}".format(e))
+            # Test random number generation
+            try:
+                for i in range(4):
+                    random = secure_ts.get_random(4)
+                    print("Random #{}: {}".format(i+1, random.hex()))
+            except TropicSquareError as e:
+                print("Random generation error: {}".format(e))
 
-        # Get device log
-        print("Device log:")
-        print(ts.get_log())
+            # Get device log
+            print("Device log:")
+            print(secure_ts.get_log())
+
+        # Session automatically cleaned up here
+        print("Session automatically terminated by context manager")
 
     except TropicSquareAlarmError as e:
         print("ALARM: Chip is in alarm state: {}".format(e))
