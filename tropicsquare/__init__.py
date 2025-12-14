@@ -9,6 +9,7 @@ from tropicsquare.constants import *
 from tropicsquare.constants.get_info_req import *
 from tropicsquare.exceptions import *
 from tropicsquare.error_mapping import raise_for_cmd_result
+from tropicsquare.chip_id import ChipId
 
 from hashlib import sha256
 
@@ -114,8 +115,14 @@ class TropicSquare:
 
 
     @property
-    def chipid(self) -> bytes:
-        return self._l2_get_info_req(GET_INFO_CHIPID)
+    def chipid(self) -> ChipId:
+        """Get parsed chip ID structure
+
+        Returns:
+            ChipId: Parsed chip ID object with all fields
+        """
+        raw_data = self._l2.get_info_req(GET_INFO_CHIPID)
+        return ChipId(raw_data)
 
 
     @property
