@@ -16,8 +16,13 @@ def main():
 
     try:
         # Get chip information (outside session)
-        print("Chip ID: {}".format(ts.chipid.hex()))
-        print("Spect FW version: {}".format(ts.spect_fw_version))
+        print("="*60)
+        print("CHIP IDENTIFICATION")
+        print("="*60)
+        chip_id = ts.chipid
+        print(chip_id)  # Human-readable output
+        print("\nRaw Chip ID: {}".format(chip_id.raw.hex()))
+        print("\nSpect FW version: {}".format(ts.spect_fw_version))
         print("RISCV FW version: {}".format(ts.riscv_fw_version))
         
         try:
@@ -25,8 +30,24 @@ def main():
         except TropicSquareError as e:
             print("FW Bank unavailable: {}".format(e))
 
+        print("\n" + "="*60)
+        print("CERTIFICATE")
+        print("="*60)
         print("RAW Certificate: {}".format(ts.certificate.hex()))
         print("Cert Public Key: {}".format(ts.public_key.hex()))
+
+        # Test ChipId dict export
+        print("\n" + "="*60)
+        print("CHIP ID DETAILS (dict export)")
+        print("="*60)
+        chip_id_dict = chip_id.to_dict()
+        for key, value in chip_id_dict.items():
+            if key == 'serial_number':
+                print(f"  {key}:")
+                for sn_key, sn_value in value.items():
+                    print(f"    {sn_key}: {sn_value}")
+            else:
+                print(f"  {key}: {value}")
 
         print("Starting secure session with context manager...")
         ts.start_secure_session(FACTORY_PAIRING_KEY_INDEX, FACTORY_PAIRING_PRIVATE_KEY_PROD0, FACTORY_PAIRING_PUBLIC_KEY_PROD0)
