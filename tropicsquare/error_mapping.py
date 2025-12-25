@@ -2,9 +2,9 @@
 Error code to exception mapping for TropicSquare
 """
 
-from .exceptions import *
-from .constants.cmd_result import *
-from .constants.rsp_status import *
+from tropicsquare.exceptions import *
+from tropicsquare.constants.cmd_result import *
+from tropicsquare.constants.rsp_status import *
 
 
 def map_cmd_result_to_exception(cmd_result):

@@ -4,18 +4,14 @@ __version__ = "0.0.1"
 __license__ = "MIT"
 
 
-from tropicsquare.crc import CRC
+from tropicsquare.l2_protocol import L2Protocol
 from tropicsquare.constants import *
-from tropicsquare.constants.chip_status import *
 from tropicsquare.constants.get_info_req import *
-from tropicsquare.constants.rsp_status import RSP_STATUS_REQ_OK, RSP_STATUS_RES_OK, RSP_STATUS_REQ_CONT, RSP_STATUS_RES_CONT
-from tropicsquare.constants.cmd_result import *
 from tropicsquare.exceptions import *
-from tropicsquare.error_mapping import raise_for_cmd_result, raise_for_response_status
+from tropicsquare.error_mapping import raise_for_cmd_result
 
 from hashlib import sha256
 
-from time import sleep
 
 class TropicSquare:
     def __new__(cls, *args, **kwargs):
@@ -45,229 +41,24 @@ class TropicSquare:
         raise TropicSquareError("Unsupported Python implementation: {}".format(sys.implementation.name))
 
 
-    def __init__(self):
+    def __init__(self, spi=None, cs=None):
+        """Initialize TropicSquare base class.
+
+        Args:
+            spi: SPI interface object (optional for direct base class use)
+            cs: Chip select pin object (optional for direct base class use)
+
+        Note:
+            Platform-specific subclasses should pass spi and cs to super().__init__()
+        """
+        self._spi = spi
+        self._cs = cs
         self._secure_session = None
         self._certificate = None
 
-
-    def _l2_get_response(self):
-        chip_status = CHIP_STATUS_NOT_READY
-
-        for _ in range(MAX_RETRIES):
-            data = bytearray()
-            data.extend(bytes(REQ_ID_GET_RESPONSE))
-
-            self._spi_cs(0)
-            self._spi_write_readinto(data, data)
-            chip_status = data[0]
-
-            if chip_status in [CHIP_STATUS_NOT_READY, CHIP_STATUS_BUSY]:
-                self._spi_cs(1)
-                sleep(0.025)
-                continue
-
-            if chip_status & CHIP_STATUS_ALARM:
-                self._spi_cs(1)
-                raise TropicSquareAlarmError("Chip is in alarm state")
-
-            response = self._spi.read(2)
-
-            response_status = response[0]
-            response_length = response[1]
-
-            # If response status is 0xFF, it means that the chip is busy
-            if response_status == 0xFF:
-                sleep(0.025)
-                continue
-
-            if response_length > 0:
-                data = self._spi.read(response_length)
-            else:
-                data = None
-
-            calccrc = CRC.crc16(response + (data or b''))
-            respcrc = self._spi.read(2)
-
-            self._spi_cs(1)
-
-            raise_for_response_status(response_status)
-
-            if respcrc != calccrc:
-                raise TropicSquareCRCError("CRC mismatch ({}<!=>{})".format(calccrc.hex(), respcrc.hex()))
-
-            if response_status == RSP_STATUS_RES_CONT:
-                data += self._l2_get_response()
-
-            return data
-
-
-        raise TropicSquareTimeoutError("Chip communication timeout - chip remains busy")
-
-
-    def _l2_get_info_req(self, object_id, req_data_chunk = GET_INFO_DATA_CHUNK_0_127):
-        data = bytearray()
-        data.extend(bytes(REQ_ID_GET_INFO_REQ))
-        data.append(object_id)
-        data.append(req_data_chunk)
-        data.extend(CRC.crc16(data))
-
-        self._spi_cs(0)
-        self._spi_write_readinto(data, data)
-        self._spi_cs(1)
-
-        chip_status = data[0]
-
-        if chip_status != CHIP_STATUS_READY:
-            raise TropicSquareError("Chip status is not ready (status: {})".format(hex(chip_status)))
-
-        return self._l2_get_response()
-
-
-    def _l2_handshake_req(self, ehpub, p_keyslot):
-        data = bytearray()
-        data.extend(bytes(REQ_ID_HANDSHARE_REQ))
-        data.extend(ehpub)
-        data.append(p_keyslot)
-        data.extend(CRC.crc16(data))
-
-        self._spi_cs(0)
-        self._spi_write_readinto(data, data)
-        self._spi_cs(1)
-
-        chip_status = data[0]
-
-        if chip_status != CHIP_STATUS_READY:
-            raise TropicSquareError("Chip status is not ready (status: {})".format(hex(chip_status)))
-
-        data = self._l2_get_response()
-
-        tsehpub = data[0:32]
-        tsauth = data[32:48]
-
-        return (tsehpub, tsauth)
-
-
-    def _l2_get_log(self):
-        data = bytearray()
-        data.extend(bytes(REQ_ID_GET_LOG_REQ))
-        data.extend(CRC.crc16(data))
-
-        self._spi_cs(0)
-        self._spi_write_readinto(data, data)
-        self._spi_cs(1)
-
-        chip_status = data[0]
-
-        if chip_status != CHIP_STATUS_READY:
-            raise TropicSquareError("Chip status is not ready (status: {})".format(hex(chip_status)))
-
-        return self._l2_get_response()
-
-
-    def _l2_encrypted_command(self, command_size, command_ciphertext, command_tag):
-        def _chunk_data(data, chunk_size=128):
-            for i in range(0, len(data), chunk_size):
-                yield (data[i:i+chunk_size])
-
-        # L3 Data to chunk
-        l3data = bytearray()
-        l3data.extend(command_size.to_bytes(COMMAND_SIZE_LEN, "little"))
-        l3data.extend(command_ciphertext)
-        l3data.extend(command_tag)
-
-        for chunk in _chunk_data(l3data):
-            data = bytearray()
-            data.extend(bytes(REQ_ID_ENCRYPTED_CMD_REQ))
-            data.append(len(chunk))
-            data.extend(chunk)
-            data.extend(CRC.crc16(data))
-
-            self._spi_cs(0)
-            self._spi_write_readinto(data, data)
-            self._spi_cs(1)
-
-            chip_status = data[0]
-
-            if chip_status != CHIP_STATUS_READY:
-                raise TropicSquareError("Chip status is not ready (status: {})".format(hex(chip_status)))
-
-            # Get response
-            self._l2_get_response()
-
-        # GET final response
-        data = self._l2_get_response()
-
-        command_size = int.from_bytes(data[0:2], "little")
-        command_ciphertext = data[2:-16]
-        command_tag = data[-16:]
-
-        if command_size != len(command_ciphertext):
-            raise TropicSquareResponseError("Command size mismatch in response")
-
-
-        return (command_ciphertext, command_tag)
-
-
-    def _l2_encrypted_session_abt(self):
-        data = bytearray()
-        data.extend(bytes(REQ_ID_ENCRYPTED_SESSION_ABT))
-        data.extend(CRC.crc16(data))
-
-        self._spi_cs(0)
-        self._spi_write_readinto(data, data)
-        self._spi_cs(1)
-
-        chip_status = data[0]
-
-        if chip_status != CHIP_STATUS_READY:
-            raise TropicSquareError("Chip status is not ready (status: {})".format(hex(chip_status)))
-
-        self._l2_get_response()
-        return True
-
-
-    def _l2_sleep_req(self, sleep_mode):
-        if sleep_mode not in [SLEEP_MODE_SLEEP, SLEEP_MODE_DEEP_SLEEP]:
-            raise ValueError("Invalid sleep mode")
-
-        data = bytearray()
-        data.extend(bytes(REQ_ID_SLEEP_REQ))
-        data.append(sleep_mode)
-        data.extend(CRC.crc16(data))
-
-        self._spi_cs(0)
-        self._spi_write_readinto(data, data)
-        self._spi_cs(1)
-
-        chip_status = data[0]
-
-        if chip_status != CHIP_STATUS_READY:
-            raise TropicSquareError("Chip status is not ready (status: {})".format(hex(chip_status)))
-
-        self._l2_get_response()
-        return True
-
-
-    def _l2_startup_req(self, startup_id):
-        if startup_id not in [STARTUP_REBOOT, STARTUP_MAINTENANCE_REBOOT]:
-            raise ValueError("Invalid sleep mode")
-
-        data = bytearray()
-        data.extend(bytes(REQ_ID_STARTUP_REQ))
-        data.append(startup_id)
-        data.extend(CRC.crc16(data))
-
-        self._spi_cs(0)
-        self._spi_write_readinto(data, data)
-        self._spi_cs(1)
-
-        chip_status = data[0]
-
-        if chip_status != CHIP_STATUS_READY:
-            raise TropicSquareError("Chip status is not ready (status: {})".format(hex(chip_status)))
-
-        self._l2_get_response()
-        return True
+        # Create L2 protocol layer if SPI is provided
+        if spi is not None and cs is not None:
+            self._l2 = L2Protocol(spi, cs)
 
 
     @property
@@ -280,10 +71,10 @@ class TropicSquare:
         if self._certificate:
             return self._certificate
 
-        data = self._l2_get_info_req(GET_INFO_X509_CERT, GET_INFO_DATA_CHUNK_0_127)
-        data += self._l2_get_info_req(GET_INFO_X509_CERT, GET_INFO_DATA_CHUNK_128_255)
-        data += self._l2_get_info_req(GET_INFO_X509_CERT, GET_INFO_DATA_CHUNK_256_383)
-        data += self._l2_get_info_req(GET_INFO_X509_CERT, GET_INFO_DATA_CHUNK_384_511)
+        data = self._l2.get_info_req(GET_INFO_X509_CERT, GET_INFO_DATA_CHUNK_0_127)
+        data += self._l2.get_info_req(GET_INFO_X509_CERT, GET_INFO_DATA_CHUNK_128_255)
+        data += self._l2.get_info_req(GET_INFO_X509_CERT, GET_INFO_DATA_CHUNK_256_383)
+        data += self._l2.get_info_req(GET_INFO_X509_CERT, GET_INFO_DATA_CHUNK_384_511)
 
         # TODO: Figure out what are that 10 bytes at the beginning
         # 2 bytes: unknown
@@ -334,7 +125,7 @@ class TropicSquare:
         Returns:
             tuple: Firmware version (major, minor, patch, release)
         """
-        data = self._l2_get_info_req(GET_INFO_RISCV_FW_VERSION)
+        data = self._l2.get_info_req(GET_INFO_RISCV_FW_VERSION)
         return (data[3], data[2], data[1], data[0])
 
 
@@ -345,13 +136,13 @@ class TropicSquare:
         Returns:
             tuple: Firmware version (major, minor, patch, release)
         """
-        data = self._l2_get_info_req(GET_INFO_SPECT_FW_VERSION)
+        data = self._l2.get_info_req(GET_INFO_SPECT_FW_VERSION)
         return (data[3], data[2], data[1], data[0])
 
 
     @property
     def fw_bank(self):
-        return self._l2_get_info_req(GET_INFO_FW_BANK)
+        return self._l2.get_info_req(GET_INFO_FW_BANK)
 
 
     def start_secure_session(self, pkey_index : int, shpriv : bytes, shpub : bytes) -> bool:
@@ -371,7 +162,7 @@ class TropicSquare:
         ehpriv, ehpub = self._get_ephemeral_keypair()
 
         # Handshake request
-        tsehpub, tsauth = self._l2_handshake_req(ehpub, pkey_index)
+        tsehpub, tsauth = self._l2.handshake_req(ehpub, pkey_index)
 
         # Calculation magic
         sha256hash = sha256()
@@ -433,7 +224,7 @@ class TropicSquare:
         Returns:
             bool: True if secure session was aborted
         """
-        if self._l2_encrypted_session_abt():
+        if self._l2.encrypted_session_abt():
             self._secure_session = None
             return True
 
@@ -448,7 +239,7 @@ class TropicSquare:
         """
         log = b''
         while True:
-            part = self._l2_get_log()
+            part = self._l2.get_log()
             if not part:
                 break
 
@@ -847,7 +638,7 @@ class TropicSquare:
         ciphertext = enc[:-16]
         tag = enc[-16:]
 
-        result_cipher, result_tag = self._l2_encrypted_command(len(ciphertext), ciphertext, tag)
+        result_cipher, result_tag = self._l2.encrypted_command(len(ciphertext), ciphertext, tag)
         decrypted = self._secure_session[1].decrypt(nonce=nonce, data=result_cipher+result_tag, associated_data=b'')
 
         self._secure_session[2] += 1
@@ -855,28 +646,6 @@ class TropicSquare:
         raise_for_cmd_result(decrypted[0])
 
         return decrypted[1:]
-
-
-    def _spi_cs(self, value):
-        # This must be implemented by the user in child class
-        raise NotImplementedError("Not implemented")
-
-
-    def _spi_write(self, data):
-        # This must be implemented by the user in child class
-        raise NotImplementedError("Not implemented")
-
-
-    def _spi_read(self, len: int) -> bytes:
-        raise NotImplementedError("Not implemented")
-
-
-    def _spi_readinto(self, buffer: bytearray):
-        raise NotImplementedError("Not implemented")
-
-
-    def _spi_write_readinto(self, tx_buffer, rx_buffer: bytearray):
-        raise NotImplementedError("Not implemented")
 
 
     def _get_ephemeral_keypair(self):
