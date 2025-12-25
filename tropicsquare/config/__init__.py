@@ -33,11 +33,33 @@ from tropicsquare.config.base import BaseConfig
 from tropicsquare.config.startup import StartUpConfig
 from tropicsquare.config.sensors import SensorsConfig
 from tropicsquare.config.debug import DebugConfig
+from tropicsquare.config.gpo import GpoConfig
+from tropicsquare.config.sleep_mode import SleepModeConfig
+from tropicsquare.config.uap_pairing_key import (
+    PairingKeyWriteConfig,
+    PairingKeyReadConfig,
+    PairingKeyInvalidateConfig
+)
+from tropicsquare.config.uap_rconfig_iconfig import (
+    RConfigWriteEraseConfig,
+    RConfigReadConfig,
+    IConfigWriteConfig,
+    IConfigReadConfig
+)
 
 from tropicsquare.constants.config import (
     CFG_START_UP,
     CFG_SENSORS,
-    CFG_DEBUG
+    CFG_DEBUG,
+    CFG_GPO,
+    CFG_SLEEP_MODE,
+    CFG_UAP_PAIRING_KEY_WRITE,
+    CFG_UAP_PAIRING_KEY_READ,
+    CFG_UAP_PAIRING_KEY_INVALIDATE,
+    CFG_UAP_R_CONFIG_WRITE_ERASE,
+    CFG_UAP_R_CONFIG_READ,
+    CFG_UAP_I_CONFIG_WRITE,
+    CFG_UAP_I_CONFIG_READ
 )
 
 
@@ -71,5 +93,23 @@ def parse_config(register, data):
         return SensorsConfig.from_bytes(data)
     elif register == CFG_DEBUG:
         return DebugConfig.from_bytes(data)
+    elif register == CFG_GPO:
+        return GpoConfig.from_bytes(data)
+    elif register == CFG_SLEEP_MODE:
+        return SleepModeConfig.from_bytes(data)
+    elif register == CFG_UAP_PAIRING_KEY_WRITE:
+        return PairingKeyWriteConfig.from_bytes(data)
+    elif register == CFG_UAP_PAIRING_KEY_READ:
+        return PairingKeyReadConfig.from_bytes(data)
+    elif register == CFG_UAP_PAIRING_KEY_INVALIDATE:
+        return PairingKeyInvalidateConfig.from_bytes(data)
+    elif register == CFG_UAP_R_CONFIG_WRITE_ERASE:
+        return RConfigWriteEraseConfig.from_bytes(data)
+    elif register == CFG_UAP_R_CONFIG_READ:
+        return RConfigReadConfig.from_bytes(data)
+    elif register == CFG_UAP_I_CONFIG_WRITE:
+        return IConfigWriteConfig.from_bytes(data)
+    elif register == CFG_UAP_I_CONFIG_READ:
+        return IConfigReadConfig.from_bytes(data)
     else:
         raise ValueError("Unknown config register: 0x{:02x}".format(register))

@@ -34,3 +34,61 @@ SENSORS_BF_PLATFORM_DIS_BIT = 17
 # Debug config (CFG_DEBUG @ 0x10)
 # Bit positions from tropic01_bootloader_co.h
 DEBUG_FW_LOG_EN_BIT = 0
+
+# GPO config (CFG_GPO @ 0x14)
+# Bit positions from tropic01_application_co.h
+GPO_FUNC_MASK = 0x07  # bits 2-0
+GPO_FUNC_POS = 0
+
+# Sleep Mode config (CFG_SLEEP_MODE @ 0x18)
+# Bit positions from tropic01_application_co.h
+SLEEP_MODE_EN_BIT = 0
+
+# UAP (User Access Policy) permission bits
+# Each 8-bit field has permission bits for Pairing Key slots 0-3
+UAP_PKEY_SLOT_0_BIT = 0
+UAP_PKEY_SLOT_1_BIT = 1
+UAP_PKEY_SLOT_2_BIT = 2
+UAP_PKEY_SLOT_3_BIT = 3
+UAP_RESERVED_MASK = 0xF0  # bits 4-7 are reserved
+
+# UAP Pairing Key Write (CFG_UAP_PAIRING_KEY_WRITE @ 0x20)
+# 4 slots, each 8 bits
+UAP_PKEY_WRITE_SLOT_0_POS = 0
+UAP_PKEY_WRITE_SLOT_1_POS = 8
+UAP_PKEY_WRITE_SLOT_2_POS = 16
+UAP_PKEY_WRITE_SLOT_3_POS = 24
+UAP_PKEY_WRITE_SLOT_MASK = 0xFF
+
+# UAP Pairing Key Read (CFG_UAP_PAIRING_KEY_READ @ 0x24)
+# Same structure as WRITE
+UAP_PKEY_READ_SLOT_0_POS = 0
+UAP_PKEY_READ_SLOT_1_POS = 8
+UAP_PKEY_READ_SLOT_2_POS = 16
+UAP_PKEY_READ_SLOT_3_POS = 24
+
+# UAP Pairing Key Invalidate (CFG_UAP_PAIRING_KEY_INVALIDATE @ 0x28)
+# Same structure as WRITE
+UAP_PKEY_INVALIDATE_SLOT_0_POS = 0
+UAP_PKEY_INVALIDATE_SLOT_1_POS = 8
+UAP_PKEY_INVALIDATE_SLOT_2_POS = 16
+UAP_PKEY_INVALIDATE_SLOT_3_POS = 24
+
+# UAP R-CONFIG Write/Erase (CFG_UAP_R_CONFIG_WRITE_ERASE @ 0x30)
+# Single 8-bit field
+UAP_R_CONFIG_WRITE_ERASE_POS = 0
+
+# UAP R-CONFIG Read (CFG_UAP_R_CONFIG_READ @ 0x34)
+# Two 8-bit fields: CFG and FUNC
+UAP_R_CONFIG_READ_CFG_POS = 0
+UAP_R_CONFIG_READ_FUNC_POS = 8
+
+# UAP I-CONFIG Write (CFG_UAP_I_CONFIG_WRITE @ 0x40)
+# Two 8-bit fields: CFG and FUNC
+UAP_I_CONFIG_WRITE_CFG_POS = 0
+UAP_I_CONFIG_WRITE_FUNC_POS = 8
+
+# UAP I-CONFIG Read (CFG_UAP_I_CONFIG_READ @ 0x44)
+# Two 8-bit fields: CFG and FUNC
+UAP_I_CONFIG_READ_CFG_POS = 0
+UAP_I_CONFIG_READ_FUNC_POS = 8
