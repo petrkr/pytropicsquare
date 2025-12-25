@@ -38,12 +38,12 @@ pip install -e .
 
 ## Quick Start
 
-### CPython Example
+### Example
 ```python
-from tropicsquare.ports.cpython import TropicSquareCPython
+from tropicsquare import TropicSquare
 
 # Initialize with your SPI interface and CS pin
-ts = TropicSquareCPython(spi, cs_pin)
+ts = TropicSquare(spi, cs_pin)
 
 # Get chip information
 print(f"Chip ID: {ts.chipid.hex()}")
@@ -60,23 +60,6 @@ ping_response = ts.ping(b"Hello TROPIC01!")
 # Generate and use ECC keys
 ts.ecc_key_generate(slot=0, curve=ECC_CURVE_ED25519)
 signature = ts.eddsa_sign(slot=0, message=b"Sign this message")
-```
-
-### MicroPython Example
-```python
-from tropicsquare.ports.micropython import TropicSquareMicroPython
-from machine import SPI, Pin
-
-# Initialize SPI and CS pin
-spi = SPI(1, baudrate=1_000_000, polarity=0, phase=0, 
-          sck=Pin(18), mosi=Pin(23), miso=Pin(19))
-cs = Pin(5, Pin.OUT)
-
-ts = TropicSquareMicroPython(spi, cs)
-
-# Same API as CPython version
-print(f"Chip ID: {ts.chipid.hex()}")
-# ... rest of operations identical
 ```
 
 ## Architecture
