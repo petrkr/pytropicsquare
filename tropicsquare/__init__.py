@@ -18,6 +18,33 @@ from hashlib import sha256
 from time import sleep
 
 class TropicSquare:
+    def __new__(cls, *args, **kwargs):
+        """Factory method that returns platform-specific implementation.
+
+        When instantiating TropicSquare directly, automatically returns
+        either TropicSquareCPython or TropicSquareMicroPython based on
+        the detected platform.
+
+        This allows users to write platform-agnostic code:
+            from tropicsquare import TropicSquare
+            ts = TropicSquare(spi, cs)
+        """
+        if cls is not TropicSquare:
+            return super().__new__(cls)
+
+        # Only do platform detection when instantiating base class directly
+        import sys
+        if sys.implementation.name == 'micropython':
+            from tropicsquare.ports.micropython import TropicSquareMicroPython
+            return TropicSquareMicroPython(*args, **kwargs)
+
+        if sys.implementation.name == 'cpython':
+            from tropicsquare.ports.cpython import TropicSquareCPython
+            return TropicSquareCPython(*args, **kwargs)
+
+        raise TropicSquareError("Unsupported Python implementation: {}".format(sys.implementation.name))
+
+
     def __init__(self):
         self._secure_session = None
         self._certificate = None
