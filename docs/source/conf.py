@@ -69,7 +69,10 @@ try:
         'collapse_navigation': False,
         'sticky_navigation': True,
         'includehidden': True,
-        'titles_only': False
+        'titles_only': False,
+        'display_version': True,
+        'prev_next_buttons_location': 'bottom',
+        'style_external_links': False,
     }
 except ImportError:
     html_theme = 'pyramid'  # Better fallback theme - clean and modern
@@ -86,3 +89,13 @@ myst_enable_extensions = [
     "linkify",          # Auto-link URLs
 ]
 myst_heading_anchors = 3  # Generate anchors for h1-h3
+
+# Force global TOC to always show in sidebar (fixes navigation disappearing on API Reference)
+html_sidebars = {
+    '**': [
+        'globaltoc.html',
+        'relations.html',
+        'sourcelink.html',
+        'searchbox.html',
+    ]
+}
