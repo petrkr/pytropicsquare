@@ -82,7 +82,7 @@ class L2Protocol:
                 self._spi_cs(1)
                 raise TropicSquareAlarmError("Chip is in alarm state")
 
-            response = self._spi.read(2)
+            response = self._spi_read(2)
 
             response_status = response[0]
             response_length = response[1]
@@ -93,12 +93,12 @@ class L2Protocol:
                 continue
 
             if response_length > 0:
-                data = self._spi.read(response_length)
+                data = self._spi_read(response_length)
             else:
                 data = None
 
             calccrc = CRC.crc16(response + (data or b''))
-            respcrc = self._spi.read(2)
+            respcrc = self._spi_read(2)
 
             self._spi_cs(1)
 
@@ -375,16 +375,8 @@ class L2Protocol:
         self._cs.value(value)
 
 
-    def _spi_write(self, data):
-        self._spi.write(data)
-
-
     def _spi_read(self, length):
         return self._spi.read(length)
-
-
-    def _spi_readinto(self, buffer):
-        self._spi.readinto(buffer)
 
 
     def _spi_write_readinto(self, tx_buffer, rx_buffer):
