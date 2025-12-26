@@ -20,6 +20,22 @@ tropicsquare.l2_protocol module
    :undoc-members:
    :show-inheritance:
 
+tropicsquare.transports package
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: tropicsquare.transports
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tropicsquare.transports.spi module
+"""""""""""""""""""""""""""""""""""
+
+.. automodule:: tropicsquare.transports.spi
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 tropicsquare.ports.cpython module
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -56,6 +72,65 @@ tropicsquare.crc module
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: tropicsquare.crc
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tropicsquare.constants package
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: tropicsquare.constants
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Submodules
+""""""""""
+
+tropicsquare.constants.chip_status module
+''''''''''''''''''''''''''''''''''''''''''
+
+.. automodule:: tropicsquare.constants.chip_status
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tropicsquare.constants.cmd_result module
+'''''''''''''''''''''''''''''''''''''''''
+
+.. automodule:: tropicsquare.constants.cmd_result
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tropicsquare.constants.get_info_req module
+'''''''''''''''''''''''''''''''''''''''''''
+
+.. automodule:: tropicsquare.constants.get_info_req
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tropicsquare.constants.l1 module
+'''''''''''''''''''''''''''''''''
+
+.. automodule:: tropicsquare.constants.l1
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tropicsquare.constants.l2 module
+'''''''''''''''''''''''''''''''''
+
+.. automodule:: tropicsquare.constants.l2
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tropicsquare.constants.rsp_status module
+'''''''''''''''''''''''''''''''''''''''''
+
+.. automodule:: tropicsquare.constants.rsp_status
    :members:
    :undoc-members:
    :show-inheritance:

@@ -17,10 +17,13 @@ class SerialNumber:
     coordinates, and unique identifiers.
 
     Structure layout (16 bytes total):
+
     - Byte 0: Serial number (8 bits)
     - Bytes 1-3: fab_data containing:
+
       - Fab ID (12 bits, bits 12-23)
       - Part number ID (12 bits, bits 0-11)
+
     - Bytes 4-5: Fabrication date (16 bits, little-endian)
     - Bytes 6-10: Lot ID (40 bits)
     - Byte 11: Wafer ID (8 bits)

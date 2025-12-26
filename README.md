@@ -42,13 +42,14 @@ pip install -e .
 ### Example
 ```python
 from tropicsquare import TropicSquare
+from tropicsquare.transports.spi import SPITransport
 
 # Initialize with your SPI interface and CS pin
-ts = TropicSquare(spi, cs_pin)
+transport = SPITransport(spi, cs)
+ts = TropicSquare(transport)
 
 # Get chip information
-chip_id = ts.chipid
-print(chip_id)  # Human-readable output
+print(ts.chipid)  # Human-readable output
 print(f"Package: {chip_id.package_type_name}")
 print(f"Fabrication: {chip_id.fab_name}")
 print(f"SPECT FW: {ts.spect_fw_version}")

@@ -50,6 +50,9 @@ autodoc_default_options = {
     'exclude-members': '__weakref__'
 }
 
+# Mock imports for MicroPython modules (not available in CPython)
+autodoc_mock_imports = ['machine', 'micropython', 'utime', 'ubinascii', 'ucryptolib']
+
 templates_path = ['_templates']
 exclude_patterns = []
 
