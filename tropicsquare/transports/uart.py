@@ -2,8 +2,7 @@
 
 """
 
-from serial import Serial
-
+import sys
 from tropicsquare.transports import L1Transport
 
 
@@ -20,7 +19,26 @@ class UartTransport(L1Transport):
         :param port: UART port name (e.g. /dev/ttyACM0)
         :param baudrate: Baud rate for UART communication
         """
-        self.port = Serial(port, baudrate)
+
+        if sys.implementation.name == "micropython":
+            if sys.platform == "linux":
+                import os
+                import termios
+                # For micropython on linux open serial as file
+                fd = os.open(port, os.O_RDWR | os.O_NOCTTY)
+                termios.setraw(fd) # Set RAW
+                os.close(fd)
+                self._port = open(port, "r+b", buffering=0) # Reopen serial device
+                self._flush = False # Micropython file does not supports flush
+            else:
+                raise RuntimeError("Unsupported platform for Micropython: {}".format(sys.platform))
+
+        elif sys.implementation.name == "cpython":
+            from serial import Serial
+            self._port = Serial(port, baudrate)
+            self._flush = True
+        else:
+            raise RuntimeError("Unsupported Python implementation: {}".format(sys.implementation.name))
 
 
     def _transfer(self, tx_data: bytes) -> bytes:
@@ -33,11 +51,11 @@ class UartTransport(L1Transport):
         """
         # Write data
         hex_data = tx_data.hex().upper() + "x\n"
-        self.port.write(hex_data.encode())
-        self.port.flush()
+        self._port.write(hex_data.encode())
+        if self._flush: self._port.flush()
 
         # Read data
-        hex_line = self.port.readline().decode().strip()
+        hex_line = self._port.readline().decode().strip()
         rx_buffer = bytes.fromhex(hex_line)
 
         return rx_buffer
@@ -52,19 +70,19 @@ class UartTransport(L1Transport):
         :rtype: bytes
         """
         # Send read command with length of dummy bytes
-        self.port.write(b"00" * length + b"x\n")
-        self.port.flush()
+        self._port.write(b"00" * length + b"x\n")
+        if self._flush: self._port.flush()
 
         # Read data
-        hex_line = self.port.readline().decode().strip()
+        hex_line = self._port.readline().decode().strip()
         data = bytes.fromhex(hex_line)
         return data
 
 
     def _set_cs(self, state: bool):
-        self.port.write("CS={}\n".format("1" if state else "0").encode())
-        self.port.flush()
-        self.port.readline() # read OK
+        self._port.write("CS={}\n".format("1" if state else "0").encode())
+        if self._flush: self._port.flush()
+        self._port.readline() # read OK
 
 
     def _cs_low(self) -> None:
@@ -76,4 +94,4 @@ class UartTransport(L1Transport):
 
 
     def _close(self):
-        self.port.close()
+        self._port.close()
