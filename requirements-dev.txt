@@ -1,0 +1,16 @@
+# Testing framework
+pytest>=7.4.0
+pytest-cov>=4.1.0
+pytest-mock>=3.11.1
+pytest-html>=4.1.0
+
+# Code quality
+flake8>=6.1.0
+black>=23.7.0
+mypy>=1.5.0
+
+# Coverage reporting
+coverage[toml]>=7.3.0
+
+# All runtime dependencies
+-r requirements.txt
