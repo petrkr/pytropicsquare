@@ -42,23 +42,16 @@ class TropicSquare:
         raise TropicSquareError("Unsupported Python implementation: {}".format(sys.implementation.name))
 
 
-    def __init__(self, spi=None, cs=None):
+    def __init__(self, transport):
         """Initialize TropicSquare base class.
 
-            :param spi: SPI interface object (optional for direct base class use)
-            :param cs: Chip select pin object (optional for direct base class use)
-
-        .. note::
-            Platform-specific subclasses should pass spi and cs to super().__init__()
+            :param transport: L1Transport instance
         """
-        self._spi = spi
-        self._cs = cs
         self._secure_session = None
         self._certificate = None
 
-        # Create L2 protocol layer if SPI is provided
-        if spi is not None and cs is not None:
-            self._l2 = L2Protocol(spi, cs)
+        # Create L2 protocol layer with transport
+        self._l2 = L2Protocol(transport)
 
 
     @property

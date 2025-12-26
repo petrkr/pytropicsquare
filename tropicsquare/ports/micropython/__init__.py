@@ -7,9 +7,14 @@ from tropicsquare.ports.micropython.aesgcm import AESGCM
 
 
 class TropicSquareMicroPython(TropicSquare):
-    def __init__(self, spi, cs, gpo=None):
-        self._gpo = gpo
-        super().__init__(spi, cs)
+    def __init__(self, transport):
+        """Initialize TropicSquare for MicroPython.
+
+            :param transport: L1 transport instance
+        """
+
+        super().__init__(transport)
+
 
     def _get_ephemeral_keypair(self):
         ehpriv = b''

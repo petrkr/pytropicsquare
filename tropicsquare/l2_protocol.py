@@ -18,14 +18,9 @@ The L2 layer does NOT handle:
 """
 
 from tropicsquare.crc import CRC
+from tropicsquare.transports import L1Transport
 from tropicsquare.constants.l2 import *
-from tropicsquare.constants.chip_status import *
-from tropicsquare.constants.rsp_status import RSP_STATUS_RES_CONT
 from tropicsquare.constants.get_info_req import GET_INFO_DATA_CHUNK_0_127
-from tropicsquare.exceptions import *
-from tropicsquare.error_mapping import raise_for_response_status
-
-from time import sleep
 
 
 class L2Protocol:
@@ -36,15 +31,12 @@ class L2Protocol:
     CRC validation, and chip state management.
     """
 
-    def __init__(self, spi, cs):
+    def __init__(self, transport: L1Transport):
         """Initialize L2 protocol layer.
 
-            :param spi: SPI interface object (platform-specific)
-            :param cs: Chip select pin object (platform-specific)
-            :param parent: Parent TropicSquare instance (for crypto operations)
+            :param transport: L1Transport instance
         """
-        self._spi = spi
-        self._cs = cs
+        self._transport = transport
 
 
     def get_info_req(self, object_id, req_data_chunk=GET_INFO_DATA_CHUNK_0_127):
@@ -129,12 +121,12 @@ class L2Protocol:
         for chunk in _chunk_data(l3data):
             payload = bytes([len(chunk)]) + chunk
             request = self._build_request(REQ_ID_ENCRYPTED_CMD_REQ, payload)
-            self._send_request(request)
+            self._transport.send_request(request)
             # Get ACK response for this chunk
-            self._get_response()
+            self._transport.get_response()
 
         # Get final response
-        data = self._get_response()
+        data = self._transport.get_response()
 
         command_size = int.from_bytes(data[0:2], "little")
         command_ciphertext = data[2:-16]
@@ -216,94 +208,12 @@ class L2Protocol:
         return data
 
 
-    def _send_request(self, request_data):
-        """Send request to chip and return chip status.
-
-            :param request_data: Complete request frame (with CRC)
-
-            :returns: Chip status byte
-            :rtype: int
-        """
-        self._spi_cs(0)
-        self._spi_write_readinto(request_data, request_data)
-        self._spi_cs(1)
-
-        if request_data[0] != CHIP_STATUS_READY:
-            raise TropicSquareError("Chip status is not ready (status: {})".format(hex(chip_status)))
-
-
-    def _get_response(self):
-        """Get response from chip with automatic retry logic.
-
-        Polls the chip for a response with automatic retry on busy status.
-        Handles response fragmentation (CONT status) automatically.
-
-            :returns: Response data from chip
-            :rtype: bytes
-
-            :raises TropicSquareAlarmError: If chip is in alarm state
-            :raises TropicSquareCRCError: If CRC validation fails
-            :raises TropicSquareTimeoutError: If chip remains busy after max retries
-            :raises TropicSquareError: On other communication errors
-        """
-        chip_status = CHIP_STATUS_NOT_READY
-
-        for _ in range(MAX_RETRIES):
-            data = bytearray()
-            data.extend(bytes(REQ_ID_GET_RESPONSE))
-
-            self._spi_cs(0)
-            self._spi_write_readinto(data, data)
-            chip_status = data[0]
-
-            if chip_status in [CHIP_STATUS_NOT_READY, CHIP_STATUS_BUSY]:
-                self._spi_cs(1)
-                sleep(0.025)
-                continue
-
-            if chip_status & CHIP_STATUS_ALARM:
-                self._spi_cs(1)
-                raise TropicSquareAlarmError("Chip is in alarm state")
-
-            response = self._spi_read(2)
-
-            response_status = response[0]
-            response_length = response[1]
-
-            # If response status is CHIP_STATUS_BUSY, retry
-            if response_status == CHIP_STATUS_BUSY:
-                sleep(0.025)
-                continue
-
-            if response_length > 0:
-                data = self._spi_read(response_length)
-            else:
-                data = None
-
-            calccrc = CRC.crc16(response + (data or b''))
-            respcrc = self._spi_read(2)
-
-            self._spi_cs(1)
-
-            raise_for_response_status(response_status)
-
-            if respcrc != calccrc:
-                raise TropicSquareCRCError("CRC mismatch ({}<!=>{})".format(calccrc.hex(), respcrc.hex()))
-
-            if response_status == RSP_STATUS_RES_CONT:
-                data += self._get_response()
-
-            return data
-
-        raise TropicSquareTimeoutError("Chip communication timeout - chip remains busy")
-
-
     def _send_and_get_response(self, req_id, payload=b''):
         """Build request, send it, check status, and get response.
 
         Convenience method that combines common pattern of:
         1. Build request with CRC
-        2. Send via SPI
+        2. Send via transport
         3. Get response
 
             :param req_id: Request ID bytes
@@ -315,19 +225,5 @@ class L2Protocol:
             :raises TropicSquareError: If chip is not ready
         """
         request = self._build_request(req_id, payload)
-        self._send_request(request)
-        return self._get_response()
-
-
-    # === Private SPI wrapper methods ===
-
-    def _spi_cs(self, value):
-        self._cs.value(value)
-
-
-    def _spi_read(self, length):
-        return self._spi.read(length)
-
-
-    def _spi_write_readinto(self, tx_buffer, rx_buffer):
-        self._spi.write_readinto(tx_buffer, rx_buffer)
+        self._transport.send_request(request)
+        return self._transport.get_response()

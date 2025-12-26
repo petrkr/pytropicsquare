@@ -11,8 +11,14 @@ from cryptography.hazmat.primitives.hashes import SHA256
 
 
 class TropicSquareCPython(TropicSquare):
-    def __init__(self, spi, cs):
-        super().__init__(spi, cs)
+    def __init__(self, transport):
+        """Initialize TropicSquare for CPython.
+
+        :param transport: L1 transport instance
+        :type transport: L1Transport
+        """
+
+        super().__init__(transport)
 
     def _get_ephemeral_keypair(self):
         ehpriv = X25519PrivateKey.generate()
