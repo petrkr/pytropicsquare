@@ -21,6 +21,7 @@ from tropicsquare.crc import CRC
 from tropicsquare.transports import L1Transport
 from tropicsquare.constants.l2 import *
 from tropicsquare.constants.get_info_req import GET_INFO_DATA_CHUNK_0_127
+from tropicsquare.exceptions import TropicSquareResponseError
 
 
 class L2Protocol:
