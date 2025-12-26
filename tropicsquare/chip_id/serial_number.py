@@ -42,11 +42,9 @@ class SerialNumber:
     def __init__(self, data: bytes):
         """Parse serial number from raw bytes
 
-        Args:
-            data: Raw serial number bytes (must be exactly 16 bytes)
+            :param data: Raw serial number bytes (must be exactly 16 bytes)
 
-        Raises:
-            ValueError: If data length is not 16 bytes
+            :raises ValueError: If data length is not 16 bytes
         """
         if len(data) != SERIAL_NUMBER_SIZE:
             raise ValueError(f"Serial number must be {SERIAL_NUMBER_SIZE} bytes, got {len(data)}")
@@ -80,8 +78,7 @@ class SerialNumber:
     def __str__(self) -> str:
         """Get human-readable string representation
 
-        Returns:
-            Compact string representation with key serial number fields
+            :returns: Compact string representation with key serial number fields
         """
         return (f"SN:0x{self.sn:02X} Fab:0x{self.fab_id:03X} PN:0x{self.part_number_id:03X} "
                 f"Wafer:0x{self.wafer_id:02X} Coords:({self.x_coord},{self.y_coord})")
@@ -89,8 +86,7 @@ class SerialNumber:
     def __repr__(self) -> str:
         """Get detailed string representation for debugging
 
-        Returns:
-            Detailed representation including all fields
+            :returns: Detailed representation including all fields
         """
         return (f"SerialNumber(sn=0x{self.sn:02X}, fab_id=0x{self.fab_id:03X}, "
                 f"part_number_id=0x{self.part_number_id:03X}, fab_date={self.fab_date}, "
@@ -100,8 +96,7 @@ class SerialNumber:
     def to_dict(self) -> dict:
         """Convert serial number to dictionary representation
 
-        Returns:
-            Dictionary containing all serial number fields with hex-encoded bytes
+            :returns: Dictionary containing all serial number fields with hex-encoded bytes
         """
         return {
             'sn': self.sn,

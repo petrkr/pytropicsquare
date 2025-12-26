@@ -39,10 +39,9 @@ class L2Protocol:
     def __init__(self, spi, cs):
         """Initialize L2 protocol layer.
 
-        Args:
-            spi: SPI interface object (platform-specific)
-            cs: Chip select pin object (platform-specific)
-            parent: Parent TropicSquare instance (for crypto operations)
+            :param spi: SPI interface object (platform-specific)
+            :param cs: Chip select pin object (platform-specific)
+            :param parent: Parent TropicSquare instance (for crypto operations)
         """
         self._spi = spi
         self._cs = cs
@@ -54,15 +53,13 @@ class L2Protocol:
         Sends GET_INFO request to retrieve chip information like certificate,
         chip ID, firmware version, etc.
 
-        Args:
-            object_id: Information object type to retrieve
-            req_data_chunk: Data chunk selector (for objects > 128 bytes)
+            :param object_id: Information object type to retrieve
+            :param req_data_chunk: Data chunk selector (for objects > 128 bytes)
 
-        Returns:
-            bytes: Raw information data
+            :returns: Raw information data
+            :rtype: bytes
 
-        Raises:
-            TropicSquareError: If chip status is not ready
+            :raises TropicSquareError: If chip status is not ready
         """
         payload = bytes([object_id, req_data_chunk])
         return self._send_and_get_response(REQ_ID_GET_INFO_REQ, payload)
@@ -74,15 +71,13 @@ class L2Protocol:
         Sends ephemeral public key to chip and receives chip's ephemeral
         public key and authentication tag.
 
-        Args:
-            ehpub: Ephemeral public key (32 bytes)
-            p_keyslot: Pairing key slot index (0-3)
+            :param ehpub: Ephemeral public key (32 bytes)
+            :param p_keyslot: Pairing key slot index (0-3)
 
-        Returns:
-            tuple: (chip_ephemeral_pubkey, chip_auth_tag)
+            :returns: (chip_ephemeral_pubkey, chip_auth_tag)
+            :rtype: tuple
 
-        Raises:
-            TropicSquareError: If chip status is not ready
+            :raises TropicSquareError: If chip status is not ready
         """
         payload = ehpub + bytes([p_keyslot])
         data = self._send_and_get_response(REQ_ID_HANDSHARE_REQ, payload)
@@ -96,11 +91,10 @@ class L2Protocol:
     def get_log(self):
         """Retrieve firmware logs from chip.
 
-        Returns:
-            bytes: Raw log data
+            :returns: Raw log data
+            :rtype: bytes
 
-        Raises:
-            TropicSquareError: If chip status is not ready
+            :raises TropicSquareError: If chip status is not ready
         """
         return self._send_and_get_response(REQ_ID_GET_LOG_REQ)
 
@@ -111,17 +105,15 @@ class L2Protocol:
         Handles chunking of large commands (> 128 bytes) and sends them
         to the chip. Returns encrypted response.
 
-        Args:
-            command_size: Size of command ciphertext
-            command_ciphertext: Encrypted command data
-            command_tag: AES-GCM authentication tag (16 bytes)
+            :param command_size: Size of command ciphertext
+            :param command_ciphertext: Encrypted command data
+            :param command_tag: AES-GCM authentication tag (16 bytes)
 
-        Returns:
-            tuple: (response_ciphertext, response_tag)
+            :returns: (response_ciphertext, response_tag)
+            :rtype: tuple
 
-        Raises:
-            TropicSquareError: If chip status is not ready
-            TropicSquareResponseError: If response size mismatch
+            :raises TropicSquareError: If chip status is not ready
+            :raises TropicSquareResponseError: If response size mismatch
         """
         def _chunk_data(data, chunk_size=128):
             for i in range(0, len(data), chunk_size):
@@ -159,11 +151,10 @@ class L2Protocol:
 
         Terminates the current secure session with the chip.
 
-        Returns:
-            bool: True on success
+            :returns: True on success
+            :rtype: bool
 
-        Raises:
-            TropicSquareError: If chip status is not ready
+            :raises TropicSquareError: If chip status is not ready
         """
         self._send_and_get_response(REQ_ID_ENCRYPTED_SESSION_ABT)
         return True
@@ -172,15 +163,13 @@ class L2Protocol:
     def sleep_req(self, sleep_mode):
         """Put chip to sleep.
 
-        Args:
-            sleep_mode: Sleep mode (SLEEP_MODE_SLEEP or SLEEP_MODE_DEEP_SLEEP)
+            :param sleep_mode: Sleep mode (SLEEP_MODE_SLEEP or SLEEP_MODE_DEEP_SLEEP)
 
-        Returns:
-            bool: True on success
+            :returns: True on success
+            :rtype: bool
 
-        Raises:
-            ValueError: If invalid sleep mode
-            TropicSquareError: If chip status is not ready
+            :raises ValueError: If invalid sleep mode
+            :raises TropicSquareError: If chip status is not ready
         """
         if sleep_mode not in [SLEEP_MODE_SLEEP, SLEEP_MODE_DEEP_SLEEP]:
             raise ValueError("Invalid sleep mode")
@@ -193,15 +182,13 @@ class L2Protocol:
     def startup_req(self, startup_id):
         """Startup/reboot chip.
 
-        Args:
-            startup_id: Startup mode (STARTUP_REBOOT or STARTUP_MAINTENANCE_REBOOT)
+            :param startup_id: Startup mode (STARTUP_REBOOT or STARTUP_MAINTENANCE_REBOOT)
 
-        Returns:
-            bool: True on success
+            :returns: True on success
+            :rtype: bool
 
-        Raises:
-            ValueError: If invalid startup mode
-            TropicSquareError: If chip status is not ready
+            :raises ValueError: If invalid startup mode
+            :raises TropicSquareError: If chip status is not ready
         """
         if startup_id not in [STARTUP_REBOOT, STARTUP_MAINTENANCE_REBOOT]:
             raise ValueError("Invalid startup mode")
@@ -216,12 +203,11 @@ class L2Protocol:
     def _build_request(self, req_id, payload=b''):
         """Build request frame with CRC.
 
-        Args:
-            req_id: Request ID bytes (e.g., REQ_ID_GET_INFO_REQ)
-            payload: Optional payload bytes
+            :param req_id: Request ID bytes (e.g., REQ_ID_GET_INFO_REQ)
+            :param payload: Optional payload bytes
 
-        Returns:
-            bytearray: Complete request with CRC
+            :returns: Complete request with CRC
+            :rtype: bytearray
         """
         data = bytearray()
         data.extend(bytes(req_id))
@@ -233,11 +219,10 @@ class L2Protocol:
     def _send_request(self, request_data):
         """Send request to chip and return chip status.
 
-        Args:
-            request_data: Complete request frame (with CRC)
+            :param request_data: Complete request frame (with CRC)
 
-        Returns:
-            int: Chip status byte
+            :returns: Chip status byte
+            :rtype: int
         """
         self._spi_cs(0)
         self._spi_write_readinto(request_data, request_data)
@@ -253,14 +238,13 @@ class L2Protocol:
         Polls the chip for a response with automatic retry on busy status.
         Handles response fragmentation (CONT status) automatically.
 
-        Returns:
-            bytes: Response data from chip
+            :returns: Response data from chip
+            :rtype: bytes
 
-        Raises:
-            TropicSquareAlarmError: If chip is in alarm state
-            TropicSquareCRCError: If CRC validation fails
-            TropicSquareTimeoutError: If chip remains busy after max retries
-            TropicSquareError: On other communication errors
+            :raises TropicSquareAlarmError: If chip is in alarm state
+            :raises TropicSquareCRCError: If CRC validation fails
+            :raises TropicSquareTimeoutError: If chip remains busy after max retries
+            :raises TropicSquareError: On other communication errors
         """
         chip_status = CHIP_STATUS_NOT_READY
 
@@ -322,15 +306,13 @@ class L2Protocol:
         2. Send via SPI
         3. Get response
 
-        Args:
-            req_id: Request ID bytes
-            payload: Optional payload bytes
+            :param req_id: Request ID bytes
+            :param payload: Optional payload bytes
 
-        Returns:
-            bytes: Response data from chip
+            :returns: Response data from chip
+            :rtype: bytes
 
-        Raises:
-            TropicSquareError: If chip is not ready
+            :raises TropicSquareError: If chip is not ready
         """
         request = self._build_request(req_id, payload)
         self._send_request(request)

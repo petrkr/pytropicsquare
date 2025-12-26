@@ -45,11 +45,10 @@ class TropicSquare:
     def __init__(self, spi=None, cs=None):
         """Initialize TropicSquare base class.
 
-        Args:
-            spi: SPI interface object (optional for direct base class use)
-            cs: Chip select pin object (optional for direct base class use)
+            :param spi: SPI interface object (optional for direct base class use)
+            :param cs: Chip select pin object (optional for direct base class use)
 
-        Note:
+        .. note::
             Platform-specific subclasses should pass spi and cs to super().__init__()
         """
         self._spi = spi
@@ -66,8 +65,8 @@ class TropicSquare:
     def certificate(self) -> bytes:
         """Get X509 certificate from the chip
 
-        Returns:
-            bytes: X509 certificate
+            :returns: X509 certificate
+            :rtype: bytes
         """
         if self._certificate:
             return self._certificate
@@ -92,8 +91,8 @@ class TropicSquare:
 
         In case certificate is not loaded before, it will load also certificate
 
-        Returns:
-            bytes: Public key
+            :returns: Public key
+            :rtype: bytes
         """
         if self._certificate is None:
             cert = self.certificate
@@ -118,8 +117,8 @@ class TropicSquare:
     def chipid(self) -> ChipId:
         """Get parsed chip ID structure
 
-        Returns:
-            ChipId: Parsed chip ID object with all fields
+            :returns: Parsed chip ID object with all fields
+            :rtype: ChipId
         """
         raw_data = self._l2.get_info_req(GET_INFO_CHIPID)
         return ChipId(raw_data)
@@ -129,8 +128,8 @@ class TropicSquare:
     def riscv_fw_version(self) -> tuple:
         """Get RISCV firmware version
 
-        Returns:
-            tuple: Firmware version (major, minor, patch, release)
+            :returns: Firmware version (major, minor, patch, release)
+            :rtype: tuple
         """
         data = self._l2.get_info_req(GET_INFO_RISCV_FW_VERSION)
         return (data[3], data[2], data[1], data[0])
@@ -140,8 +139,8 @@ class TropicSquare:
     def spect_fw_version(self) -> tuple:
         """Get SPECT firmware version
 
-        Returns:
-            tuple: Firmware version (major, minor, patch, release)
+            :returns: Firmware version (major, minor, patch, release)
+            :rtype: tuple
         """
         data = self._l2.get_info_req(GET_INFO_SPECT_FW_VERSION)
         return (data[3], data[2], data[1], data[0])
@@ -155,16 +154,14 @@ class TropicSquare:
     def start_secure_session(self, pkey_index : int, shpriv : bytes, shpub : bytes) -> bool:
         """Initialize secure session for L3 commands
 
-        Args:
-            phkey_index (int): Pairing key index
-            shpriv (bytes): Pairing private key
-            shpub (bytes): Pairing public key
+            :param phkey_index: Pairing key index
+            :param shpriv: Pairing private key
+            :param shpub: Pairing public key
 
-        Returns:
-            bool: True if secure session was established
+            :returns: True if secure session was established
+            :rtype: bool
 
-        Raises:
-            TropicSquareError: If secure session handshake failed
+            :raises TropicSquareError: If secure session handshake failed
         """
         ehpriv, ehpub = self._get_ephemeral_keypair()
 
@@ -228,8 +225,8 @@ class TropicSquare:
     def abort_secure_session(self) -> bool:
         """Abort secure session
 
-        Returns:
-            bool: True if secure session was aborted
+            :returns: True if secure session was aborted
+            :rtype: bool
         """
         if self._l2.encrypted_session_abt():
             self._secure_session = None
@@ -241,8 +238,8 @@ class TropicSquare:
     def get_log(self) -> str:
         """Get log from the RISC Firmware
 
-        Returns:
-            str: Log message
+            :returns: Log message
+            :rtype: str
         """
         log = b''
         while True:
@@ -261,11 +258,10 @@ class TropicSquare:
     def ping(self, data : bytes) -> bytes:
         """Returns data back
 
-        Args:
-            data (bytes): Data to send
+            :param data: Data to send
 
-        Returns:
-            bytes: Data from input
+            :returns: Data from input
+            :rtype: bytes
         """
         request_data = bytearray()
         request_data.append(CMD_ID_PING)
@@ -279,11 +275,10 @@ class TropicSquare:
     def get_random(self, nbytes : int) -> bytes:
         """Get random bytes
 
-        Args:
-            nbytes (int): Number of bytes to generate
+            :param nbytes: Number of bytes to generate
 
-        Returns:
-            bytes: Random bytes
+            :returns: Random bytes
+            :rtype: bytes
         """
         request_data = bytearray()
         request_data.append(CMD_ID_RANDOM_VALUE)
@@ -326,11 +321,10 @@ class TropicSquare:
     def mem_data_read(self, slot : int) -> bytes:
         """Read data from memory slot
 
-        Args:
-            slot (int): Memory slot
+            :param slot: Memory slot
 
-        Returns:
-            bytes: Data from memory slot
+            :returns: Data from memory slot
+            :rtype: bytes
         """
         request_data = bytearray()
         request_data.append(CMD_ID_R_MEMDATA_READ)
@@ -344,15 +338,13 @@ class TropicSquare:
     def mem_data_write(self, data : bytes, slot : int) -> bool:
         """Write data to memory slot
 
-        Args:
-            data (bytes): Data to write (Maximum 444 bytes)
-            slot (int): Memory slot
+            :param data: Data to write (Maximum 444 bytes)
+            :param slot: Memory slot
 
-        Returns:
-            bool: True if data was written
+            :returns: True if data was written
+            :rtype: bool
 
-        Raises:
-            ValueError: If data size is larger than 444
+            :raises ValueError: If data size is larger than 444
         """
         if len(data) > MEM_DATA_MAX_SIZE:
             raise ValueError(f"Data size ({len(data)} bytes) exceeds maximum allowed size ({MEM_DATA_MAX_SIZE} bytes)")
@@ -371,11 +363,10 @@ class TropicSquare:
     def mem_data_erase(self, slot : int) -> bool:
         """Erase memory slot
 
-        Args:
-            slot (int): Memory slot
+            :param slot: Memory slot
 
-        Returns:
-            bool: True if data was erased
+            :returns: True if data was erased
+            :rtype: bool
         """
         request_data = bytearray()
         request_data.append(CMD_ID_R_MEMDATA_ERASE)
@@ -389,15 +380,13 @@ class TropicSquare:
     def ecc_key_generate(self, slot : int, curve : int) -> bool:
         """Generate ECC key
 
-        Args:
-            slot (int): Slot for key
-            curve (int): Curve (ECC_CURVE_P256 or ECC_CURVE_ED25519)
+            :param slot: Slot for key
+            :param curve: Curve (ECC_CURVE_P256 or ECC_CURVE_ED25519)
 
-        Returns:
-            bool: True if key was generated
+            :returns: True if key was generated
+            :rtype: bool
 
-        Raises:
-            ValueError: If slot is larger than ECC_MAX_KEYS or curve is invalid
+            :raises ValueError: If slot is larger than ECC_MAX_KEYS or curve is invalid
         """
         if slot > ECC_MAX_KEYS:
             raise ValueError("Slot is larger than ECC_MAX_KEYS")
@@ -419,16 +408,14 @@ class TropicSquare:
     def ecc_key_store(self, slot : int, curve : int, key : bytes) -> bytes:
         """Store own ECC key
 
-        Args:
-            slot (int): Slot for key
-            curve (int): Curve (ECC_CURVE_P256 or ECC_CURVE_ED25519)
-            key (bytes): Private key
+            :param slot: Slot for key
+            :param curve: Curve (ECC_CURVE_P256 or ECC_CURVE_ED25519)
+            :param key: Private key
 
-        Returns:
-            bool: True if key was stored
+            :returns: True if key was stored
+            :rtype: bool
 
-        Raises:
-            ValueError: If slot is larger than ECC_MAX_KEYS or curve is invalid
+            :raises ValueError: If slot is larger than ECC_MAX_KEYS or curve is invalid
         """
         if slot > ECC_MAX_KEYS:
             raise ValueError("Slot is larger than ECC_MAX_KEYS")
@@ -451,14 +438,12 @@ class TropicSquare:
     def ecc_key_read(self, slot : int) -> tuple:
         """Read ECC key
 
-        Args:
-            slot (int): Slot for key
+            :param slot: Slot for key
 
-        Returns:
-            tuple: Curve, origin, public key
+            :returns: Curve, origin, public key
+            :rtype: tuple
 
-        Raises:
-            ValueError: If slot is larger than ECC_MAX_KEYS
+            :raises ValueError: If slot is larger than ECC_MAX_KEYS
         """
         if slot > ECC_MAX_KEYS:
             raise ValueError("Slot is larger than ECC_MAX_KEYS")
@@ -479,14 +464,12 @@ class TropicSquare:
     def ecc_key_erase(self, slot : int) -> bool:
         """Erase ECC key
 
-        Args:
-            slot (int): Slot for key
+            :param slot: Slot for key
 
-        Returns:
-            bool: True if key was erased
+            :returns: True if key was erased
+            :rtype: bool
 
-        Raises:
-            ValueError: If slot is larger than ECC_MAX_KEYS
+            :raises ValueError: If slot is larger than ECC_MAX_KEYS
         """
         if slot > ECC_MAX_KEYS:
             raise ValueError("Slot is larger than ECC_MAX_KEYS")
@@ -503,12 +486,11 @@ class TropicSquare:
     def ecdsa_sign(self, slot : int, hash : bytes) -> tuple:
         """Sign hash with ECC key
 
-        Args:
-            slot (int): Slot with ECC key (ECC_CURVE_P256)
-            hash (bytes): Hash to sign
+            :param slot: Slot with ECC key (ECC_CURVE_P256)
+            :param hash: Hash to sign
 
-        Returns:
-            tuple: R and S values of the signature
+            :returns: R and S values of the signature
+            :rtype: tuple
         """
         if slot > ECC_MAX_KEYS:
             raise ValueError("Slot is larger than ECC_MAX_KEYS")
@@ -530,12 +512,11 @@ class TropicSquare:
     def eddsa_sign(self, slot : int, message : bytes) -> tuple:
         """Sign message with ECC key
 
-        Args:
-            slot (int): Slot with ECC key (ECC_CURVE_ED25519)
-            message (bytes): Message
+            :param slot: Slot with ECC key (ECC_CURVE_ED25519)
+            :param message: Message
 
-        Returns:
-            tuple: R and S values of the signature
+            :returns: R and S values of the signature
+            :rtype: tuple
         """
         if slot > ECC_MAX_KEYS:
             raise ValueError("Slot is larger than ECC_MAX_KEYS")
@@ -557,12 +538,11 @@ class TropicSquare:
     def mcounter_init(self, index : int, value : int) -> bool:
         """Initialize monotonic counter
 
-        Args:
-            index (int): Counter index
-            value (int): Initial value
+            :param index: Counter index
+            :param value: Initial value
 
-        Returns:
-            bool: True if counter was initialized
+            :returns: True if counter was initialized
+            :rtype: bool
         """
         if index > MCOUNTER_MAX:
             raise ValueError("Index is larger than MCOUNTER_MAX")
@@ -581,11 +561,10 @@ class TropicSquare:
     def mcounter_update(self, index : int) -> bool:
         """Decrement monotonic counter
 
-        Args:
-            index (int): Counter index
+            :param index: Counter index
 
-        Returns:
-            bool: True if counter was updated
+            :returns: True if counter was updated
+            :rtype: bool
         """
         if index > MCOUNTER_MAX:
             raise ValueError("Index is larger than MCOUNTER_MAX")
@@ -602,11 +581,10 @@ class TropicSquare:
     def mcounter_get(self, index : int) -> int:
         """Get monotonic counter value
 
-        Args:
-            index (int): Counter index
+            :param index: Counter index
 
-        Returns:
-            int: Counter value
+            :returns: Counter value
+            :rtype: int
         """
         if index > MCOUNTER_MAX:
             raise ValueError("Index is larger than MCOUNTER_MAX")

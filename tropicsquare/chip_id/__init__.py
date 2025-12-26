@@ -86,11 +86,9 @@ class ChipId:
     def __init__(self, data: bytes):
         """Parse chip ID from raw bytes
 
-        Args:
-            data: Raw chip ID bytes (must be exactly 128 bytes)
+            :param data: Raw chip ID bytes (must be exactly 128 bytes)
 
-        Raises:
-            ValueError: If data length is not 128 bytes
+            :raises ValueError: If data length is not 128 bytes
         """
         if len(data) != CHIP_ID_SIZE:
             raise ValueError(f"Chip ID must be {CHIP_ID_SIZE} bytes, got {len(data)}")
@@ -161,8 +159,7 @@ class ChipId:
     def __str__(self) -> str:
         """Get human-readable multi-line string representation
 
-        Returns:
-            Multi-line formatted string with key chip ID information
+            :returns: Multi-line formatted string with key chip ID information
         """
         lines = [
             "TROPIC01 Chip ID:",
@@ -181,16 +178,14 @@ class ChipId:
     def __repr__(self) -> str:
         """Get detailed string representation for debugging
 
-        Returns:
-            Detailed representation with class name
+            :returns: Detailed representation with class name
         """
         return f"ChipId(package={self.package_type_name}, fab={self.fab_name}, sn={self.serial_number.sn:02X})"
 
     def to_dict(self) -> dict:
         """Convert chip ID to dictionary representation
 
-        Returns:
-            Dictionary containing all chip ID fields with nested serial number
+            :returns: Dictionary containing all chip ID fields with nested serial number
         """
         return {
             'chip_id_version': list(self.chip_id_version),
