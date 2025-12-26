@@ -6,7 +6,7 @@ This module provides SPI transport implementation for MicroPython machine.SPI in
 from tropicsquare.transports import L1Transport
 
 
-class SPITransport(L1Transport):
+class SpiTransport(L1Transport):
     """L1 transport for MicroPython machine.SPI.
 
     :param spi: SPI interface object (e.g., machine.SPI instance)

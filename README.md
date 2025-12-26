@@ -47,19 +47,19 @@ from tropicsquare import TropicSquare
 
 # Micropython machine.SPI
 from machine import Spi, Pin
-from tropicsquare.transports.spi import SPITransport
+from tropicsquare.transports.spi import SpiTransport
 
 spi = SPI(...)
 cs = Pin(...)
-transport = SPITransport(spi, cs)
+transport = SpiTransport(spi, cs)
 
 # Linux UART SPI devkit
 # from tropicsquare.transports.uart import UartTransport
 # transport = UartTransport("/dev/ttyACM0")
 
 # Remote SPI over Network
-# from tropicsquare.transports.network import NetworkSPITransport
-# transport = NetworkSPITransport("127.0.0.1", 12345)
+# from tropicsquare.transports.network import NetworkSpiTransport
+# transport = NetworkSpiTransport("127.0.0.1", 12345)
 
 ts = TropicSquare(transport)
 

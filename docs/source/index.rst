@@ -33,12 +33,12 @@ MicroPython Example (ESP32)
 
    from machine import SPI, Pin
    from tropicsquare import TropicSquare
-   from tropicsquare.transports.spi import SPITransport
+   from tropicsquare.transports.spi import SpiTransport
 
    spi = SPI(1, baudrate=1000000, polarity=0, phase=0)
    cs = Pin(5, Pin.OUT)
 
-   spi_transport = SPITransport(spi, cs)
+   spi_transport = SpiTransport(spi, cs)
    ts = TropicSquare(spi_transport)
    chip_id = ts.chipid
 

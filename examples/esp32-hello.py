@@ -5,7 +5,7 @@
 from machine import SPI, Pin
 
 from tropicsquare import TropicSquare
-from tropicsquare.transports.spi import SPITransport
+from tropicsquare.transports.spi import SpiTransport
 from tropicsquare.constants.pairing_keys import *
 from tropicsquare.exceptions import *
 
@@ -24,7 +24,7 @@ def main():
     spi = SPI(1, baudrate=1_000_000, polarity=0, phase=0, sck=Pin(18), mosi=Pin(23), miso=Pin(19))
     cs = Pin(5, Pin.OUT)
 
-    ts = TropicSquare(SPITransport(spi, cs))
+    ts = TropicSquare(SpiTransport(spi, cs))
 
     try:
         # Get chip information

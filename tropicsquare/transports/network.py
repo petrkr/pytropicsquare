@@ -8,7 +8,7 @@ from tropicsquare.transports import L1Transport
 
 import socket
 
-class NetworkSPITransport(L1Transport):
+class NetworkSpiTransport(L1Transport):
     """L1 transport for network-based SPI bridge.
 
     :param host: Hostname or IP address of the SPI bridge
