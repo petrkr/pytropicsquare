@@ -42,10 +42,25 @@ pip install -e .
 ### Example
 ```python
 from tropicsquare import TropicSquare
-from tropicsquare.transports.spi import SPITransport
 
 # Initialize with your SPI interface and CS pin
+
+# Micropython machine.SPI
+from machine import Spi, Pin
+from tropicsquare.transports.spi import SPITransport
+
+spi = SPI(...)
+cs = Pin(...)
 transport = SPITransport(spi, cs)
+
+# Linux UART SPI devkit
+# from tropicsquare.transports.uart import UartTransport
+# transport = UartTransport("/dev/ttyACM0")
+
+# Remote SPI over Network
+# from tropicsquare.transports.network import NetworkSPITransport
+# transport = NetworkSPITransport("127.0.0.1", 12345)
+
 ts = TropicSquare(transport)
 
 # Get chip information

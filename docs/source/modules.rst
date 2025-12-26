@@ -36,6 +36,22 @@ tropicsquare.transports.spi module
    :undoc-members:
    :show-inheritance:
 
+tropicsquare.transports.uart module
+"""""""""""""""""""""""""""""""""""
+
+.. automodule:: tropicsquare.transports.uart
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tropicsquare.transports.network module
+"""""""""""""""""""""""""""""""""""
+
+.. automodule:: tropicsquare.transports.network
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 tropicsquare.ports.cpython module
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
