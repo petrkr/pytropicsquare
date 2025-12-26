@@ -4,9 +4,6 @@ __pycache__/
 *$py.class
 *.mpy
 
-#
-docs/html
-
 # C extensions
 *.so
 
@@ -73,7 +70,7 @@ instance/
 .scrapy
 
 # Sphinx documentation
-docs/_build/
+docs/build/
 
 # PyBuilder
 target/
