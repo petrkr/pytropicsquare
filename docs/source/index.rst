@@ -7,8 +7,6 @@ Python library for communicating with the Tropic Square TROPIC01 secure element 
    :maxdepth: 2
    :caption: Contents:
 
-   modules
-
 Overview
 --------
 
