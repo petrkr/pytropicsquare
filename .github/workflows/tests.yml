@@ -1,0 +1,62 @@
+name: Tests
+
+on:
+  push:
+    branches: ['*']
+  pull_request:
+    branches: ['*']
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
+    strategy:
+      matrix:
+        python-version: ['3.9', '3.10', '3.11', '3.12']
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r requirements-dev.txt
+
+    - name: Run tests with coverage
+      run: |
+        pytest tests/ -v \
+          --cov=tropicsquare \
+          --cov-report=xml \
+          --cov-report=html \
+          --cov-report=term-missing \
+          --junit-xml=junit.xml
+
+    # GitHub annotations - zobrazí výsledky testů v PR
+    - name: Publish test results
+      uses: EnricoMi/publish-unit-test-result-action@v2
+      if: always()
+      with:
+        files: junit.xml
+        check_name: Test Results (Python ${{ matrix.python-version }})
+
+    # Coverage comment v PR
+    - name: Coverage comment
+      uses: py-cov-action/python-coverage-comment-action@v3
+      if: github.event_name == 'pull_request' && matrix.python-version == '3.11'
+      with:
+        GITHUB_TOKEN: ${{ github.token }}
+
+    # Fail pokud coverage < 70%
+    - name: Check coverage threshold
+      run: |
+        coverage report --fail-under=70
