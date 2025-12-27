@@ -45,7 +45,7 @@ tropicsquare.transports.uart module
    :show-inheritance:
 
 tropicsquare.transports.network module
-"""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""
 
 .. automodule:: tropicsquare.transports.network
    :members:

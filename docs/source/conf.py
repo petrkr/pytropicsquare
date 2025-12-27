@@ -23,6 +23,7 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
+    'myst_parser',
 ]
 
 # Napoleon settings for parsing Google and NumPy style docstrings
@@ -76,3 +77,12 @@ except ImportError:
 html_static_path = ['_static']
 html_title = 'PyTropicSquare Documentation'
 html_short_title = 'pytropicsquare'
+
+# MyST parser configuration
+myst_enable_extensions = [
+    "colon_fence",      # ::: fence syntax
+    "deflist",          # Definition lists
+    "tasklist",         # Task lists [ ]
+    "linkify",          # Auto-link URLs
+]
+myst_heading_anchors = 3  # Generate anchors for h1-h3
