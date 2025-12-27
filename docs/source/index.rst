@@ -21,6 +21,7 @@ Key Features
 * **L3 Commands**: High-level API for chip operations (ping, random, ECC, memory, etc.)
 * **Secure Sessions**: X25519 key exchange with HKDF and AES-GCM encryption
 * **Chip Information**: Parse chip ID, serial number, and configuration registers
+* **Configuration Management**: Read and modify R-CONFIG/I-CONFIG registers including startup settings, sensors, UAP permissions
 * **Platform Support**: CPython and MicroPython implementations
 
 Quick Start

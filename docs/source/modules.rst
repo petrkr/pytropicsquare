@@ -166,3 +166,118 @@ tropicsquare.error_mapping module
    :members:
    :undoc-members:
    :show-inheritance:
+
+tropicsquare.config package
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: tropicsquare.config
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Submodules
+""""""""""
+
+tropicsquare.config.base module
+''''''''''''''''''''''''''''''''
+
+.. automodule:: tropicsquare.config.base
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tropicsquare.config.startup module
+'''''''''''''''''''''''''''''''''''
+
+.. automodule:: tropicsquare.config.startup
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tropicsquare.config.sensors module
+'''''''''''''''''''''''''''''''''''
+
+.. automodule:: tropicsquare.config.sensors
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tropicsquare.config.debug module
+'''''''''''''''''''''''''''''''''
+
+.. automodule:: tropicsquare.config.debug
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tropicsquare.config.gpo module
+''''''''''''''''''''''''''''''
+
+.. automodule:: tropicsquare.config.gpo
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tropicsquare.config.sleep_mode module
+''''''''''''''''''''''''''''''''''''''
+
+.. automodule:: tropicsquare.config.sleep_mode
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tropicsquare.config.uap_base module
+''''''''''''''''''''''''''''''''''''
+
+.. automodule:: tropicsquare.config.uap_base
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tropicsquare.config.uap_pairing_key module
+'''''''''''''''''''''''''''''''''''''''''''
+
+.. automodule:: tropicsquare.config.uap_pairing_key
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tropicsquare.config.uap_rconfig_iconfig module
+'''''''''''''''''''''''''''''''''''''''''''''''
+
+.. automodule:: tropicsquare.config.uap_rconfig_iconfig
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tropicsquare.config.uap_operations module
+''''''''''''''''''''''''''''''''''''''''''
+
+.. automodule:: tropicsquare.config.uap_operations
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tropicsquare.config.uap_memory module
+''''''''''''''''''''''''''''''''''''''
+
+.. automodule:: tropicsquare.config.uap_memory
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tropicsquare.config.uap_ecc module
+''''''''''''''''''''''''''''''''''
+
+.. automodule:: tropicsquare.config.uap_ecc
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tropicsquare.config.uap_mcounter module
+''''''''''''''''''''''''''''''''''''''''
+
+.. automodule:: tropicsquare.config.uap_mcounter
+   :members:
+   :undoc-members:
+   :show-inheritance:
