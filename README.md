@@ -10,12 +10,16 @@ PyTropicSquare provides a comprehensive Python interface for the TROPIC01 secure
 
 - **Dual Platform Support**: Works with both CPython (using the `cryptography` library) and MicroPython (with embedded crypto implementations)
 - **Secure Communication**: X25519 key exchange with HKDF key derivation and AES-GCM encryption
-- **Cryptographic Operations**: 
+- **Cryptographic Operations**:
   - ECDSA signing (P256 curve)
   - EdDSA signing (Ed25519 curve)
   - ECC key generation and management
 - **Secure Storage**: Memory slots for data storage (up to 444 bytes per slot)
 - **Chip Identification**: Parsed chip ID with manufacturing details (package type, fab location, serial number, wafer coordinates)
+- **Configuration Management**:
+  - R-CONFIG (Reversible) and I-CONFIG (Irreversible) register support
+  - User Access Policy (UAP) permissions for cryptographic operations
+  - Startup, sensors, debug, GPO, and sleep mode configuration
 - **Additional Features**:
   - True random number generation
   - Monotonic counters
@@ -116,6 +120,57 @@ chip_dict = chip_id.to_dict()
 raw_chip_id = chip_id.raw  # 128 bytes
 ```
 
+## Configuration Management
+
+TROPIC01 uses two configuration memory spaces:
+- **R-CONFIG (Reversible)**: Can be written and erased freely
+- **I-CONFIG (Irreversible)**: Bits can only change from 1→0 permanently
+
+The effective configuration is the AND of R-CONFIG and I-CONFIG values.
+
+### Configuration Types
+
+**Basic Configuration:**
+- `StartUpConfig`: Chip startup settings (MBIST, TRNG, clock, reset behavior)
+- `SensorsConfig`: Security sensor disable flags (18 sensors)
+- `DebugConfig`: Firmware logging control
+- `GpoConfig`: General Purpose Output function (0-7)
+- `SleepModeConfig`: Sleep mode behavior
+
+**User Access Policy (UAP) Permissions:**
+Control which pairing keys can access cryptographic operations:
+- ECC operations: key generation, storage, signing (ECDSA/EdDSA)
+- Memory operations: read, write, erase
+- Pairing key management
+- R-CONFIG/I-CONFIG access
+- Monotonic counters
+- Utility operations (ping, random, MAC)
+
+### Example
+
+```python
+from tropicsquare.constants.config import CFG_START_UP
+from tropicsquare.config import parse_config
+
+# Read R-CONFIG startup register
+data = ts.r_config_read(CFG_START_UP)
+config = parse_config(CFG_START_UP, data)
+
+print(f"MBIST disabled: {config.mbist_dis}")
+print(f"TRNG disabled: {config.trng_dis}")
+
+# Modify and write back
+config.mbist_dis = True
+ts.r_config_write(CFG_START_UP, config.to_bytes())
+
+# Read I-CONFIG and compute effective value
+r_data = ts.r_config_read(CFG_START_UP)
+i_data = ts.i_config_read(CFG_START_UP)
+r_config = parse_config(CFG_START_UP, r_data)
+i_config = parse_config(CFG_START_UP, i_data)
+effective = StartUpConfig(r_config._value & i_config._value)
+```
+
 ## Architecture
 
 The library is structured in three protocol layers:
@@ -162,6 +217,13 @@ The library is structured in three protocol layers:
 - `ping(data)`: Echo test
 - `get_log()`: Retrieve chip logs
 - `mcounter_init/update/get()`: Monotonic counter operations
+
+#### Configuration Access
+- `r_config_read(register)`: Read R-CONFIG register
+- `r_config_write(register, data)`: Write R-CONFIG register
+- `i_config_read(register)`: Read I-CONFIG register
+- `i_config_write(register, data)`: Write I-CONFIG register (irreversible!)
+- `parse_config(register, data)`: Parse raw bytes into config object
 
 ## Examples
 
