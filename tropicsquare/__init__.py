@@ -10,6 +10,7 @@ from tropicsquare.constants.get_info_req import *
 from tropicsquare.exceptions import *
 from tropicsquare.error_mapping import raise_for_cmd_result
 from tropicsquare.chip_id import ChipId
+from tropicsquare.config import parse_config
 
 from hashlib import sha256
 
@@ -292,23 +293,51 @@ class TropicSquare:
 
 
     def r_config_read(self, address):
+        """Read and parse R-CONFIG register.
+
+            :param address: Register address (use CFG_* constants from tropicsquare.constants.config)
+
+            :returns: Parsed config object (StartUpConfig, SensorsConfig, etc.)
+            :rtype: BaseConfig
+
+            Example::
+
+                from tropicsquare.constants.config import CFG_START_UP
+
+                config = ts.r_config_read(CFG_START_UP)
+                print(config.mbist_dis)
+        """
         request_data = bytearray()
         request_data.append(CMD_ID_R_CFG_READ)
         request_data.extend(address.to_bytes(CFG_ADDRESS_SIZE, "little"))
 
         result = self._call_command(request_data)
 
-        return result[3:]
+        return parse_config(address, result[3:])
 
 
     def i_config_read(self, address):
+        """Read and parse I-CONFIG register.
+
+            :param address: Register address (use CFG_* constants from tropicsquare.constants.config)
+
+            :returns: Parsed config object (StartUpConfig, SensorsConfig, etc.)
+            :rtype: BaseConfig
+
+            Example::
+
+                from tropicsquare.constants.config import CFG_START_UP
+
+                config = ts.i_config_read(CFG_START_UP)
+                print(config.mbist_dis)
+        """
         request_data = bytearray()
         request_data.append(CMD_ID_I_CFG_READ)
         request_data.extend(address.to_bytes(CFG_ADDRESS_SIZE, "little"))
 
         result = self._call_command(request_data)
 
-        return result[3:]
+        return parse_config(address, result[3:])
 
 
     def mem_data_read(self, slot : int) -> bytes:

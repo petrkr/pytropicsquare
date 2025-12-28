@@ -150,11 +150,10 @@ Control which pairing keys can access cryptographic operations:
 
 ```python
 from tropicsquare.constants.config import CFG_START_UP
-from tropicsquare.config import parse_config
+from tropicsquare.config.startup import StartUpConfig
 
-# Read R-CONFIG startup register
-data = ts.r_config_read(CFG_START_UP)
-config = parse_config(CFG_START_UP, data)
+# Read R-CONFIG startup register (returns parsed config object)
+config = ts.r_config_read(CFG_START_UP)
 
 print(f"MBIST disabled: {config.mbist_dis}")
 print(f"TRNG disabled: {config.trng_dis}")
@@ -164,10 +163,8 @@ config.mbist_dis = True
 ts.r_config_write(CFG_START_UP, config.to_bytes())
 
 # Read I-CONFIG and compute effective value
-r_data = ts.r_config_read(CFG_START_UP)
-i_data = ts.i_config_read(CFG_START_UP)
-r_config = parse_config(CFG_START_UP, r_data)
-i_config = parse_config(CFG_START_UP, i_data)
+r_config = ts.r_config_read(CFG_START_UP)
+i_config = ts.i_config_read(CFG_START_UP)
 effective = StartUpConfig(r_config._value & i_config._value)
 ```
 
@@ -219,11 +216,11 @@ The library is structured in three protocol layers:
 - `mcounter_init/update/get()`: Monotonic counter operations
 
 #### Configuration Access
-- `r_config_read(register)`: Read R-CONFIG register
+- `r_config_read(register)`: Read and parse R-CONFIG register (returns Config object)
 - `r_config_write(register, data)`: Write R-CONFIG register
-- `i_config_read(register)`: Read I-CONFIG register
+- `i_config_read(register)`: Read and parse I-CONFIG register (returns Config object)
 - `i_config_write(register, data)`: Write I-CONFIG register (irreversible!)
-- `parse_config(register, data)`: Parse raw bytes into config object
+- `parse_config(register, data)`: Parse raw bytes into config object (used internally)
 
 ## Examples
 

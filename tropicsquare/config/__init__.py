@@ -11,21 +11,18 @@ The effective configuration is the AND of R-CONFIG and I-CONFIG values.
 Usage:
     from tropicsquare import TropicSquareCPython
     from tropicsquare.constants.config import CFG_START_UP
-    from tropicsquare.config import parse_config
+    from tropicsquare.config.startup import StartUpConfig
 
     ts = TropicSquareCPython(...)
     ts.establish_session()
 
-    # Read R-CONFIG startup register
-    data = ts.r_config_read(CFG_START_UP)
-    config = parse_config(CFG_START_UP, data)
+    # Read R-CONFIG startup register (auto-parsed)
+    config = ts.r_config_read(CFG_START_UP)
     print(config.mbist_dis)
 
     # Read I-CONFIG and compute effective value
-    r_data = ts.r_config_read(CFG_START_UP)
-    i_data = ts.i_config_read(CFG_START_UP)
-    r_config = parse_config(CFG_START_UP, r_data)
-    i_config = parse_config(CFG_START_UP, i_data)
+    r_config = ts.r_config_read(CFG_START_UP)
+    i_config = ts.i_config_read(CFG_START_UP)
     effective = StartUpConfig(r_config._value & i_config._value)
 """
 
@@ -107,9 +104,13 @@ def parse_config(register, data):
     Factory function that creates the correct config object type
     based on the register address.
 
+    Note: This function is used internally by r_config_read() and i_config_read().
+    You typically don't need to call this directly as those methods return
+    already-parsed config objects.
+
     Args:
         register: Registry address (use CFG_* constants from tropicsquare.constants.config)
-        data: 4 bytes from r_config_read() or i_config_read()
+        data: 4 bytes of raw config data
 
     Returns:
         BaseConfig: Appropriate config object (StartUpConfig, SensorsConfig, etc.)
@@ -117,12 +118,12 @@ def parse_config(register, data):
     Raises:
         ValueError: If register address is unknown
 
-    Example:
+    Example (advanced usage with raw bytes):
         from tropicsquare.constants.config import CFG_START_UP
         from tropicsquare.config import parse_config
 
-        data = ts.r_config_read(CFG_START_UP)
-        config = parse_config(CFG_START_UP, data)
+        raw_data = b'\\x12\\x34\\x56\\x78'
+        config = parse_config(CFG_START_UP, raw_data)
         print(config.mbist_dis)
     """
     if register == CFG_START_UP:
