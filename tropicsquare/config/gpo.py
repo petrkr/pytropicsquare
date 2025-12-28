@@ -17,8 +17,8 @@ class GpoConfig(BaseConfig):
     def gpo_func(self):
         """GPO function selection (3-bit value).
 
-        Returns:
-            int: Function code (0-7)
+            :returns: Function code (0-7)
+            :rtype: int
         """
         return (self._value >> GPO_FUNC_POS) & GPO_FUNC_MASK
 
@@ -26,11 +26,9 @@ class GpoConfig(BaseConfig):
     def gpo_func(self, value):
         """Set GPO function.
 
-        Args:
-            value: Function code (0-7)
+            :param value: Function code (0-7)
 
-        Raises:
-            ValueError: If value is out of range
+            :raises ValueError: If value is out of range
         """
         if not 0 <= value <= 7:
             raise ValueError("gpo_func must be 0-7, got {}".format(value))
@@ -40,8 +38,8 @@ class GpoConfig(BaseConfig):
     def to_dict(self):
         """Export fields as dictionary.
 
-        Returns:
-            dict: Configuration fields and their values
+            :returns: Configuration fields and their values
+            :rtype: dict
         """
         return {
             'gpo_func': self.gpo_func

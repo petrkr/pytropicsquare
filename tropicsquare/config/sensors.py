@@ -226,8 +226,8 @@ class SensorsConfig(BaseConfig):
     def to_dict(self):
         """Export fields as dictionary.
 
-        Returns:
-            dict: Configuration fields and their values
+            :returns: Configuration fields and their values
+            :rtype: dict
         """
         return {
             'ptrng0_test_dis': self.ptrng0_test_dis,

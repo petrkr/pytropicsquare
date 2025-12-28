@@ -27,8 +27,8 @@ class StartUpConfig(BaseConfig):
         When True, memory built-in self-test is disabled during startup.
         Default: False (BIST enabled)
 
-        Returns:
-            bool: True if MBIST is disabled
+            :returns: True if MBIST is disabled
+            :rtype: bool
         """
         return bool((self._value >> STARTUP_MBIST_DIS_BIT) & 1)
 
@@ -46,8 +46,8 @@ class StartUpConfig(BaseConfig):
         When True, random number generator test is disabled during startup.
         Default: False (RNG test enabled)
 
-        Returns:
-            bool: True if RNG test is disabled
+            :returns: True if RNG test is disabled
+            :rtype: bool
         """
         return bool((self._value >> STARTUP_RNGTEST_DIS_BIT) & 1)
 
@@ -66,8 +66,8 @@ class StartUpConfig(BaseConfig):
         normal application mode.
         Default: False (normal boot)
 
-        Returns:
-            bool: True if maintenance mode is enabled
+            :returns: True if maintenance mode is enabled
+            :rtype: bool
         """
         return bool((self._value >> STARTUP_MAINTENANCE_ENA_BIT) & 1)
 
@@ -81,8 +81,8 @@ class StartUpConfig(BaseConfig):
     def to_dict(self):
         """Export fields as dictionary.
 
-        Returns:
-            dict: Configuration fields and their values
+            :returns: Configuration fields and their values
+            :rtype: dict
         """
         return {
             'mbist_dis': self.mbist_dis,

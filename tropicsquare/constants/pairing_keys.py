@@ -40,13 +40,12 @@ FACTORY_PAIRING_PUBLIC_KEY_PROD0 = bytes([
 def get_pairing_keys(batch_id=None, part_number=None):
     """Get pairing keys based on chip information
 
-    Args:
-        batch_id: Chip batch ID (future use)
-        part_number: Chip part number (future use)
+        :param batch_id: Chip batch ID (future use)
+        :param part_number: Chip part number (future use)
 
-    Returns:
-        tuple: (key_index, private_key, public_key)
+        :returns: (key_index, private_key, public_key)
+        :rtype: tuple
 
-    TODO: Implement logic to select keys based on batch_id/part_number
+        TODO: Implement logic to select keys based on batch_id/part_number
     """
     raise NotImplementedError("get_pairing_keys() is not yet implemented")

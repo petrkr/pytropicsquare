@@ -21,8 +21,8 @@ class DebugConfig(BaseConfig):
         using appropriate debug commands.
         Default: False (logging disabled)
 
-        Returns:
-            bool: True if firmware logging is enabled
+            :returns: True if firmware logging is enabled
+            :rtype: bool
         """
         return bool((self._value >> DEBUG_FW_LOG_EN_BIT) & 1)
 
@@ -36,8 +36,8 @@ class DebugConfig(BaseConfig):
     def to_dict(self):
         """Export fields as dictionary.
 
-        Returns:
-            dict: Configuration fields and their values
+            :returns: Configuration fields and their values
+            :rtype: dict
         """
         return {
             'fw_log_en': self.fw_log_en

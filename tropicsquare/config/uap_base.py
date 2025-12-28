@@ -23,19 +23,17 @@ class UapPermissionField:
     def __init__(self, value=0xFF):
         """Initialize permission field.
 
-        Args:
-            value: 8-bit permission value (default: 0xFF = all slots have access)
+            :param value: 8-bit permission value (default: 0xFF = all slots have access)
         """
         self._value = value & 0xFF
 
     def get_slot_permission(self, slot):
         """Check if pairing key slot has access.
 
-        Args:
-            slot: Slot number (0-3)
+            :param slot: Slot number (0-3)
 
-        Returns:
-            bool: True if slot has access
+            :returns: True if slot has access
+            :rtype: bool
         """
         if not 0 <= slot <= 3:
             raise ValueError("Slot must be 0-3, got {}".format(slot))
@@ -44,9 +42,8 @@ class UapPermissionField:
     def set_slot_permission(self, slot, has_access):
         """Set permission for pairing key slot.
 
-        Args:
-            slot: Slot number (0-3)
-            has_access: True to grant access, False to deny
+            :param slot: Slot number (0-3)
+            :param has_access: True to grant access, False to deny
         """
         if not 0 <= slot <= 3:
             raise ValueError("Slot must be 0-3, got {}".format(slot))
@@ -129,11 +126,10 @@ class UapMultiSlotConfig(BaseConfig):
     def _get_slot_field(self, slot_pos):
         """Get 8-bit permission field at slot position.
 
-        Args:
-            slot_pos: Bit position of slot (0, 8, 16, or 24)
+            :param slot_pos: Bit position of slot (0, 8, 16, or 24)
 
-        Returns:
-            UapPermissionField
+            :returns: Permission field at the specified slot position
+            :rtype: UapPermissionField
         """
         field_value = (self._value >> slot_pos) & 0xFF
         return UapPermissionField(field_value)
@@ -141,9 +137,8 @@ class UapMultiSlotConfig(BaseConfig):
     def _set_slot_field(self, slot_pos, field):
         """Set 8-bit permission field at slot position.
 
-        Args:
-            slot_pos: Bit position of slot (0, 8, 16, or 24)
-            field: UapPermissionField or int (8-bit value)
+            :param slot_pos: Bit position of slot (0, 8, 16, or 24)
+            :param field: UapPermissionField or int (8-bit value)
         """
         if isinstance(field, UapPermissionField):
             field_value = field.value

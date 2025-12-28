@@ -19,8 +19,7 @@ class BaseConfig:
     def __init__(self, value=0xFFFFFFFF):
         """Initialize config object.
 
-        Args:
-            value: 32-bit configuration value (default: 0xFFFFFFFF)
+            :param value: 32-bit configuration value (default: 0xFFFFFFFF)
         """
         self._value = value
 
@@ -28,14 +27,12 @@ class BaseConfig:
     def from_bytes(cls, data):
         """Create config object from raw bytes.
 
-        Args:
-            data: 4 bytes in big-endian format
+            :param data: 4 bytes in big-endian format
 
-        Returns:
-            New config object instance
+            :returns: New config object instance
+            :rtype: BaseConfig
 
-        Raises:
-            ValueError: If data is not exactly 4 bytes
+            :raises ValueError: If data is not exactly 4 bytes
         """
         if len(data) != 4:
             raise ValueError("Expected 4 bytes, got {}".format(len(data)))
@@ -45,19 +42,18 @@ class BaseConfig:
     def to_bytes(self):
         """Convert config object to raw bytes.
 
-        Returns:
-            4 bytes in big-endian format
+            :returns: 4 bytes in big-endian format
+            :rtype: bytes
         """
         return self._value.to_bytes(4, 'big')
 
     def to_dict(self):
         """Export configuration fields as dictionary.
 
-        Returns:
-            Dictionary mapping field names to values
+            :returns: Dictionary mapping field names to values
+            :rtype: dict
 
-        Raises:
-            NotImplementedError: Must be implemented by subclasses
+            :raises NotImplementedError: Must be implemented by subclasses
         """
         raise NotImplementedError("Subclasses must implement to_dict()")
 
