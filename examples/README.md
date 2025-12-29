@@ -370,7 +370,7 @@ PYTHONPATH=. python examples/01_chip_info.py
 
 - **Documentation:** [https://petrkr.github.io/pytropicsquare/](https://petrkr.github.io/pytropicsquare/)
 - **Issues:** [https://github.com/petrkr/pytropicsquare/issues](https://github.com/petrkr/pytropicsquare/issues)
-- **Main README:** [../README.md](../README.md)
+- **Main README:** [https://github.com/petrkr/pytropicsquare](https://github.com/petrkr/pytropicsquare)
 
 ## Contributing Examples
 
