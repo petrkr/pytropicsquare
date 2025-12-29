@@ -134,7 +134,7 @@ transport = UartTransport('/dev/ttyACM0', baudrate=115200)
 | **02_hello_ping.py** | Your first secure session and encrypted ping | Yes |
 | **03_random_numbers.py** | Generate cryptographic random bytes | Yes |
 
-### Cryptographic Operations (Coming Soon)
+### Cryptographic Operations
 
 | Example | Description |
 |---------|-------------|
@@ -143,22 +143,20 @@ transport = UartTransport('/dev/ttyACM0', baudrate=115200)
 | **12_eddsa_signing.py** | Sign data with EdDSA (Ed25519 curve) |
 | **13_key_storage.py** | Import external keys into the chip |
 
-### Data Storage (Coming Soon)
+### Data Storage
 
 | Example | Description |
 |---------|-------------|
 | **20_memory_slots.py** | Store and retrieve secure data (up to 444 bytes per slot) |
 | **21_monotonic_counters.py** | Anti-rollback counters |
 
-### Configuration Management - Advanced (Coming Soon)
+### Configuration Management - Advanced
 
 | Example | Description |
 |---------|-------------|
 | **30_config_basics.py** | Read R-CONFIG and I-CONFIG registers |
-| **31_uap_permissions.py** | Understand User Access Policies |
-| **32_effective_config.py** | R-CONFIG vs I-CONFIG behavior |
 
-### Platform-Specific Examples (Coming Soon)
+### TODO: Platform-Specific Examples
 
 | Example | Platform | Description |
 |---------|----------|-------------|
@@ -166,7 +164,7 @@ transport = UartTransport('/dev/ttyACM0', baudrate=115200)
 | **raspberry_pi_example.py** | Raspberry Pi (CPython) | Using UART or SPI on Raspberry Pi |
 | **network_bridge_example.py** | Universal | Remote hardware via network bridge |
 
-### Advanced Features (Coming Soon)
+### TODO: Advanced Features
 
 | Example | Description |
 |---------|-------------|
@@ -293,10 +291,8 @@ if __name__ == "__main__":
 
 ### Advanced Track
 10. `30_config_basics.py` - Configuration registers
-11. `31_uap_permissions.py` - Security policies
-12. `32_effective_config.py` - R-CONFIG vs I-CONFIG
-13. `40_mac_and_destroy.py` - Authenticated destruction
-14. `41_complete_workflow.py` - Real-world integration
+11. `40_mac_and_destroy.py` - Authenticated destruction
+12. `41_complete_workflow.py` - Real-world integration
 
 ## Hardware Requirements
 
