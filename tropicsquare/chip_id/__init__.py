@@ -28,59 +28,61 @@ from tropicsquare.chip_id.constants import (
 
 
 class ChipId:
-    """TROPIC01 Chip ID structure parser
+    """TROPC01 Chip ID structure parser
 
-    This class parses the 128-byte chip identification structure that contains
-    comprehensive information about the chip including manufacturing data,
-    provisioning information, firmware versions, and serial number.
+        This class parses the 128-byte chip identification structure that contains
+        comprehensive information about the chip including manufacturing data,
+        provisioning information, firmware versions, and serial number.
 
-    The structure follows the lt_chip_id_t layout from libtropic with all
-    fields properly parsed and exposed as attributes.
+        The structure follows the lt_chip_id_t layout from libtropic with all
+        fields properly parsed and exposed as attributes.
 
-    Structure layout (128 bytes total):
-    - Bytes 0-3: Chip ID version (4 bytes)
-    - Bytes 4-19: Factory level chip info (16 bytes)
-    - Bytes 20-27: Functional test info (8 bytes)
-    - Bytes 28-31: Silicon revision (4 bytes, ASCII)
-    - Bytes 32-33: Package type ID (2 bytes, big-endian)
-    - Bytes 34-35: Reserved field 1 (2 bytes)
-    - Bytes 36-39: Provisioning info - version/fab/part number (4 bytes, big-endian)
-    - Bytes 40-41: Provisioning date (2 bytes, big-endian)
-    - Bytes 42-45: HSM version (4 bytes)
-    - Bytes 46-49: Program version (4 bytes)
-    - Bytes 50-51: Reserved field 2 (2 bytes)
-    - Bytes 52-67: Serial number structure (16 bytes)
-    - Bytes 68-83: Part number data (16 bytes)
-    - Bytes 84-85: Provisioning template version (2 bytes, big-endian)
-    - Bytes 86-89: Provisioning template tag (4 bytes)
-    - Bytes 90-91: Provisioning specification version (2 bytes, big-endian)
-    - Bytes 92-95: Provisioning specification tag (4 bytes)
-    - Bytes 96-100: Batch ID (5 bytes)
-    - Bytes 101-103: Reserved field 3 (3 bytes)
-    - Bytes 104-127: Reserved field 4 / Padding (24 bytes)
+        **Structure layout (128 bytes total):**
 
-    Attributes:
-        raw (bytes): Original raw chip ID data (128 bytes)
-        chip_id_version (tuple): Chip ID version as 4-element tuple
-        fl_chip_info (bytes): Factory level chip information (16 bytes)
-        func_test_info (bytes): Functional test information (8 bytes)
-        silicon_rev (str): Silicon revision (ASCII string, null-terminated)
-        package_type_id (int): Package type identifier
-        package_type_name (str): Human-readable package type name
-        provisioning_version (int): Provisioning version number (8-bit)
-        fab_id (int): Fabrication facility ID (12-bit)
-        fab_name (str): Human-readable fabrication facility name
-        part_number_id (int): Part number identifier (12-bit)
-        provisioning_date (int): Provisioning date value
-        hsm_version (tuple): HSM version as 4-element tuple
-        prog_version (tuple): Program version as 4-element tuple
-        serial_number (SerialNumber): Parsed serial number structure
-        part_num_data (bytes): Part number data (16 bytes)
-        prov_template_version (int): Provisioning template version
-        prov_template_tag (bytes): Provisioning template tag (4 bytes)
-        prov_spec_version (int): Provisioning specification version
-        prov_spec_tag (bytes): Provisioning specification tag (4 bytes)
-        batch_id (bytes): Batch identifier (5 bytes)
+        - Bytes 0-3: Chip ID version (4 bytes)
+        - Bytes 4-19: Factory level chip info (16 bytes)
+        - Bytes 20-27: Functional test info (8 bytes)
+        - Bytes 28-31: Silicon revision (4 bytes, ASCII)
+        - Bytes 32-33: Package type ID (2 bytes, big-endian)
+        - Bytes 34-35: Reserved field 1 (2 bytes)
+        - Bytes 36-39: Provisioning info - version/fab/part number (4 bytes, big-endian)
+        - Bytes 40-41: Provisioning date (2 bytes, big-endian)
+        - Bytes 42-45: HSM version (4 bytes)
+        - Bytes 46-49: Program version (4 bytes)
+        - Bytes 50-51: Reserved field 2 (2 bytes)
+        - Bytes 52-67: Serial number structure (16 bytes)
+        - Bytes 68-83: Part number data (16 bytes)
+        - Bytes 84-85: Provisioning template version (2 bytes, big-endian)
+        - Bytes 86-89: Provisioning template tag (4 bytes)
+        - Bytes 90-91: Provisioning specification version (2 bytes, big-endian)
+        - Bytes 92-95: Provisioning specification tag (4 bytes)
+        - Bytes 96-100: Batch ID (5 bytes)
+        - Bytes 101-103: Reserved field 3 (3 bytes)
+        - Bytes 104-127: Reserved field 4 / Padding (24 bytes)
+
+        Attributes:
+
+            raw (bytes): Original raw chip ID data (128 bytes)
+            chip_id_version (tuple): Chip ID version as 4-element tuple
+            fl_chip_info (bytes): Factory level chip information (16 bytes)
+            func_test_info (bytes): Functional test information (8 bytes)
+            silicon_rev (str): Silicon revision (ASCII string, null-terminated)
+            package_type_id (int): Package type identifier
+            package_type_name (str): Human-readable package type name
+            provisioning_version (int): Provisioning version number (8-bit)
+            fab_id (int): Fabrication facility ID (12-bit)
+            fab_name (str): Human-readable fabrication facility name
+            part_number_id (int): Part number identifier (12-bit)
+            provisioning_date (int): Provisioning date value
+            hsm_version (tuple): HSM version as 4-element tuple
+            prog_version (tuple): Program version as 4-element tuple
+            serial_number (SerialNumber): Parsed serial number structure
+            part_num_data (bytes): Part number data (16 bytes)
+            prov_template_version (int): Provisioning template version
+            prov_template_tag (bytes): Provisioning template tag (4 bytes)
+            prov_spec_version (int): Provisioning specification version
+            prov_spec_tag (bytes): Provisioning specification tag (4 bytes)
+            batch_id (bytes): Batch identifier (5 bytes)
     """
 
     def __init__(self, data: bytes):

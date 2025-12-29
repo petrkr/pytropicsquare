@@ -1,29 +1,31 @@
 """Configuration objects for TROPIC01 secure element
 
-This module provides classes for parsing and manipulating TROPIC01
-configuration registers. Configuration is split into two memory spaces:
+    This module provides classes for parsing and manipulating TROPIC01
+    configuration registers. Configuration is split into two memory spaces:
 
-- R-CONFIG (Reversible): Can be written and erased freely
-- I-CONFIG (Irreversible): Bits can only change from 1 to 0 permanently
+    - R-CONFIG (Reversible): Can be written and erased freely
+    - I-CONFIG (Irreversible): Bits can only change from 1 to 0 permanently
 
-The effective configuration is the AND of R-CONFIG and I-CONFIG values.
+    The effective configuration is the AND of R-CONFIG and I-CONFIG values.
 
-Usage:
-    from tropicsquare import TropicSquareCPython
-    from tropicsquare.constants.config import CFG_START_UP
-    from tropicsquare.config.startup import StartUpConfig
+    Example::
 
-    ts = TropicSquareCPython(...)
-    ts.establish_session()
+        from tropicsquare import TropicSquare
+        from tropicsquare.constants.config import CFG_START_UP
+        from tropicsquare.config.startup import StartUpConfig
 
-    # Read R-CONFIG startup register (auto-parsed)
-    config = ts.r_config_read(CFG_START_UP)
-    print(config.mbist_dis)
+        transport = ...  # Initialize transport (e.g., I2C, SPI)
+        ts = TropicSquare(transport)
+        ts.start_secure_session(...)
 
-    # Read I-CONFIG and compute effective value
-    r_config = ts.r_config_read(CFG_START_UP)
-    i_config = ts.i_config_read(CFG_START_UP)
-    effective = StartUpConfig(r_config._value & i_config._value)
+        # Read R-CONFIG startup register (auto-parsed)
+        config = ts.r_config_read(CFG_START_UP)
+        print(config.mbist_dis)
+
+        # Read I-CONFIG and compute effective value
+        r_config = ts.r_config_read(CFG_START_UP)
+        i_config = ts.i_config_read(CFG_START_UP)
+        effective = StartUpConfig(r_config._value & i_config._value)
 """
 
 from tropicsquare.config.base import BaseConfig
@@ -101,30 +103,30 @@ from tropicsquare.constants.config import (
 def parse_config(register, data):
     """Parse config data into appropriate Config object.
 
-    Factory function that creates the correct config object type
-    based on the register address.
+        Factory function that creates the correct config object type
+        based on the register address.
 
-    Note: This function is used internally by r_config_read() and i_config_read().
-    You typically don't need to call this directly as those methods return
-    already-parsed config objects.
+        :Note: This function is used internally by r_config_read() and i_config_read().
+            You typically don't need to call this directly as those methods return
+            already-parsed config objects.
 
-    Args:
-        register: Registry address (use CFG_* constants from tropicsquare.constants.config)
-        data: 4 bytes of raw config data
+        :param register: Registry address (use CFG_* constants from tropicsquare.constants.config)
+        :param data: 4 bytes of raw config data
 
-    Returns:
-        BaseConfig: Appropriate config object (StartUpConfig, SensorsConfig, etc.)
+        :returns: Appropriate config object (StartUpConfig, SensorsConfig, etc.)
+        :rtype: BaseConfig
 
-    Raises:
-        ValueError: If register address is unknown
+        :raises ValueError: If register address is unknown
 
-    Example (advanced usage with raw bytes):
-        from tropicsquare.constants.config import CFG_START_UP
-        from tropicsquare.config import parse_config
 
-        raw_data = b'\\x12\\x34\\x56\\x78'
-        config = parse_config(CFG_START_UP, raw_data)
-        print(config.mbist_dis)
+        Example::
+
+            from tropicsquare.constants.config import CFG_START_UP
+            from tropicsquare.config import parse_config
+
+            raw_data = b'\\x12\\x34\\x56\\x78'
+            config = parse_config(CFG_START_UP, raw_data)
+            print(config.mbist_dis)
     """
     if register == CFG_START_UP:
         return StartUpConfig.from_bytes(data)

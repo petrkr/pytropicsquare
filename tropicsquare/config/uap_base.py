@@ -12,12 +12,13 @@ from tropicsquare.config.constants import (
 class UapPermissionField:
     """Represents an 8-bit UAP permission field.
 
-    Each field contains permission bits for 4 pairing key slots:
-    - Bit 0: Pairing Key slot 0 has access
-    - Bit 1: Pairing Key slot 1 has access
-    - Bit 2: Pairing Key slot 2 has access
-    - Bit 3: Pairing Key slot 3 has access
-    - Bits 4-7: Reserved
+        Each field contains permission bits for 4 pairing key slots:
+
+        - Bit 0: Pairing Key slot 0 has access
+        - Bit 1: Pairing Key slot 1 has access
+        - Bit 2: Pairing Key slot 2 has access
+        - Bit 3: Pairing Key slot 3 has access
+        - Bits 4-7: Reserved
     """
 
     def __init__(self, value=0xFF):

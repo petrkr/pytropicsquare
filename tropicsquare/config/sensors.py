@@ -30,24 +30,25 @@ class SensorsConfig(BaseConfig):
     Each field disables a specific security feature when set to True.
 
     Fields:
-        ptrng0_test_dis: PTRNG0 test disable (bit 0)
-        ptrng1_test_dis: PTRNG1 test disable (bit 1)
-        oscmon_dis: Oscillator monitoring disable (bit 2)
-        shield_dis: Shield monitoring disable (bit 3)
-        vmon_dis: Voltage monitoring disable (bit 4)
-        glitch_dis: Glitch detection disable (bit 5)
-        temp_dis: Temperature sensor disable (bit 6)
-        laser_dis: Laser detection disable (bit 7)
-        emp_dis: EMP detection disable (bit 8)
-        cpu_alert_dis: CPU alert disable (bit 9)
-        bf_pin_ver_dis: Bit-flip PIN verification disable (bit 10)
-        bf_scb_dis: Bit-flip SCB disable (bit 11)
-        bf_cpb_dis: Bit-flip CPB disable (bit 12)
-        bf_ecc_dis: Bit-flip ECC disable (bit 13)
-        bf_ram_dis: Bit-flip RAM disable (bit 14)
-        bf_ekdb_dis: Bit-flip EKDB disable (bit 15)
-        bf_imem_dis: Bit-flip instruction memory disable (bit 16)
-        bf_platform_dis: Bit-flip platform disable (bit 17)
+
+    - ptrng0_test_dis: PTRNG0 test disable (bit 0)
+    - ptrng1_test_dis: PTRNG1 test disable (bit 1)
+    - oscmon_dis: Oscillator monitoring disable (bit 2)
+    - shield_dis: Shield monitoring disable (bit 3)
+    - vmon_dis: Voltage monitoring disable (bit 4)
+    - glitch_dis: Glitch detection disable (bit 5)
+    - temp_dis: Temperature sensor disable (bit 6)
+    - laser_dis: Laser detection disable (bit 7)
+    - emp_dis: EMP detection disable (bit 8)
+    - cpu_alert_dis: CPU alert disable (bit 9)
+    - bf_pin_ver_dis: Bit-flip PIN verification disable (bit 10)
+    - bf_scb_dis: Bit-flip SCB disable (bit 11)
+    - bf_cpb_dis: Bit-flip CPB disable (bit 12)
+    - bf_ecc_dis: Bit-flip ECC disable (bit 13)
+    - bf_ram_dis: Bit-flip RAM disable (bit 14)
+    - bf_ekdb_dis: Bit-flip EKDB disable (bit 15)
+    - bf_imem_dis: Bit-flip instruction memory disable (bit 16)
+    - bf_platform_dis: Bit-flip platform disable (bit 17)
     """
 
     def _get_bit(self, bit_pos):

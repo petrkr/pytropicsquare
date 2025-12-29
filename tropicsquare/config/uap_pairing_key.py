@@ -20,14 +20,8 @@ from tropicsquare.config.constants import (
 class PairingKeyWriteConfig(UapMultiSlotConfig):
     """UAP Pairing Key Write configuration (CFG_UAP_PAIRING_KEY_WRITE @ 0x20).
 
-    Controls which pairing key slots can write to each pairing key slot.
-    Has 4 slots, each with 8-bit permission field.
-
-    Fields:
-        slot_0: Permission for writing to pairing key slot 0
-        slot_1: Permission for writing to pairing key slot 1
-        slot_2: Permission for writing to pairing key slot 2
-        slot_3: Permission for writing to pairing key slot 3
+        Controls which pairing key slots can write to each pairing key slot.
+        Has 4 slots, each with 8-bit permission field.
     """
 
     @property
@@ -84,7 +78,7 @@ class PairingKeyWriteConfig(UapMultiSlotConfig):
 class PairingKeyReadConfig(UapMultiSlotConfig):
     """UAP Pairing Key Read configuration (CFG_UAP_PAIRING_KEY_READ @ 0x24).
 
-    Controls which pairing key slots can read from each pairing key slot.
+       Controls which pairing key slots can read from each pairing key slot.
     """
 
     @property
