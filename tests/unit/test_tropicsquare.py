@@ -695,11 +695,11 @@ class TestL3Commands:
         pubkey = b'\xAB' * 32
         ts.response_data = bytes([CMD_RESULT_OK, curve, origin]) + b'\x00' * 13 + pubkey
 
-        result_curve, result_origin, result_pubkey = ts.ecc_key_read(0)
+        result = ts.ecc_key_read(0)
 
-        assert result_curve == curve
-        assert result_origin == origin
-        assert result_pubkey == pubkey
+        assert result.curve == curve
+        assert result.origin == origin
+        assert result.public_key == pubkey
 
     def test_ecc_key_erase_command(self, ts_with_session):
         """Test ecc_key_erase command."""
@@ -741,6 +741,160 @@ class TestL3Commands:
         result = ts.mcounter_get(0)
 
         assert result == counter_value
+
+    def test_r_config_read_command(self, ts_with_session):
+        """Test r_config_read command execution and auto-parsing."""
+        ts = ts_with_session
+
+        # Mock response: CMD_RESULT_OK + 3-byte header + config data (4 bytes)
+        config_data = b'\x12\x34\x56\x78'
+        ts.response_data = bytes([CMD_RESULT_OK]) + b'\x00\x00\x00' + config_data
+
+        result = ts.r_config_read(CFG_START_UP)
+
+        # Verify result is parsed config object
+        assert isinstance(result, StartUpConfig)
+        # Verify the underlying value is correct (config uses big-endian)
+        assert result._value == int.from_bytes(config_data, 'big')
+
+    def test_i_config_read_command(self, ts_with_session):
+        """Test i_config_read command execution and auto-parsing."""
+        ts = ts_with_session
+
+        # Mock response: CMD_RESULT_OK + 3-byte header + config data (4 bytes)
+        config_data = b'\x12\x34\x56\x78'
+        ts.response_data = bytes([CMD_RESULT_OK]) + b'\x00\x00\x00' + config_data
+
+        result = ts.i_config_read(CFG_START_UP)
+
+        # Verify result is parsed config object
+        assert isinstance(result, StartUpConfig)
+        # Verify the underlying value is correct (config uses big-endian)
+        assert result._value == int.from_bytes(config_data, 'big')
+
+    def test_ecc_key_store_command(self, ts_with_session):
+        """Test ecc_key_store command execution."""
+        ts = ts_with_session
+
+        # Mock successful response
+        ts.response_data = bytes([CMD_RESULT_OK])
+
+        # P256 key (32 bytes)
+        key = b'\x01' * 32
+        result = ts.ecc_key_store(0, ECC_CURVE_P256, key)
+
+        assert result == True
+
+    def test_ecc_key_store_validates_slot(self, ts_with_session):
+        """Test that ecc_key_store validates slot."""
+        ts = ts_with_session
+
+        with pytest.raises(ValueError) as exc_info:
+            ts.ecc_key_store(ECC_MAX_KEYS + 1, ECC_CURVE_P256, b'\x01' * 32)
+
+        assert "Slot is larger than ECC_MAX_KEYS" in str(exc_info.value)
+
+    def test_ecc_key_store_validates_curve(self, ts_with_session):
+        """Test that ecc_key_store validates curve."""
+        ts = ts_with_session
+
+        with pytest.raises(ValueError) as exc_info:
+            ts.ecc_key_store(0, 0xFF, b'\x01' * 32)  # Invalid curve
+
+        assert "Invalid curve" in str(exc_info.value)
+
+    def test_ecdsa_sign_command(self, ts_with_session):
+        """Test ecdsa_sign command execution."""
+        ts = ts_with_session
+
+        # Mock response: CMD_RESULT_OK + 15 bytes padding + R (32) + S (32)
+        # Note: _call_command strips first byte (CMD_RESULT_OK), leaving 15 + 32 + 32
+        sign_r = b'\xAA' * 32
+        sign_s = b'\xBB' * 32
+        ts.response_data = bytes([CMD_RESULT_OK]) + b'\x00' * 15 + sign_r + sign_s
+
+        hash_value = b'\x01' * 32
+        sign = ts.ecdsa_sign(0, hash_value)
+
+        assert sign_r == sign.r
+        assert sign_s == sign.s
+
+    def test_ecdsa_sign_validates_slot(self, ts_with_session):
+        """Test that ecdsa_sign validates slot."""
+        ts = ts_with_session
+
+        with pytest.raises(ValueError) as exc_info:
+            ts.ecdsa_sign(ECC_MAX_KEYS + 1, b'\x01' * 32)
+
+        assert "Slot is larger than ECC_MAX_KEYS" in str(exc_info.value)
+
+    def test_eddsa_sign_command(self, ts_with_session):
+        """Test eddsa_sign command execution."""
+        ts = ts_with_session
+
+        # Mock response: CMD_RESULT_OK + 15 bytes padding + R (32) + S (32)
+        # Note: _call_command strips first byte (CMD_RESULT_OK), leaving 15 + 32 + 32
+        sign_r = b'\xCC' * 32
+        sign_s = b'\xDD' * 32
+        ts.response_data = bytes([CMD_RESULT_OK]) + b'\x00' * 15 + sign_r + sign_s
+
+        message = b'test message'
+        sign = ts.eddsa_sign(0, message)
+
+        assert sign_r == sign.r
+        assert sign_s == sign.s
+
+    def test_eddsa_sign_validates_slot(self, ts_with_session):
+        """Test that eddsa_sign validates slot."""
+        ts = ts_with_session
+
+        with pytest.raises(ValueError) as exc_info:
+            ts.eddsa_sign(ECC_MAX_KEYS + 1, b'message')
+
+        assert "Slot is larger than ECC_MAX_KEYS" in str(exc_info.value)
+
+    def test_mcounter_update_command(self, ts_with_session):
+        """Test mcounter_update command execution."""
+        ts = ts_with_session
+
+        # Mock successful response
+        ts.response_data = bytes([CMD_RESULT_OK])
+
+        result = ts.mcounter_update(0)
+
+        assert result == True
+
+    def test_mcounter_update_validates_index(self, ts_with_session):
+        """Test that mcounter_update validates index."""
+        ts = ts_with_session
+
+        with pytest.raises(ValueError) as exc_info:
+            ts.mcounter_update(MCOUNTER_MAX + 1)
+
+        assert "Index is larger than MCOUNTER_MAX" in str(exc_info.value)
+
+    def test_mac_and_destroy_command(self, ts_with_session):
+        """Test mac_and_destroy command execution."""
+        ts = ts_with_session
+
+        # Mock response: CMD_RESULT_OK + 3-byte header + MAC result (32 bytes)
+        mac_result = b'\xEE' * 32
+        ts.response_data = bytes([CMD_RESULT_OK]) + b'\x00\x00\x00' + mac_result
+
+        data = b'test data to MAC'
+        result = ts.mac_and_destroy(0, data)
+
+        # Verify 3-byte header is stripped
+        assert result == mac_result
+
+    def test_mac_and_destroy_validates_slot(self, ts_with_session):
+        """Test that mac_and_destroy validates slot."""
+        ts = ts_with_session
+
+        with pytest.raises(ValueError) as exc_info:
+            ts.mac_and_destroy(MAC_AND_DESTROY_MAX + 1, b'data')
+
+        assert "Slot is larger than ECC_MAX_KEYS" in str(exc_info.value)
 
 
 class TestStartSecureSession:
