@@ -32,7 +32,7 @@ class L2Protocol:
     CRC validation, and chip state management.
     """
 
-    def __init__(self, transport: L1Transport):
+    def __init__(self, transport: L1Transport) -> None:
         """Initialize L2 protocol layer.
 
             :param transport: L1Transport instance
@@ -40,7 +40,7 @@ class L2Protocol:
         self._transport = transport
 
 
-    def get_info_req(self, object_id, req_data_chunk=GET_INFO_DATA_CHUNK_0_127):
+    def get_info_req(self, object_id: int, req_data_chunk: int = GET_INFO_DATA_CHUNK_0_127) -> bytes:
         """Request information object from chip.
 
         Sends GET_INFO request to retrieve chip information like certificate,
@@ -58,7 +58,7 @@ class L2Protocol:
         return self._send_and_get_response(REQ_ID_GET_INFO_REQ, payload)
 
 
-    def handshake_req(self, ehpub, p_keyslot):
+    def handshake_req(self, ehpub: bytes, p_keyslot: int) -> tuple:
         """Perform secure session handshake.
 
         Sends ephemeral public key to chip and receives chip's ephemeral
@@ -81,7 +81,7 @@ class L2Protocol:
         return (tsehpub, tsauth)
 
 
-    def get_log(self):
+    def get_log(self) -> bytes:
         """Retrieve firmware logs from chip.
 
             :returns: Raw log data
@@ -92,7 +92,7 @@ class L2Protocol:
         return self._send_and_get_response(REQ_ID_GET_LOG_REQ)
 
 
-    def encrypted_command(self, command_size, command_ciphertext, command_tag):
+    def encrypted_command(self, command_size: int, command_ciphertext: bytes, command_tag: bytes) -> tuple:
         """Send encrypted L3 command to chip.
 
         Handles chunking of large commands (> 128 bytes) and sends them
@@ -139,7 +139,7 @@ class L2Protocol:
         return (command_ciphertext, command_tag)
 
 
-    def encrypted_session_abt(self):
+    def encrypted_session_abt(self) -> bool:
         """Abort encrypted session.
 
         Terminates the current secure session with the chip.
@@ -153,7 +153,7 @@ class L2Protocol:
         return True
 
 
-    def sleep_req(self, sleep_mode):
+    def sleep_req(self, sleep_mode: int) -> bool:
         """Put chip to sleep.
 
             :param sleep_mode: Sleep mode (SLEEP_MODE_SLEEP or SLEEP_MODE_DEEP_SLEEP)
@@ -172,7 +172,7 @@ class L2Protocol:
         return True
 
 
-    def startup_req(self, startup_id):
+    def startup_req(self, startup_id: int) -> bool:
         """Startup/reboot chip.
 
             :param startup_id: Startup mode (STARTUP_REBOOT or STARTUP_MAINTENANCE_REBOOT)
