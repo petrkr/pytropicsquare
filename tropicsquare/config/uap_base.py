@@ -21,14 +21,14 @@ class UapPermissionField:
         - Bits 4-7: Reserved
     """
 
-    def __init__(self, value=0xFF):
+    def __init__(self, value: int = 0xFF) -> None:
         """Initialize permission field.
 
             :param value: 8-bit permission value (default: 0xFF = all slots have access)
         """
         self._value = value & 0xFF
 
-    def get_slot_permission(self, slot):
+    def get_slot_permission(self, slot: int) -> bool:
         """Check if pairing key slot has access.
 
             :param slot: Slot number (0-3)
@@ -40,7 +40,7 @@ class UapPermissionField:
             raise ValueError("Slot must be 0-3, got {}".format(slot))
         return bool((self._value >> slot) & 1)
 
-    def set_slot_permission(self, slot, has_access):
+    def set_slot_permission(self, slot: int, has_access: bool) -> None:
         """Set permission for pairing key slot.
 
             :param slot: Slot number (0-3)
@@ -54,51 +54,51 @@ class UapPermissionField:
             self._value &= ~(1 << slot)
 
     @property
-    def pkey_slot_0(self):
+    def pkey_slot_0(self) -> bool:
         """Pairing Key slot 0 has access."""
         return self.get_slot_permission(0)
 
     @pkey_slot_0.setter
-    def pkey_slot_0(self, value):
+    def pkey_slot_0(self, value: bool) -> None:
         self.set_slot_permission(0, value)
 
     @property
-    def pkey_slot_1(self):
+    def pkey_slot_1(self) -> bool:
         """Pairing Key slot 1 has access."""
         return self.get_slot_permission(1)
 
     @pkey_slot_1.setter
-    def pkey_slot_1(self, value):
+    def pkey_slot_1(self, value: bool) -> None:
         self.set_slot_permission(1, value)
 
     @property
-    def pkey_slot_2(self):
+    def pkey_slot_2(self) -> bool:
         """Pairing Key slot 2 has access."""
         return self.get_slot_permission(2)
 
     @pkey_slot_2.setter
-    def pkey_slot_2(self, value):
+    def pkey_slot_2(self, value: bool) -> None:
         self.set_slot_permission(2, value)
 
     @property
-    def pkey_slot_3(self):
+    def pkey_slot_3(self) -> bool:
         """Pairing Key slot 3 has access."""
         return self.get_slot_permission(3)
 
     @pkey_slot_3.setter
-    def pkey_slot_3(self, value):
+    def pkey_slot_3(self, value: bool) -> None:
         self.set_slot_permission(3, value)
 
     @property
-    def value(self):
+    def value(self) -> int:
         """Raw 8-bit value."""
         return self._value
 
     @value.setter
-    def value(self, val):
+    def value(self, val: int) -> None:
         self._value = val & 0xFF
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         """Export as dictionary."""
         return {
             'pkey_slot_0': self.pkey_slot_0,
@@ -107,7 +107,7 @@ class UapPermissionField:
             'pkey_slot_3': self.pkey_slot_3
         }
 
-    def __str__(self):
+    def __str__(self) -> str:
         slots = []
         for i in range(4):
             if self.get_slot_permission(i):
@@ -154,18 +154,18 @@ class UapMultiSlotConfig(BaseConfig):
 class UapSingleFieldConfig(BaseConfig):
     """Base class for UAP configs with single 8-bit permission field."""
 
-    def __init__(self, value=0xFFFFFFFF):
+    def __init__(self, value: int = 0xFFFFFFFF) -> None:
         """Initialize with default all-access value."""
         super().__init__(value)
 
     @property
-    def permissions(self):
+    def permissions(self) -> UapPermissionField:
         """Get permission field (8 bits at position 0)."""
         field_value = self._value & 0xFF
         return UapPermissionField(field_value)
 
     @permissions.setter
-    def permissions(self, field):
+    def permissions(self, field) -> None:
         """Set permission field."""
         if isinstance(field, UapPermissionField):
             field_value = field.value
@@ -173,7 +173,7 @@ class UapSingleFieldConfig(BaseConfig):
             field_value = field & 0xFF
         self._value = (self._value & ~0xFF) | field_value
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         """Export as dictionary."""
         return {
             'permissions': self.permissions.to_dict()
@@ -183,18 +183,18 @@ class UapSingleFieldConfig(BaseConfig):
 class UapDualFieldConfig(BaseConfig):
     """Base class for UAP configs with two 8-bit permission fields (CFG and FUNC)."""
 
-    def __init__(self, value=0xFFFFFFFF):
+    def __init__(self, value: int = 0xFFFFFFFF) -> None:
         """Initialize with default all-access value."""
         super().__init__(value)
 
     @property
-    def cfg_permissions(self):
+    def cfg_permissions(self) -> UapPermissionField:
         """Get CFG permission field (8 bits at position 0)."""
         field_value = self._value & 0xFF
         return UapPermissionField(field_value)
 
     @cfg_permissions.setter
-    def cfg_permissions(self, field):
+    def cfg_permissions(self, field) -> None:
         """Set CFG permission field."""
         if isinstance(field, UapPermissionField):
             field_value = field.value
@@ -203,13 +203,13 @@ class UapDualFieldConfig(BaseConfig):
         self._value = (self._value & ~0xFF) | field_value
 
     @property
-    def func_permissions(self):
+    def func_permissions(self) -> UapPermissionField:
         """Get FUNC permission field (8 bits at position 8)."""
         field_value = (self._value >> 8) & 0xFF
         return UapPermissionField(field_value)
 
     @func_permissions.setter
-    def func_permissions(self, field):
+    def func_permissions(self, field) -> None:
         """Set FUNC permission field."""
         if isinstance(field, UapPermissionField):
             field_value = field.value
@@ -217,7 +217,7 @@ class UapDualFieldConfig(BaseConfig):
             field_value = field & 0xFF
         self._value = (self._value & ~0xFF00) | (field_value << 8)
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         """Export as dictionary."""
         return {
             'cfg_permissions': self.cfg_permissions.to_dict(),

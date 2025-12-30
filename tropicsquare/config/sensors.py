@@ -63,168 +63,168 @@ class SensorsConfig(BaseConfig):
             self._value &= ~(1 << bit_pos)
 
     @property
-    def ptrng0_test_dis(self):
+    def ptrng0_test_dis(self) -> bool:
         """PTRNG0 test disable (bit 0)."""
         return self._get_bit(SENSORS_PTRNG0_TEST_DIS_BIT)
 
     @ptrng0_test_dis.setter
-    def ptrng0_test_dis(self, value):
+    def ptrng0_test_dis(self, value: bool) -> None:
         self._set_bit(SENSORS_PTRNG0_TEST_DIS_BIT, value)
 
     @property
-    def ptrng1_test_dis(self):
+    def ptrng1_test_dis(self) -> bool:
         """PTRNG1 test disable (bit 1)."""
         return self._get_bit(SENSORS_PTRNG1_TEST_DIS_BIT)
 
     @ptrng1_test_dis.setter
-    def ptrng1_test_dis(self, value):
+    def ptrng1_test_dis(self, value: bool) -> None:
         self._set_bit(SENSORS_PTRNG1_TEST_DIS_BIT, value)
 
     @property
-    def oscmon_dis(self):
+    def oscmon_dis(self) -> bool:
         """Oscillator monitoring disable (bit 2)."""
         return self._get_bit(SENSORS_OSCMON_DIS_BIT)
 
     @oscmon_dis.setter
-    def oscmon_dis(self, value):
+    def oscmon_dis(self, value: bool) -> None:
         self._set_bit(SENSORS_OSCMON_DIS_BIT, value)
 
     @property
-    def shield_dis(self):
+    def shield_dis(self) -> bool:
         """Shield monitoring disable (bit 3)."""
         return self._get_bit(SENSORS_SHIELD_DIS_BIT)
 
     @shield_dis.setter
-    def shield_dis(self, value):
+    def shield_dis(self, value: bool) -> None:
         self._set_bit(SENSORS_SHIELD_DIS_BIT, value)
 
     @property
-    def vmon_dis(self):
+    def vmon_dis(self) -> bool:
         """Voltage monitoring disable (bit 4)."""
         return self._get_bit(SENSORS_VMON_DIS_BIT)
 
     @vmon_dis.setter
-    def vmon_dis(self, value):
+    def vmon_dis(self, value: bool) -> None:
         self._set_bit(SENSORS_VMON_DIS_BIT, value)
 
     @property
-    def glitch_dis(self):
+    def glitch_dis(self) -> bool:
         """Glitch detection disable (bit 5)."""
         return self._get_bit(SENSORS_GLITCH_DIS_BIT)
 
     @glitch_dis.setter
-    def glitch_dis(self, value):
+    def glitch_dis(self, value: bool) -> None:
         self._set_bit(SENSORS_GLITCH_DIS_BIT, value)
 
     @property
-    def temp_dis(self):
+    def temp_dis(self) -> bool:
         """Temperature sensor disable (bit 6)."""
         return self._get_bit(SENSORS_TEMP_DIS_BIT)
 
     @temp_dis.setter
-    def temp_dis(self, value):
+    def temp_dis(self, value: bool) -> None:
         self._set_bit(SENSORS_TEMP_DIS_BIT, value)
 
     @property
-    def laser_dis(self):
+    def laser_dis(self) -> bool:
         """Laser detection disable (bit 7)."""
         return self._get_bit(SENSORS_LASER_DIS_BIT)
 
     @laser_dis.setter
-    def laser_dis(self, value):
+    def laser_dis(self, value: bool) -> None:
         self._set_bit(SENSORS_LASER_DIS_BIT, value)
 
     @property
-    def emp_dis(self):
+    def emp_dis(self) -> bool:
         """EMP detection disable (bit 8)."""
         return self._get_bit(SENSORS_EMP_DIS_BIT)
 
     @emp_dis.setter
-    def emp_dis(self, value):
+    def emp_dis(self, value: bool) -> None:
         self._set_bit(SENSORS_EMP_DIS_BIT, value)
 
     @property
-    def cpu_alert_dis(self):
+    def cpu_alert_dis(self) -> bool:
         """CPU alert disable (bit 9)."""
         return self._get_bit(SENSORS_CPU_ALERT_DIS_BIT)
 
     @cpu_alert_dis.setter
-    def cpu_alert_dis(self, value):
+    def cpu_alert_dis(self, value: bool) -> None:
         self._set_bit(SENSORS_CPU_ALERT_DIS_BIT, value)
 
     @property
-    def bf_pin_ver_dis(self):
+    def bf_pin_ver_dis(self) -> bool:
         """Bit-flip PIN verification disable (bit 10)."""
         return self._get_bit(SENSORS_BF_PIN_VER_DIS_BIT)
 
     @bf_pin_ver_dis.setter
-    def bf_pin_ver_dis(self, value):
+    def bf_pin_ver_dis(self, value: bool) -> None:
         self._set_bit(SENSORS_BF_PIN_VER_DIS_BIT, value)
 
     @property
-    def bf_scb_dis(self):
+    def bf_scb_dis(self) -> bool:
         """Bit-flip SCB disable (bit 11)."""
         return self._get_bit(SENSORS_BF_SCB_DIS_BIT)
 
     @bf_scb_dis.setter
-    def bf_scb_dis(self, value):
+    def bf_scb_dis(self, value: bool) -> None:
         self._set_bit(SENSORS_BF_SCB_DIS_BIT, value)
 
     @property
-    def bf_cpb_dis(self):
+    def bf_cpb_dis(self) -> bool:
         """Bit-flip CPB disable (bit 12)."""
         return self._get_bit(SENSORS_BF_CPB_DIS_BIT)
 
     @bf_cpb_dis.setter
-    def bf_cpb_dis(self, value):
+    def bf_cpb_dis(self, value: bool) -> None:
         self._set_bit(SENSORS_BF_CPB_DIS_BIT, value)
 
     @property
-    def bf_ecc_dis(self):
+    def bf_ecc_dis(self) -> bool:
         """Bit-flip ECC disable (bit 13)."""
         return self._get_bit(SENSORS_BF_ECC_DIS_BIT)
 
     @bf_ecc_dis.setter
-    def bf_ecc_dis(self, value):
+    def bf_ecc_dis(self, value: bool) -> None:
         self._set_bit(SENSORS_BF_ECC_DIS_BIT, value)
 
     @property
-    def bf_ram_dis(self):
+    def bf_ram_dis(self) -> bool:
         """Bit-flip RAM disable (bit 14)."""
         return self._get_bit(SENSORS_BF_RAM_DIS_BIT)
 
     @bf_ram_dis.setter
-    def bf_ram_dis(self, value):
+    def bf_ram_dis(self, value: bool) -> None:
         self._set_bit(SENSORS_BF_RAM_DIS_BIT, value)
 
     @property
-    def bf_ekdb_dis(self):
+    def bf_ekdb_dis(self) -> bool:
         """Bit-flip EKDB disable (bit 15)."""
         return self._get_bit(SENSORS_BF_EKDB_DIS_BIT)
 
     @bf_ekdb_dis.setter
-    def bf_ekdb_dis(self, value):
+    def bf_ekdb_dis(self, value: bool) -> None:
         self._set_bit(SENSORS_BF_EKDB_DIS_BIT, value)
 
     @property
-    def bf_imem_dis(self):
+    def bf_imem_dis(self) -> bool:
         """Bit-flip instruction memory disable (bit 16)."""
         return self._get_bit(SENSORS_BF_IMEM_DIS_BIT)
 
     @bf_imem_dis.setter
-    def bf_imem_dis(self, value):
+    def bf_imem_dis(self, value: bool) -> None:
         self._set_bit(SENSORS_BF_IMEM_DIS_BIT, value)
 
     @property
-    def bf_platform_dis(self):
+    def bf_platform_dis(self) -> bool:
         """Bit-flip platform disable (bit 17)."""
         return self._get_bit(SENSORS_BF_PLATFORM_DIS_BIT)
 
     @bf_platform_dis.setter
-    def bf_platform_dis(self, value):
+    def bf_platform_dis(self, value: bool) -> None:
         self._set_bit(SENSORS_BF_PLATFORM_DIS_BIT, value)
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         """Export fields as dictionary.
 
             :returns: Configuration fields and their values
@@ -251,7 +251,7 @@ class SensorsConfig(BaseConfig):
             'bf_platform_dis': self.bf_platform_dis
         }
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Human-readable representation."""
         fields = self.to_dict()
         enabled_sensors = [k for k, v in fields.items() if not v]

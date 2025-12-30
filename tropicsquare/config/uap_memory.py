@@ -10,7 +10,7 @@ class RMemDataWriteConfig(UapDualFieldConfig):
     Two 8-bit permission fields: CFG and FUNC.
     """
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Human-readable representation."""
         return "RMemDataWriteConfig(cfg={}, func={})".format(
             self.cfg_permissions, self.func_permissions)
@@ -23,7 +23,7 @@ class RMemDataReadConfig(UapDualFieldConfig):
     Two 8-bit permission fields: CFG and FUNC.
     """
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Human-readable representation."""
         return "RMemDataReadConfig(cfg={}, func={})".format(
             self.cfg_permissions, self.func_permissions)
@@ -36,7 +36,7 @@ class RMemDataEraseConfig(UapDualFieldConfig):
     Two 8-bit permission fields: CFG and FUNC.
     """
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Human-readable representation."""
         return "RMemDataEraseConfig(cfg={}, func={})".format(
             self.cfg_permissions, self.func_permissions)

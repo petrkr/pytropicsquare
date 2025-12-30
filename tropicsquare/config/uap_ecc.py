@@ -10,7 +10,7 @@ class EccKeyGenerateConfig(UapDualFieldConfig):
     Two 8-bit permission fields: CFG and FUNC.
     """
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Human-readable representation."""
         return "EccKeyGenerateConfig(cfg={}, func={})".format(
             self.cfg_permissions, self.func_permissions)
@@ -23,7 +23,7 @@ class EccKeyStoreConfig(UapDualFieldConfig):
     Two 8-bit permission fields: CFG and FUNC.
     """
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Human-readable representation."""
         return "EccKeyStoreConfig(cfg={}, func={})".format(
             self.cfg_permissions, self.func_permissions)
@@ -36,7 +36,7 @@ class EccKeyReadConfig(UapDualFieldConfig):
     Two 8-bit permission fields: CFG and FUNC.
     """
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Human-readable representation."""
         return "EccKeyReadConfig(cfg={}, func={})".format(
             self.cfg_permissions, self.func_permissions)
@@ -49,7 +49,7 @@ class EccKeyEraseConfig(UapDualFieldConfig):
     Two 8-bit permission fields: CFG and FUNC.
     """
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Human-readable representation."""
         return "EccKeyEraseConfig(cfg={}, func={})".format(
             self.cfg_permissions, self.func_permissions)
@@ -62,7 +62,7 @@ class EcdsaSignConfig(UapDualFieldConfig):
     Two 8-bit permission fields: CFG and FUNC.
     """
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Human-readable representation."""
         return "EcdsaSignConfig(cfg={}, func={})".format(
             self.cfg_permissions, self.func_permissions)
@@ -75,7 +75,7 @@ class EddsaSignConfig(UapDualFieldConfig):
     Two 8-bit permission fields: CFG and FUNC.
     """
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Human-readable representation."""
         return "EddsaSignConfig(cfg={}, func={})".format(
             self.cfg_permissions, self.func_permissions)

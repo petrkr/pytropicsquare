@@ -14,7 +14,7 @@ class GpoConfig(BaseConfig):
     """
 
     @property
-    def gpo_func(self):
+    def gpo_func(self) -> int:
         """GPO function selection (3-bit value).
 
             :returns: Function code (0-7)
@@ -23,7 +23,7 @@ class GpoConfig(BaseConfig):
         return (self._value >> GPO_FUNC_POS) & GPO_FUNC_MASK
 
     @gpo_func.setter
-    def gpo_func(self, value):
+    def gpo_func(self, value: int) -> None:
         """Set GPO function.
 
             :param value: Function code (0-7)
@@ -35,7 +35,7 @@ class GpoConfig(BaseConfig):
         # Clear existing bits and set new value
         self._value = (self._value & ~(GPO_FUNC_MASK << GPO_FUNC_POS)) | (value << GPO_FUNC_POS)
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         """Export fields as dictionary.
 
             :returns: Configuration fields and their values
@@ -45,6 +45,6 @@ class GpoConfig(BaseConfig):
             'gpo_func': self.gpo_func
         }
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Human-readable representation."""
         return "GpoConfig(gpo_func={})".format(self.gpo_func)

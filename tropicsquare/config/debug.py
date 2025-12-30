@@ -14,7 +14,7 @@ class DebugConfig(BaseConfig):
     """
 
     @property
-    def fw_log_en(self):
+    def fw_log_en(self) -> bool:
         """Firmware logging enable flag.
 
         When True, firmware logging is enabled. Logs can be retrieved
@@ -27,13 +27,13 @@ class DebugConfig(BaseConfig):
         return bool((self._value >> DEBUG_FW_LOG_EN_BIT) & 1)
 
     @fw_log_en.setter
-    def fw_log_en(self, value):
+    def fw_log_en(self, value: bool) -> None:
         if value:
             self._value |= (1 << DEBUG_FW_LOG_EN_BIT)
         else:
             self._value &= ~(1 << DEBUG_FW_LOG_EN_BIT)
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         """Export fields as dictionary.
 
             :returns: Configuration fields and their values
@@ -43,6 +43,6 @@ class DebugConfig(BaseConfig):
             'fw_log_en': self.fw_log_en
         }
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Human-readable representation."""
         return "DebugConfig(fw_log_en={})".format(self.fw_log_en)

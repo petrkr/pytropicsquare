@@ -13,7 +13,7 @@ class PingConfig(UapDualFieldConfig):
     Two 8-bit permission fields: CFG and FUNC.
     """
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Human-readable representation."""
         return "PingConfig(cfg={}, func={})".format(
             self.cfg_permissions, self.func_permissions)
@@ -26,7 +26,7 @@ class RandomValueGetConfig(UapDualFieldConfig):
     Two 8-bit permission fields: CFG and FUNC.
     """
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Human-readable representation."""
         return "RandomValueGetConfig(cfg={}, func={})".format(
             self.cfg_permissions, self.func_permissions)
@@ -39,7 +39,7 @@ class MacAndDestroyConfig(UapDualFieldConfig):
     Two 8-bit permission fields: CFG and FUNC.
     """
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Human-readable representation."""
         return "MacAndDestroyConfig(cfg={}, func={})".format(
             self.cfg_permissions, self.func_permissions)

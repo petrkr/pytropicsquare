@@ -10,7 +10,7 @@ class MCounterInitConfig(UapDualFieldConfig):
     Two 8-bit permission fields: CFG and FUNC.
     """
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Human-readable representation."""
         return "MCounterInitConfig(cfg={}, func={})".format(
             self.cfg_permissions, self.func_permissions)
@@ -23,7 +23,7 @@ class MCounterGetConfig(UapDualFieldConfig):
     Two 8-bit permission fields: CFG and FUNC.
     """
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Human-readable representation."""
         return "MCounterGetConfig(cfg={}, func={})".format(
             self.cfg_permissions, self.func_permissions)
@@ -36,7 +36,7 @@ class MCounterUpdateConfig(UapDualFieldConfig):
     Two 8-bit permission fields: CFG and FUNC.
     """
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Human-readable representation."""
         return "MCounterUpdateConfig(cfg={}, func={})".format(
             self.cfg_permissions, self.func_permissions)

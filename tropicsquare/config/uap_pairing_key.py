@@ -25,42 +25,42 @@ class PairingKeyWriteConfig(UapMultiSlotConfig):
     """
 
     @property
-    def slot_0(self):
+    def slot_0(self) -> UapPermissionField:
         """Permission field for pairing key slot 0 write."""
         return self._get_slot_field(UAP_PKEY_WRITE_SLOT_0_POS)
 
     @slot_0.setter
-    def slot_0(self, field):
+    def slot_0(self, field) -> None:
         self._set_slot_field(UAP_PKEY_WRITE_SLOT_0_POS, field)
 
     @property
-    def slot_1(self):
+    def slot_1(self) -> UapPermissionField:
         """Permission field for pairing key slot 1 write."""
         return self._get_slot_field(UAP_PKEY_WRITE_SLOT_1_POS)
 
     @slot_1.setter
-    def slot_1(self, field):
+    def slot_1(self, field) -> None:
         self._set_slot_field(UAP_PKEY_WRITE_SLOT_1_POS, field)
 
     @property
-    def slot_2(self):
+    def slot_2(self) -> UapPermissionField:
         """Permission field for pairing key slot 2 write."""
         return self._get_slot_field(UAP_PKEY_WRITE_SLOT_2_POS)
 
     @slot_2.setter
-    def slot_2(self, field):
+    def slot_2(self, field) -> None:
         self._set_slot_field(UAP_PKEY_WRITE_SLOT_2_POS, field)
 
     @property
-    def slot_3(self):
+    def slot_3(self) -> UapPermissionField:
         """Permission field for pairing key slot 3 write."""
         return self._get_slot_field(UAP_PKEY_WRITE_SLOT_3_POS)
 
     @slot_3.setter
-    def slot_3(self, field):
+    def slot_3(self, field) -> None:
         self._set_slot_field(UAP_PKEY_WRITE_SLOT_3_POS, field)
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         """Export fields as dictionary."""
         return {
             'slot_0': self.slot_0.to_dict(),
@@ -69,7 +69,7 @@ class PairingKeyWriteConfig(UapMultiSlotConfig):
             'slot_3': self.slot_3.to_dict()
         }
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Human-readable representation."""
         return "PairingKeyWriteConfig(slot_0={}, slot_1={}, slot_2={}, slot_3={})".format(
             self.slot_0, self.slot_1, self.slot_2, self.slot_3)
@@ -82,42 +82,42 @@ class PairingKeyReadConfig(UapMultiSlotConfig):
     """
 
     @property
-    def slot_0(self):
+    def slot_0(self) -> UapPermissionField:
         """Permission field for pairing key slot 0 read."""
         return self._get_slot_field(UAP_PKEY_READ_SLOT_0_POS)
 
     @slot_0.setter
-    def slot_0(self, field):
+    def slot_0(self, field) -> None:
         self._set_slot_field(UAP_PKEY_READ_SLOT_0_POS, field)
 
     @property
-    def slot_1(self):
+    def slot_1(self) -> UapPermissionField:
         """Permission field for pairing key slot 1 read."""
         return self._get_slot_field(UAP_PKEY_READ_SLOT_1_POS)
 
     @slot_1.setter
-    def slot_1(self, field):
+    def slot_1(self, field) -> None:
         self._set_slot_field(UAP_PKEY_READ_SLOT_1_POS, field)
 
     @property
-    def slot_2(self):
+    def slot_2(self) -> UapPermissionField:
         """Permission field for pairing key slot 2 read."""
         return self._get_slot_field(UAP_PKEY_READ_SLOT_2_POS)
 
     @slot_2.setter
-    def slot_2(self, field):
+    def slot_2(self, field) -> None:
         self._set_slot_field(UAP_PKEY_READ_SLOT_2_POS, field)
 
     @property
-    def slot_3(self):
+    def slot_3(self) -> UapPermissionField:
         """Permission field for pairing key slot 3 read."""
         return self._get_slot_field(UAP_PKEY_READ_SLOT_3_POS)
 
     @slot_3.setter
-    def slot_3(self, field):
+    def slot_3(self, field) -> None:
         self._set_slot_field(UAP_PKEY_READ_SLOT_3_POS, field)
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         """Export fields as dictionary."""
         return {
             'slot_0': self.slot_0.to_dict(),
@@ -126,7 +126,7 @@ class PairingKeyReadConfig(UapMultiSlotConfig):
             'slot_3': self.slot_3.to_dict()
         }
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Human-readable representation."""
         return "PairingKeyReadConfig(slot_0={}, slot_1={}, slot_2={}, slot_3={})".format(
             self.slot_0, self.slot_1, self.slot_2, self.slot_3)
@@ -139,42 +139,42 @@ class PairingKeyInvalidateConfig(UapMultiSlotConfig):
     """
 
     @property
-    def slot_0(self):
+    def slot_0(self) -> UapPermissionField:
         """Permission field for pairing key slot 0 invalidate."""
         return self._get_slot_field(UAP_PKEY_INVALIDATE_SLOT_0_POS)
 
     @slot_0.setter
-    def slot_0(self, field):
+    def slot_0(self, field) -> None:
         self._set_slot_field(UAP_PKEY_INVALIDATE_SLOT_0_POS, field)
 
     @property
-    def slot_1(self):
+    def slot_1(self) -> UapPermissionField:
         """Permission field for pairing key slot 1 invalidate."""
         return self._get_slot_field(UAP_PKEY_INVALIDATE_SLOT_1_POS)
 
     @slot_1.setter
-    def slot_1(self, field):
+    def slot_1(self, field) -> None:
         self._set_slot_field(UAP_PKEY_INVALIDATE_SLOT_1_POS, field)
 
     @property
-    def slot_2(self):
+    def slot_2(self) -> UapPermissionField:
         """Permission field for pairing key slot 2 invalidate."""
         return self._get_slot_field(UAP_PKEY_INVALIDATE_SLOT_2_POS)
 
     @slot_2.setter
-    def slot_2(self, field):
+    def slot_2(self, field) -> None:
         self._set_slot_field(UAP_PKEY_INVALIDATE_SLOT_2_POS, field)
 
     @property
-    def slot_3(self):
+    def slot_3(self) -> UapPermissionField:
         """Permission field for pairing key slot 3 invalidate."""
         return self._get_slot_field(UAP_PKEY_INVALIDATE_SLOT_3_POS)
 
     @slot_3.setter
-    def slot_3(self, field):
+    def slot_3(self, field) -> None:
         self._set_slot_field(UAP_PKEY_INVALIDATE_SLOT_3_POS, field)
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         """Export fields as dictionary."""
         return {
             'slot_0': self.slot_0.to_dict(),
@@ -183,7 +183,7 @@ class PairingKeyInvalidateConfig(UapMultiSlotConfig):
             'slot_3': self.slot_3.to_dict()
         }
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Human-readable representation."""
         return "PairingKeyInvalidateConfig(slot_0={}, slot_1={}, slot_2={}, slot_3={})".format(
             self.slot_0, self.slot_1, self.slot_2, self.slot_3)
