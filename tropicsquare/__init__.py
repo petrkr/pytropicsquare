@@ -5,6 +5,7 @@ __license__ = "MIT"
 
 
 from tropicsquare.l2_protocol import L2Protocol
+from tropicsquare.transports import L1Transport
 from tropicsquare.constants import *
 from tropicsquare.constants.ecc import ECC_MAX_KEYS
 from tropicsquare.constants.get_info_req import *
@@ -46,7 +47,7 @@ class TropicSquare:
         raise TropicSquareError("Unsupported Python implementation: {}".format(sys.implementation.name))
 
 
-    def __init__(self, transport):
+    def __init__(self, transport: L1Transport) -> None:
         """Initialize TropicSquare base class.
 
             :param transport: L1Transport instance
@@ -144,7 +145,12 @@ class TropicSquare:
 
 
     @property
-    def fw_bank(self):
+    def fw_bank(self) -> bytes:
+        """Get firmware bank information.
+
+            :returns: Firmware bank data
+            :rtype: bytes
+        """
         return self._l2.get_info_req(GET_INFO_FW_BANK)
 
 
@@ -286,7 +292,12 @@ class TropicSquare:
         return result[3:]
 
 
-    def get_serial_code(self):
+    def get_serial_code(self) -> bytes:
+        """Get serial code from chip.
+
+            :returns: Serial code data
+            :rtype: bytes
+        """
         request_data = bytearray()
         request_data.append(CMD_ID_SERIAL_CODE_GET)
 
@@ -295,7 +306,7 @@ class TropicSquare:
         return result
 
 
-    def r_config_read(self, address):
+    def r_config_read(self, address: int):
         """Read and parse R-CONFIG register.
 
             :param address: Register address (use CFG_* constants from tropicsquare.constants.config)
@@ -319,7 +330,7 @@ class TropicSquare:
         return parse_config(address, result[3:])
 
 
-    def i_config_read(self, address):
+    def i_config_read(self, address: int):
         """Read and parse I-CONFIG register.
 
             :param address: Register address (use CFG_* constants from tropicsquare.constants.config)
@@ -646,7 +657,17 @@ class TropicSquare:
         return int.from_bytes(result[3:], "little")
 
 
-    def mac_and_destroy(self, slot, data):
+    def mac_and_destroy(self, slot: int, data: bytes) -> bytes:
+        """MAC and destroy operation.
+
+            :param slot: Memory slot index
+            :param data: Data to MAC
+
+            :returns: MAC result
+            :rtype: bytes
+
+            :raises ValueError: If slot exceeds maximum
+        """
         if slot > MAC_AND_DESTROY_MAX:
             raise ValueError("Slot is larger than ECC_MAX_KEYS")
 
@@ -685,7 +706,7 @@ class TropicSquare:
         raise NotImplementedError("Not implemented")
 
 
-    def _hkdf(self, salt, shared_secret, length):
+    def _hkdf(self, salt, shared_secret, length=1):
         raise NotImplementedError("Not implemented")
 
 
