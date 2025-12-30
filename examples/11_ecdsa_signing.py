@@ -33,7 +33,7 @@ Usage:
 
 import hashlib
 from tropicsquare import TropicSquare
-from tropicsquare.constants import ECC_CURVE_P256
+from tropicsquare.constants.ecc import ECC_CURVE_P256
 from tropicsquare.constants.pairing_keys import *
 from tropicsquare.exceptions import *
 
@@ -109,9 +109,9 @@ def main():
         # ======================================================================
         print("\n=== CHECKING FOR P256 KEY ===")
         try:
-            _, _, pubkey = ts.ecc_key_read(1)
+            key_info = ts.ecc_key_read(1)
             print(f"✓ Found P256 key in slot 1")
-            print(f"  Public key: {pubkey.hex()}")
+            print(f"  Public key: {key_info.public_key.hex()}")
         except TropicSquareError as e:
             print(f"\n❌ ERROR: No P256 key found in slot 1")
             print("Please run: python 10_ecc_key_management.py")
@@ -133,12 +133,12 @@ def main():
         # CREATE ECDSA SIGNATURE
         # ======================================================================
         print("\n=== SIGNING WITH ECDSA (P256) ===")
-        r, s = ts.ecdsa_sign(1, message_hash)
+        signature = ts.ecdsa_sign(1, message_hash)
 
-        print(f"Signature R: {r.hex()}")
-        print(f"Signature S: {s.hex()}")
-        print(f"R size:      {len(r)} bytes")
-        print(f"S size:      {len(s)} bytes")
+        print(f"Signature R: {signature.r.hex()}")
+        print(f"Signature S: {signature.s.hex()}")
+        print(f"R size:      {len(signature.r)} bytes")
+        print(f"S size:      {len(signature.s)} bytes")
 
         # ======================================================================
         # SUMMARY

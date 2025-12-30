@@ -103,6 +103,14 @@ tropicsquare.constants package
 Submodules
 """"""""""
 
+tropicsquare.constants.ecc module
+''''''''''''''''''''''''''''''''''
+
+.. automodule:: tropicsquare.constants.ecc
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 tropicsquare.constants.chip_status module
 ''''''''''''''''''''''''''''''''''''''''''
 
@@ -163,6 +171,25 @@ tropicsquare.error_mapping module
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. automodule:: tropicsquare.error_mapping
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+tropicsquare.ecc package
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: tropicsquare.ecc
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Submodules
+""""""""""
+
+tropicsquare.ecc.signature module
+''''''''''''''''''''''''''''''''''
+
+.. automodule:: tropicsquare.ecc.signature
    :members:
    :undoc-members:
    :show-inheritance:

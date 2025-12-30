@@ -32,7 +32,7 @@ Usage:
 """
 
 from tropicsquare import TropicSquare
-from tropicsquare.constants import ECC_CURVE_ED25519
+from tropicsquare.constants.ecc import ECC_CURVE_ED25519
 from tropicsquare.constants.pairing_keys import *
 from tropicsquare.exceptions import *
 
@@ -108,9 +108,9 @@ def main():
         # ======================================================================
         print("\n=== CHECKING FOR Ed25519 KEY ===")
         try:
-            _, _, pubkey = ts.ecc_key_read(0)
+            key_info = ts.ecc_key_read(0)
             print(f"✓ Found Ed25519 key in slot 0")
-            print(f"  Public key: {pubkey.hex()}")
+            print(f"  Public key: {key_info.public_key.hex()}")
         except TropicSquareError as e:
             print(f"\n❌ ERROR: No Ed25519 key found in slot 0")
             print("Please run: python 10_ecc_key_management.py")
@@ -131,12 +131,12 @@ def main():
         # CREATE EdDSA SIGNATURE
         # ======================================================================
         print("\n=== SIGNING WITH EdDSA (Ed25519) ===")
-        r, s = ts.eddsa_sign(0, message)
+        signature = ts.eddsa_sign(0, message)
 
-        print(f"Signature R: {r.hex()}")
-        print(f"Signature S: {s.hex()}")
-        print(f"R size:      {len(r)} bytes")
-        print(f"S size:      {len(s)} bytes")
+        print(f"Signature R: {signature.r.hex()}")
+        print(f"Signature S: {signature.s.hex()}")
+        print(f"R size:      {len(signature.r)} bytes")
+        print(f"S size:      {len(signature.s)} bytes")
 
         # ======================================================================
         # SUMMARY

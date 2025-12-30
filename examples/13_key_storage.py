@@ -35,7 +35,7 @@ Usage:
 """
 
 from tropicsquare import TropicSquare
-from tropicsquare.constants import ECC_CURVE_P256, ECC_CURVE_ED25519
+from tropicsquare.constants.ecc import ECC_CURVE_P256, ECC_CURVE_ED25519
 from tropicsquare.constants.pairing_keys import *
 from tropicsquare.exceptions import *
 
@@ -136,19 +136,19 @@ def main():
         # ======================================================================
         print("\n=== CHECKING SLOT 2 ===")
         try:
-            curve, origin, existing_pubkey = ts.ecc_key_read(2)
+            key_info = ts.ecc_key_read(2)
 
             # Determine curve name
-            if curve == ECC_CURVE_P256:
+            if key_info.curve == ECC_CURVE_P256:
                 curve_name = "P256"
-            elif curve == ECC_CURVE_ED25519:
+            elif key_info.curve == ECC_CURVE_ED25519:
                 curve_name = "Ed25519"
             else:
-                curve_name = f"Unknown (0x{curve:02x})"
+                curve_name = f"Unknown (0x{key_info.curve:02x})"
 
             print(f"⚠ WARNING: Slot 2 already contains a key")
             print(f"  Curve:      {curve_name}")
-            print(f"  Public key: {existing_pubkey.hex()}")
+            print(f"  Public key: {key_info.public_key.hex()}")
             print("\nTo import a new key, first erase the existing one:")
             print("  ts.ecc_key_erase(2)")
             print("\nSkipping import to preserve existing key.")
@@ -171,9 +171,9 @@ def main():
         print(f"✓ Key stored successfully")
 
         # Read back the public key
-        _, _, public_key = ts.ecc_key_read(2)
-        print(f"  Public key: {public_key.hex()}")
-        print(f"  Public key size: {len(public_key)} bytes")
+        key_info = ts.ecc_key_read(2)
+        print(f"  Public key: {key_info.public_key.hex()}")
+        print(f"  Public key size: {len(key_info.public_key)} bytes")
 
         # ======================================================================
         # VERIFY IMPORT
@@ -181,12 +181,12 @@ def main():
         print("\n=== VERIFYING IMPORT ===")
         print("Reading slot 2 again to confirm storage...")
 
-        _, curve_read, pubkey_verify = ts.ecc_key_read(2)
+        key_info_verify = ts.ecc_key_read(2)
 
         print(f"✓ Key verified in slot 2")
-        print(f"  Curve:      {curve_read} (P256)")
-        print(f"  Public key: {pubkey_verify.hex()}")
-        print(f"  Match:      {public_key == pubkey_verify}")
+        print(f"  Curve:      {key_info_verify.curve} (P256)")
+        print(f"  Public key: {key_info_verify.public_key.hex()}")
+        print(f"  Match:      {key_info.public_key == key_info_verify.public_key}")
 
         # ======================================================================
         # SUMMARY

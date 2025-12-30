@@ -6,11 +6,14 @@ __license__ = "MIT"
 
 from tropicsquare.l2_protocol import L2Protocol
 from tropicsquare.constants import *
+from tropicsquare.constants.ecc import ECC_MAX_KEYS
 from tropicsquare.constants.get_info_req import *
 from tropicsquare.exceptions import *
 from tropicsquare.error_mapping import raise_for_cmd_result
 from tropicsquare.chip_id import ChipId
 from tropicsquare.config import parse_config
+from tropicsquare.ecc import EccKeyInfo
+from tropicsquare.ecc.signature import EcdsaSignature, EddsaSignature
 
 from hashlib import sha256
 
@@ -457,15 +460,22 @@ class TropicSquare:
         return True
 
 
-    def ecc_key_read(self, slot : int) -> tuple:
-        """Read ECC key
+    def ecc_key_read(self, slot : int) -> EccKeyInfo:
+        """Read ECC key information from slot
 
             :param slot: Slot for key
 
-            :returns: Curve, origin, public key
-            :rtype: tuple
+            :returns: Key information with curve, origin, and public_key
+            :rtype: EccKeyInfo
 
             :raises ValueError: If slot is larger than ECC_MAX_KEYS
+
+            Example::
+
+                key_info = ts.ecc_key_read(0)
+                if key_info.curve == ECC_CURVE_ED25519:
+                    print("Ed25519 key")
+                print(key_info.public_key.hex())
         """
         if slot > ECC_MAX_KEYS:
             raise ValueError("Slot is larger than ECC_MAX_KEYS")
@@ -480,7 +490,7 @@ class TropicSquare:
         origin = result[1]
         pubkey = result[15:]
 
-        return curve, origin, pubkey
+        return EccKeyInfo(curve, origin, pubkey)
 
 
     def ecc_key_erase(self, slot : int) -> bool:
@@ -505,14 +515,24 @@ class TropicSquare:
         return True
 
 
-    def ecdsa_sign(self, slot : int, hash : bytes) -> tuple:
-        """Sign hash with ECC key
+    def ecdsa_sign(self, slot : int, hash : bytes) -> EcdsaSignature:
+        """Sign hash with ECDSA using P256 key
 
-            :param slot: Slot with ECC key (ECC_CURVE_P256)
-            :param hash: Hash to sign
+            :param slot: Slot with P256 ECC key
+            :param hash: Hash to sign (32 bytes)
 
-            :returns: R and S values of the signature
-            :rtype: tuple
+            :returns: ECDSA signature
+            :rtype: EcdsaSignature
+
+            :raises ValueError: If slot is larger than ECC_MAX_KEYS
+
+            Example::
+
+                import hashlib
+                message_hash = hashlib.sha256(b"Hello").digest()
+                signature = ts.ecdsa_sign(1, message_hash)
+                print(signature.r.hex())
+                print(signature.s.hex())
         """
         if slot > ECC_MAX_KEYS:
             raise ValueError("Slot is larger than ECC_MAX_KEYS")
@@ -528,17 +548,23 @@ class TropicSquare:
         sign_r = result[15:47]
         sign_s = result[47:]
 
-        return sign_r, sign_s
+        return EcdsaSignature(sign_r, sign_s)
 
 
-    def eddsa_sign(self, slot : int, message : bytes) -> tuple:
-        """Sign message with ECC key
+    def eddsa_sign(self, slot : int, message : bytes) -> EddsaSignature:
+        """Sign message with EdDSA using Ed25519 key
 
-            :param slot: Slot with ECC key (ECC_CURVE_ED25519)
-            :param message: Message
+            :param slot: Slot with Ed25519 ECC key
+            :param message: Message to sign
 
-            :returns: R and S values of the signature
-            :rtype: tuple
+            :returns: EdDSA signature
+            :rtype: EddsaSignature
+
+            Example::
+
+                signature = ts.eddsa_sign(0, message)
+                print(signature.r.hex())
+                print(signature.s.hex())
         """
         if slot > ECC_MAX_KEYS:
             raise ValueError("Slot is larger than ECC_MAX_KEYS")
@@ -554,7 +580,7 @@ class TropicSquare:
         sign_r = result[15:47]
         sign_s = result[47:]
 
-        return sign_r, sign_s
+        return EddsaSignature(sign_r, sign_s)
 
 
     def mcounter_init(self, index : int, value : int) -> bool:

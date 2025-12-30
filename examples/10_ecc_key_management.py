@@ -34,7 +34,7 @@ Usage:
 """
 
 from tropicsquare import TropicSquare
-from tropicsquare.constants import ECC_CURVE_P256, ECC_CURVE_ED25519
+from tropicsquare.constants.ecc import ECC_CURVE_P256, ECC_CURVE_ED25519
 from tropicsquare.constants.pairing_keys import *
 from tropicsquare.exceptions import *
 
@@ -111,16 +111,16 @@ def main():
         print("\n=== CHECKING SLOT 0 (Ed25519) ===")
         try:
             # Try to read existing key
-            _, _, pubkey = ts.ecc_key_read(0)
+            key_info = ts.ecc_key_read(0)
             print(f"✓ Key already exists in slot 0")
-            print(f"  Public key: {pubkey.hex()}")
+            print(f"  Public key: {key_info.public_key.hex()}")
         except TropicSquareError:
             # Slot is empty, generate new key
             print("Slot 0 is empty, generating Ed25519 key...")
             ts.ecc_key_generate(0, ECC_CURVE_ED25519)
-            _, _, pubkey = ts.ecc_key_read(0)
+            key_info = ts.ecc_key_read(0)
             print(f"✓ Ed25519 key generated successfully")
-            print(f"  Public key: {pubkey.hex()}")
+            print(f"  Public key: {key_info.public_key.hex()}")
 
         # ======================================================================
         # SLOT 1: P256 Key (for ECDSA signing)
@@ -128,16 +128,16 @@ def main():
         print("\n=== CHECKING SLOT 1 (P256) ===")
         try:
             # Try to read existing key
-            _, _, pubkey = ts.ecc_key_read(1)
+            key_info = ts.ecc_key_read(1)
             print(f"✓ Key already exists in slot 1")
-            print(f"  Public key: {pubkey.hex()}")
+            print(f"  Public key: {key_info.public_key.hex()}")
         except TropicSquareError:
             # Slot is empty, generate new key
             print("Slot 1 is empty, generating P256 key...")
             ts.ecc_key_generate(1, ECC_CURVE_P256)
-            _, _, pubkey = ts.ecc_key_read(1)
+            key_info = ts.ecc_key_read(1)
             print(f"✓ P256 key generated successfully")
-            print(f"  Public key: {pubkey.hex()}")
+            print(f"  Public key: {key_info.public_key.hex()}")
 
         # ======================================================================
         # SUMMARY
