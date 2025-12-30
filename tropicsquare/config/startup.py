@@ -21,7 +21,7 @@ class StartUpConfig(BaseConfig):
     """
 
     @property
-    def mbist_dis(self):
+    def mbist_dis(self) -> bool:
         """Memory BIST disable flag.
 
         When True, memory built-in self-test is disabled during startup.
@@ -33,14 +33,14 @@ class StartUpConfig(BaseConfig):
         return bool((self._value >> STARTUP_MBIST_DIS_BIT) & 1)
 
     @mbist_dis.setter
-    def mbist_dis(self, value):
+    def mbist_dis(self, value: bool) -> None:
         if value:
             self._value |= (1 << STARTUP_MBIST_DIS_BIT)
         else:
             self._value &= ~(1 << STARTUP_MBIST_DIS_BIT)
 
     @property
-    def rngtest_dis(self):
+    def rngtest_dis(self) -> bool:
         """RNG test disable flag.
 
         When True, random number generator test is disabled during startup.
@@ -52,14 +52,14 @@ class StartUpConfig(BaseConfig):
         return bool((self._value >> STARTUP_RNGTEST_DIS_BIT) & 1)
 
     @rngtest_dis.setter
-    def rngtest_dis(self, value):
+    def rngtest_dis(self, value: bool) -> None:
         if value:
             self._value |= (1 << STARTUP_RNGTEST_DIS_BIT)
         else:
             self._value &= ~(1 << STARTUP_RNGTEST_DIS_BIT)
 
     @property
-    def maintenance_ena(self):
+    def maintenance_ena(self) -> bool:
         """Maintenance mode enable flag.
 
         When True, chip boots into maintenance mode instead of
@@ -72,13 +72,13 @@ class StartUpConfig(BaseConfig):
         return bool((self._value >> STARTUP_MAINTENANCE_ENA_BIT) & 1)
 
     @maintenance_ena.setter
-    def maintenance_ena(self, value):
+    def maintenance_ena(self, value: bool) -> None:
         if value:
             self._value |= (1 << STARTUP_MAINTENANCE_ENA_BIT)
         else:
             self._value &= ~(1 << STARTUP_MAINTENANCE_ENA_BIT)
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         """Export fields as dictionary.
 
             :returns: Configuration fields and their values
@@ -90,7 +90,7 @@ class StartUpConfig(BaseConfig):
             'maintenance_ena': self.maintenance_ena
         }
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Human-readable representation."""
         return "StartUpConfig(mbist_dis={}, rngtest_dis={}, maintenance_ena={})".format(
             self.mbist_dis, self.rngtest_dis, self.maintenance_ena)

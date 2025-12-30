@@ -16,7 +16,7 @@ class BaseConfig:
         _value: 32-bit integer holding the raw configuration value
     """
 
-    def __init__(self, value=0xFFFFFFFF):
+    def __init__(self, value: int = 0xFFFFFFFF) -> None:
         """Initialize config object.
 
             :param value: 32-bit configuration value (default: 0xFFFFFFFF)
@@ -24,7 +24,7 @@ class BaseConfig:
         self._value = value
 
     @classmethod
-    def from_bytes(cls, data):
+    def from_bytes(cls, data: bytes):
         """Create config object from raw bytes.
 
             :param data: 4 bytes in big-endian format
@@ -39,7 +39,7 @@ class BaseConfig:
         value = int.from_bytes(data, 'big')
         return cls(value)
 
-    def to_bytes(self):
+    def to_bytes(self) -> bytes:
         """Convert config object to raw bytes.
 
             :returns: 4 bytes in big-endian format
@@ -47,7 +47,7 @@ class BaseConfig:
         """
         return self._value.to_bytes(4, 'big')
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         """Export configuration fields as dictionary.
 
             :returns: Dictionary mapping field names to values
@@ -57,11 +57,11 @@ class BaseConfig:
         """
         raise NotImplementedError("Subclasses must implement to_dict()")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Machine-readable representation."""
         return "{}(0x{:08x})".format(self.__class__.__name__, self._value)
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Human-readable representation.
 
         Default implementation shows class name and hex value.

@@ -100,7 +100,7 @@ from tropicsquare.constants.config import (
 )
 
 
-def parse_config(register, data):
+def parse_config(register: int, data: bytes) -> BaseConfig:
     """Parse config data into appropriate Config object.
 
         Factory function that creates the correct config object type
