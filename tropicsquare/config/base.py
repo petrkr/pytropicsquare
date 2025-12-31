@@ -24,13 +24,12 @@ class BaseConfig:
         self._value = value
 
     @classmethod
-    def from_bytes(cls, data: bytes):
+    def from_bytes(cls, data: bytes) -> 'BaseConfig':
         """Create config object from raw bytes.
 
             :param data: 4 bytes in big-endian format
 
             :returns: New config object instance
-            :rtype: BaseConfig
 
             :raises ValueError: If data is not exactly 4 bytes
         """
@@ -43,7 +42,6 @@ class BaseConfig:
         """Convert config object to raw bytes.
 
             :returns: 4 bytes in big-endian format
-            :rtype: bytes
         """
         return self._value.to_bytes(4, 'big')
 

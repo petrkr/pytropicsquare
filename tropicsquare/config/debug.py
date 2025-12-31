@@ -17,9 +17,9 @@ class DebugConfig(BaseConfig):
     def fw_log_en(self) -> bool:
         """Firmware logging enable flag.
 
-        When True, firmware logging is enabled. Logs can be retrieved
-        using appropriate debug commands.
-        Default: False (logging disabled)
+            When True, firmware logging is enabled. Logs can be retrieved
+            using appropriate debug commands.
+            Default: False (logging disabled)
 
             :returns: True if firmware logging is enabled
             :rtype: bool

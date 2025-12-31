@@ -18,7 +18,6 @@ class GpoConfig(BaseConfig):
         """GPO function selection (3-bit value).
 
             :returns: Function code (0-7)
-            :rtype: int
         """
         return (self._value >> GPO_FUNC_POS) & GPO_FUNC_MASK
 
@@ -39,7 +38,6 @@ class GpoConfig(BaseConfig):
         """Export fields as dictionary.
 
             :returns: Configuration fields and their values
-            :rtype: dict
         """
         return {
             'gpo_func': self.gpo_func

@@ -3,7 +3,7 @@
 These classes control permissions for various TROPIC01 operations.
 """
 
-from tropicsquare.config.uap_base import UapSingleFieldConfig, UapDualFieldConfig
+from tropicsquare.config.uap_base import UapDualFieldConfig
 
 
 class PingConfig(UapDualFieldConfig):

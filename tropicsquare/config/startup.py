@@ -24,11 +24,10 @@ class StartUpConfig(BaseConfig):
     def mbist_dis(self) -> bool:
         """Memory BIST disable flag.
 
-        When True, memory built-in self-test is disabled during startup.
-        Default: False (BIST enabled)
+            When True, memory built-in self-test is disabled during startup.
+            Default: False (BIST enabled)
 
             :returns: True if MBIST is disabled
-            :rtype: bool
         """
         return bool((self._value >> STARTUP_MBIST_DIS_BIT) & 1)
 
@@ -43,11 +42,10 @@ class StartUpConfig(BaseConfig):
     def rngtest_dis(self) -> bool:
         """RNG test disable flag.
 
-        When True, random number generator test is disabled during startup.
-        Default: False (RNG test enabled)
+            When True, random number generator test is disabled during startup.
+            Default: False (RNG test enabled)
 
             :returns: True if RNG test is disabled
-            :rtype: bool
         """
         return bool((self._value >> STARTUP_RNGTEST_DIS_BIT) & 1)
 
@@ -62,12 +60,11 @@ class StartUpConfig(BaseConfig):
     def maintenance_ena(self) -> bool:
         """Maintenance mode enable flag.
 
-        When True, chip boots into maintenance mode instead of
-        normal application mode.
-        Default: False (normal boot)
+            When True, chip boots into maintenance mode instead of
+            normal application mode.
+            Default: False (normal boot)
 
             :returns: True if maintenance mode is enabled
-            :rtype: bool
         """
         return bool((self._value >> STARTUP_MAINTENANCE_ENA_BIT) & 1)
 
@@ -82,7 +79,6 @@ class StartUpConfig(BaseConfig):
         """Export fields as dictionary.
 
             :returns: Configuration fields and their values
-            :rtype: dict
         """
         return {
             'mbist_dis': self.mbist_dis,

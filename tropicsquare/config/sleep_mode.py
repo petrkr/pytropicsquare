@@ -17,11 +17,10 @@ class SleepModeConfig(BaseConfig):
     def sleep_mode_en(self) -> bool:
         """Sleep mode enable flag.
 
-        When True, the chip can enter sleep mode for power saving.
-        Default: False (sleep mode disabled)
+            When True, the chip can enter sleep mode for power saving.
+            Default: False (sleep mode disabled)
 
             :returns: True if sleep mode is enabled
-            :rtype: bool
         """
         return bool((self._value >> SLEEP_MODE_EN_BIT) & 1)
 
@@ -36,7 +35,6 @@ class SleepModeConfig(BaseConfig):
         """Export fields as dictionary.
 
             :returns: Configuration fields and their values
-            :rtype: dict
         """
         return {
             'sleep_mode_en': self.sleep_mode_en

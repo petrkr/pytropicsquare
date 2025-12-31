@@ -1,12 +1,6 @@
 """Base classes and helpers for User Access Policy (UAP) configuration"""
 
 from tropicsquare.config.base import BaseConfig
-from tropicsquare.config.constants import (
-    UAP_PKEY_SLOT_0_BIT,
-    UAP_PKEY_SLOT_1_BIT,
-    UAP_PKEY_SLOT_2_BIT,
-    UAP_PKEY_SLOT_3_BIT
-)
 
 
 class UapPermissionField:
@@ -34,7 +28,6 @@ class UapPermissionField:
             :param slot: Slot number (0-3)
 
             :returns: True if slot has access
-            :rtype: bool
         """
         if not 0 <= slot <= 3:
             raise ValueError("Slot must be 0-3, got {}".format(slot))
@@ -124,7 +117,7 @@ class UapMultiSlotConfig(BaseConfig):
     Used for configs that have 4 slots, each with 8-bit permission field.
     """
 
-    def _get_slot_field(self, slot_pos):
+    def _get_slot_field(self, slot_pos: int) -> UapPermissionField:
         """Get 8-bit permission field at slot position.
 
             :param slot_pos: Bit position of slot (0, 8, 16, or 24)
@@ -135,7 +128,7 @@ class UapMultiSlotConfig(BaseConfig):
         field_value = (self._value >> slot_pos) & 0xFF
         return UapPermissionField(field_value)
 
-    def _set_slot_field(self, slot_pos, field):
+    def _set_slot_field(self, slot_pos: int, field: UapPermissionField) -> None:
         """Set 8-bit permission field at slot position.
 
             :param slot_pos: Bit position of slot (0, 8, 16, or 24)
