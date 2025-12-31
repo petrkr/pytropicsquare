@@ -5,14 +5,19 @@ for https://github.com/petrkr/netbridge32 SPI bridge
 """
 
 from tropicsquare.transports import L1Transport
+from tropicsquare.exceptions import TropicSquareError
 
 import socket
 
 class NetworkSpiTransport(L1Transport):
     """L1 transport for network-based SPI bridge.
 
-    :param host: Hostname or IP address of the SPI bridge
-    :param port: Port number for the SPI connection
+        :param host: Hostname or IP address of the SPI bridge
+        :type host: str
+        :param port: Port number for the SPI connection (default: 12345)
+        :type port: int
+        :param timeout: Socket timeout in seconds (default: 5.0)
+        :type timeout: float
     """
 
     COMMAND_READ = b'\x01'
@@ -21,12 +26,27 @@ class NetworkSpiTransport(L1Transport):
     COMMAND_CS_LOW = b'\x10'
     COMMAND_CS_HIGH = b'\x20'
 
-    def __init__(self, host, port):
+    def __init__(self, host: str, port: int = 12345, timeout: float = 5.0):
         """Initialize Network SPI transport.
 
         :param host: Hostname or IP address of the SPI bridge
-        :param port: Port number for the SPI connection
+        :type host: str
+        :param port: Port number for the SPI connection (default: 12345)
+        :type port: int
+        :param timeout: Socket timeout in seconds (default: 5.0)
+        :type timeout: float
         """
+        try:
+            hostport = socket.getaddrinfo(host, port)
+            self._sock = socket.socket()
+            self._sock.settimeout(timeout)
+            self._sock.connect(hostport[0][-1])
+        except Exception as e:
+            self._sock.close()
+            raise TropicSquareError(
+                f"Failed to connect to {host}:{port}: {e}"
+            )
+
         hostport = socket.getaddrinfo(host, port)
         self._sock = socket.socket()
         self._sock.connect(hostport[0][-1])
