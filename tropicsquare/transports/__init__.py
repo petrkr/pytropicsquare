@@ -22,7 +22,7 @@ class L1Transport():
     """
 
     def send_request(self, request_data: bytes) -> bytes:
-        """Send request to chip and return chip status.
+        """Send request to chip and return response bytes.
 
         :param request_data: Complete request frame (with CRC)
         :type request_data: bytes
