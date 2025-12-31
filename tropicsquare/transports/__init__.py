@@ -5,8 +5,6 @@ This module provides the base class for L1 transport implementations.
 
 from time import sleep
 
-from tropicsquare.constants.chip_status import CHIP_STATUS_READY
-from tropicsquare.exceptions import TropicSquareError
 from tropicsquare.constants.chip_status import CHIP_STATUS_NOT_READY, CHIP_STATUS_BUSY, CHIP_STATUS_ALARM
 from tropicsquare.constants.l1 import REQ_ID_GET_RESPONSE, MAX_RETRIES
 from tropicsquare.constants.rsp_status import RSP_STATUS_RES_CONT
