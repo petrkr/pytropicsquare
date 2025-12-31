@@ -1,9 +1,12 @@
 """
 TropicSquare Factory Pairing Keys
 =================================
+
 This module defines the factory pairing keys used for TropicSquare chips.
 It includes predefined keys for engineering samples and production units.
+
 Main exports:
+
     - FACTORY_PAIRING_KEY_INDEX: Default key index for factory pairing
     - FACTORY_PAIRING_PRIVATE_KEY_ENG_SAMPLE: Private key for engineering samples
     - FACTORY_PAIRING_PUBLIC_KEY_ENG_SAMPLE: Public key for engineering samples
