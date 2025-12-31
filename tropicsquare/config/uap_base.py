@@ -139,12 +139,9 @@ class UapMultiSlotConfig(BaseConfig):
         """Set 8-bit permission field at slot position.
 
             :param slot_pos: Bit position of slot (0, 8, 16, or 24)
-            :param field: UapPermissionField or int (8-bit value)
+            :param field: UapPermissionField object
         """
-        if isinstance(field, UapPermissionField):
-            field_value = field.value
-        else:
-            field_value = field & 0xFF
+        field_value = field.value
 
         # Clear existing field and set new value
         mask = 0xFF << slot_pos
@@ -165,13 +162,9 @@ class UapSingleFieldConfig(BaseConfig):
         return UapPermissionField(field_value)
 
     @permissions.setter
-    def permissions(self, field) -> None:
+    def permissions(self, field: UapPermissionField) -> None:
         """Set permission field."""
-        if isinstance(field, UapPermissionField):
-            field_value = field.value
-        else:
-            field_value = field & 0xFF
-        self._value = (self._value & ~0xFF) | field_value
+        self._value = (self._value & ~0xFF) | field.value
 
     def to_dict(self) -> dict:
         """Export as dictionary."""
@@ -194,13 +187,9 @@ class UapDualFieldConfig(BaseConfig):
         return UapPermissionField(field_value)
 
     @cfg_permissions.setter
-    def cfg_permissions(self, field) -> None:
+    def cfg_permissions(self, field: UapPermissionField) -> None:
         """Set CFG permission field."""
-        if isinstance(field, UapPermissionField):
-            field_value = field.value
-        else:
-            field_value = field & 0xFF
-        self._value = (self._value & ~0xFF) | field_value
+        self._value = (self._value & ~0xFF) | field.value
 
     @property
     def func_permissions(self) -> UapPermissionField:
@@ -209,13 +198,9 @@ class UapDualFieldConfig(BaseConfig):
         return UapPermissionField(field_value)
 
     @func_permissions.setter
-    def func_permissions(self, field) -> None:
+    def func_permissions(self, field: UapPermissionField) -> None:
         """Set FUNC permission field."""
-        if isinstance(field, UapPermissionField):
-            field_value = field.value
-        else:
-            field_value = field & 0xFF
-        self._value = (self._value & ~0xFF00) | (field_value << 8)
+        self._value = (self._value & ~0xFF00) | (field.value << 8)
 
     def to_dict(self) -> dict:
         """Export as dictionary."""
