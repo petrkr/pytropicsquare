@@ -1,20 +1,22 @@
 """L2 Protocol Layer for TROPIC01 Secure Element
 
-This module implements the L2 (Link Layer) protocol for communication
-with the TROPIC01 chip. It handles low-level SPI communication, CRC
-validation, retry logic, and message framing.
+    This module implements the L2 (Link Layer) protocol for communication
+    with the TROPIC01 chip. It handles low-level SPI communication, CRC
+    validation, retry logic, and message framing.
 
-The L2 layer is responsible for:
-- SPI bus communication and chip select management
-- Request/response framing and CRC validation
-- Chip status monitoring and retry logic
-- Encrypted command transmission
-- Session handshake protocol
+    The L2 layer is responsible for:
 
-The L2 layer does NOT handle:
-- Cryptographic operations (delegated to parent)
-- Command parsing/building (done by L3 layer)
-- Session state management (done by TropicSquare)
+        - SPI bus communication and chip select management
+        - Request/response framing and CRC validation
+        - Chip status monitoring and retry logic
+        - Encrypted command transmission
+        - Session handshake protocol
+
+    The L2 layer does NOT handle:
+
+        - Cryptographic operations (delegated to parent)
+        - Command parsing/building (done by L3 layer)
+        - Session state management (done by TropicSquare)
 """
 
 from tropicsquare.crc import CRC
@@ -27,15 +29,16 @@ from tropicsquare.exceptions import TropicSquareResponseError
 class L2Protocol:
     """L2 protocol layer implementation.
 
-    Provides low-level chip communication primitives for the TROPIC01
-    secure element. This class handles SPI communication, framing,
-    CRC validation, and chip state management.
+        Provides low-level chip communication primitives for the TROPIC01
+        secure element. This class handles SPI communication, framing,
+        CRC validation, and chip state management.
     """
 
     def __init__(self, transport: L1Transport) -> None:
         """Initialize L2 protocol layer.
 
-            :param transport: L1Transport instance
+            :param transport: Transport instance
+            :type transport: L1Transport
         """
         self._transport = transport
 
@@ -43,8 +46,8 @@ class L2Protocol:
     def get_info_req(self, object_id: int, req_data_chunk: int = GET_INFO_DATA_CHUNK_0_127) -> bytes:
         """Request information object from chip.
 
-        Sends GET_INFO request to retrieve chip information like certificate,
-        chip ID, firmware version, etc.
+            Sends GET_INFO request to retrieve chip information like certificate,
+            chip ID, firmware version, etc.
 
             :param object_id: Information object type to retrieve
             :param req_data_chunk: Data chunk selector (for objects > 128 bytes)
@@ -61,8 +64,8 @@ class L2Protocol:
     def handshake_req(self, ehpub: bytes, p_keyslot: int) -> tuple:
         """Perform secure session handshake.
 
-        Sends ephemeral public key to chip and receives chip's ephemeral
-        public key and authentication tag.
+            Sends ephemeral public key to chip and receives chip's ephemeral
+            public key and authentication tag.
 
             :param ehpub: Ephemeral public key (32 bytes)
             :param p_keyslot: Pairing key slot index (0-3)
@@ -95,8 +98,8 @@ class L2Protocol:
     def encrypted_command(self, command_size: int, command_ciphertext: bytes, command_tag: bytes) -> tuple:
         """Send encrypted L3 command to chip.
 
-        Handles chunking of large commands (> 128 bytes) and sends them
-        to the chip. Returns encrypted response.
+            Handles chunking of large commands (> 128 bytes) and sends them
+            to the chip. Returns encrypted response.
 
             :param command_size: Size of command ciphertext
             :param command_ciphertext: Encrypted command data
@@ -142,7 +145,7 @@ class L2Protocol:
     def encrypted_session_abt(self) -> bool:
         """Abort encrypted session.
 
-        Terminates the current secure session with the chip.
+            Terminates the current secure session with the chip.
 
             :returns: True on success
             :rtype: bool
