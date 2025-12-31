@@ -7,7 +7,7 @@ __license__ = "MIT"
 from tropicsquare.l2_protocol import L2Protocol
 from tropicsquare.transports import L1Transport
 from tropicsquare.constants import *
-from tropicsquare.constants.ecc import ECC_MAX_KEYS
+from tropicsquare.constants.ecc import ECC_MAX_KEYS, ECC_CURVE_P256, ECC_CURVE_ED25519
 from tropicsquare.constants.get_info_req import *
 from tropicsquare.exceptions import *
 from tropicsquare.error_mapping import raise_for_cmd_result
