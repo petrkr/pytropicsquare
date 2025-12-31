@@ -52,6 +52,14 @@ tropicsquare.transports.network module
    :undoc-members:
    :show-inheritance:
 
+tropicsquare.transports.tcp module
+""""""""""""""""""""""""""""""""""""""
+
+.. automodule:: tropicsquare.transports.tcp
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 tropicsquare.ports.cpython module
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
