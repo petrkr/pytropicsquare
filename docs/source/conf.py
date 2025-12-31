@@ -20,9 +20,11 @@ release = '0.0.1'
 
 extensions = [
     'sphinx.ext.autodoc',
+    'sphinx.ext.autosummary',
     'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
+    'sphinx.ext.intersphinx',
     'myst_parser',
 ]
 
@@ -48,11 +50,29 @@ autodoc_default_options = {
     'member-order': 'bysource',
     'special-members': '__init__',
     'undoc-members': True,
-    'exclude-members': '__weakref__'
+    'exclude-members': '__weakref__',
+    'show-inheritance': True,
 }
+
+# Type hints settings
+autodoc_typehints = 'description'  # Show type hints in parameter descriptions
+autodoc_type_aliases = {
+    'L1Transport': 'tropicsquare.transports.L1Transport',
+}
+python_use_unqualified_type_names = True
+
+# Autosummary settings
+autosummary_generate = True
+autosummary_imported_members = False
 
 # Mock imports for MicroPython modules (not available in CPython)
 autodoc_mock_imports = ['machine', 'micropython', 'utime', 'ubinascii', 'ucryptolib']
+
+# Intersphinx mapping for cross-references to external documentation
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/3', None),
+    'cryptography': ('https://cryptography.io/en/latest/', None),
+}
 
 templates_path = ['_templates']
 exclude_patterns = []
@@ -65,11 +85,12 @@ try:
     import sphinx_rtd_theme
     html_theme = 'sphinx_rtd_theme'
     html_theme_options = {
-        'navigation_depth': 4,
+        'navigation_depth': 5,
         'collapse_navigation': False,
         'sticky_navigation': True,
         'includehidden': True,
-        'titles_only': False
+        'titles_only': False,
+        'prev_next_buttons_location': 'both',
     }
 except ImportError:
     html_theme = 'pyramid'  # Better fallback theme - clean and modern
