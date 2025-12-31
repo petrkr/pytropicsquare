@@ -21,27 +21,20 @@ class L1Transport():
     Platform-specific classes implement only abstract low-level methods.
     """
 
-    def send_request(self, request_data: bytes) -> int:
+    def send_request(self, request_data: bytes) -> bytes:
         """Send request to chip and return chip status.
 
         :param request_data: Complete request frame (with CRC)
         :type request_data: bytes
-        :returns: Chip status byte
-        :rtype: int
-        :raises TropicSquareError: If chip status is not READY
+        :returns: Response bytes
+        :rtype: bytes
         """
 
         self._cs_low()
         rx_data = self._transfer(request_data)
         self._cs_high()
 
-        chip_status = rx_data[0]
-        if chip_status != CHIP_STATUS_READY:
-            raise TropicSquareError(
-                f"Chip status is not ready (status: {hex(chip_status)})"
-            )
-
-        return chip_status
+        return rx_data
 
 
     def get_response(self) -> bytes:
