@@ -60,6 +60,7 @@ autodoc_type_aliases = {
     'L1Transport': 'tropicsquare.transports.L1Transport',
 }
 python_use_unqualified_type_names = True
+autodoc_preserve_defaults = True  # Preserve hex literals like 0xFFFFFFFF instead of converting to decimal
 
 # Autosummary settings
 autosummary_generate = True
