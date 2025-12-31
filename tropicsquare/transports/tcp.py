@@ -56,11 +56,8 @@ class TcpTransport(L1Transport):
     - ``_read()`` → TAG_SPI_SEND (0x03) with dummy bytes
 
     :param host: Hostname or IP address of the model server
-    :type host: str
     :param port: Port number for the TCP connection (default: 28992)
-    :type port: int
     :param timeout: Socket timeout in seconds (default: 5.0)
-    :type timeout: float
 
     :raises TropicSquareError: If connection fails
 
@@ -89,11 +86,8 @@ class TcpTransport(L1Transport):
         """Initialize TCP transport.
 
         :param host: Hostname or IP address of the model server
-        :type host: str
         :param port: Port number for the TCP connection (default: 28992)
-        :type port: int
         :param timeout: Socket timeout in seconds (default: 5.0)
-        :type timeout: float
 
         :raises TropicSquareError: If connection fails
         """
@@ -116,10 +110,8 @@ class TcpTransport(L1Transport):
         Sends tx_data and receives same number of bytes back.
 
         :param tx_data: Data to transmit
-        :type tx_data: bytes
 
         :returns: Received data (same length as tx_data)
-        :rtype: bytes
 
         :raises TropicSquareError: If transfer length mismatch occurs
         """
@@ -141,10 +133,8 @@ class TcpTransport(L1Transport):
         Sends dummy bytes (all zeros) and reads response.
 
         :param length: Number of bytes to read
-        :type length: int
 
         :returns: Read data
-        :rtype: bytes
         """
         # Send dummy bytes (all zeros) to clock out data
         return self._communicate(self.TAG_SPI_SEND, bytes(length))
@@ -170,7 +160,6 @@ class TcpTransport(L1Transport):
         """Send all data with retry logic.
 
         :param data: Data to send
-        :type data: bytes
 
         :raises TropicSquareError: If send fails
         :raises TropicSquareTimeoutError: If send times out after retries
@@ -203,10 +192,8 @@ class TcpTransport(L1Transport):
         """Receive exactly num_bytes with retry logic.
 
         :param num_bytes: Number of bytes to receive
-        :type num_bytes: int
 
         :returns: Received data
-        :rtype: bytes
 
         :raises TropicSquareError: If receive fails or connection lost
         :raises TropicSquareTimeoutError: If receive times out after retries
@@ -250,12 +237,9 @@ class TcpTransport(L1Transport):
         6. Return payload data
 
         :param tag: Protocol tag (TAG_CSN_LOW, TAG_CSN_HIGH, TAG_SPI_SEND, etc.)
-        :type tag: int
         :param tx_payload: Optional payload data (max 256 bytes)
-        :type tx_payload: bytes
 
         :returns: Response payload (or empty bytes if no payload)
-        :rtype: bytes
 
         :raises TropicSquareError: On protocol or network errors
         :raises TropicSquareTimeoutError: On timeout

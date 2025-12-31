@@ -13,11 +13,8 @@ class NetworkSpiTransport(L1Transport):
     """L1 transport for network-based SPI bridge.
 
         :param host: Hostname or IP address of the SPI bridge
-        :type host: str
         :param port: Port number for the SPI connection (default: 12345)
-        :type port: int
         :param timeout: Socket timeout in seconds (default: 5.0)
-        :type timeout: float
     """
 
     COMMAND_READ = b'\x01'
@@ -30,11 +27,8 @@ class NetworkSpiTransport(L1Transport):
         """Initialize Network SPI transport.
 
         :param host: Hostname or IP address of the SPI bridge
-        :type host: str
         :param port: Port number for the SPI connection (default: 12345)
-        :type port: int
         :param timeout: Socket timeout in seconds (default: 5.0)
-        :type timeout: float
         """
         try:
             hostport = socket.getaddrinfo(host, port)
@@ -52,7 +46,7 @@ class NetworkSpiTransport(L1Transport):
         self._sock.connect(hostport[0][-1])
 
 
-    def _transfer(self, write_buf):
+    def _transfer(self, write_buf: bytes) -> bytes:
         command = self.COMMAND_WRITE_READINTO
         data = bytes(write_buf)
         length = len(data)
@@ -69,7 +63,7 @@ class NetworkSpiTransport(L1Transport):
         return received
 
 
-    def _read(self, length):
+    def _read(self, length: int) -> bytes:
         command = self.COMMAND_READ
         packet = command + length.to_bytes(4, 'big')
         self._sock.send(packet)

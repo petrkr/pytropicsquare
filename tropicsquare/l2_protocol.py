@@ -38,7 +38,6 @@ class L2Protocol:
         """Initialize L2 protocol layer.
 
             :param transport: Transport instance
-            :type transport: L1Transport
         """
         self._transport = transport
 

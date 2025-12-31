@@ -15,7 +15,6 @@ class TropicSquareCPython(TropicSquare):
         """Initialize TropicSquare for CPython.
 
         :param transport: L1 transport instance
-        :type transport: L1Transport
         """
 
         super().__init__(transport)

@@ -13,7 +13,7 @@ class UartTransport(L1Transport):
     """
 
 
-    def __init__(self, port, baudrate=115200):
+    def __init__(self, port: str, baudrate: int = 115200):
         """Initialize UART transport.
 
         :param port: UART port name (e.g. /dev/ttyACM0)
@@ -45,9 +45,8 @@ class UartTransport(L1Transport):
         """SPI transfer using write_readinto.
 
         :param tx_data: Data to transmit
-        :type tx_data: bytes
+
         :returns: Received data
-        :rtype: bytes
         """
         # Write data
         hex_data = tx_data.hex().upper() + "x\n"
@@ -65,9 +64,8 @@ class UartTransport(L1Transport):
         """SPI read operation.
 
         :param length: Number of bytes to read
-        :type length: int
+
         :returns: Read data
-        :rtype: bytes
         """
         # Send read command with length of dummy bytes
         self._port.write(b"00" * length + b"x\n")

@@ -23,9 +23,8 @@ class L1Transport():
         """Send request to chip and return response bytes.
 
         :param request_data: Complete request frame (with CRC)
-        :type request_data: bytes
+
         :returns: Response bytes
-        :rtype: bytes
         """
 
         self._cs_low()
@@ -106,9 +105,8 @@ class L1Transport():
         Corresponds to SPI write_readinto operation.
 
         :param tx_data: Data to transmit
-        :type tx_data: bytes
+
         :returns: Received data (same length as tx_data)
-        :rtype: bytes
         """
         raise NotImplementedError("_transfer() method not implemented in L1Transport subclass")
 
@@ -119,9 +117,8 @@ class L1Transport():
         Corresponds to SPI read operation.
 
         :param length: Number of bytes to read
-        :type length: int
+
         :returns: Read data
-        :rtype: bytes
         """
         raise NotImplementedError("_read() method not implemented in L1Transport subclass")
 

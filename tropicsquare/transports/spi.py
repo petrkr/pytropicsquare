@@ -18,7 +18,9 @@ class SpiTransport(L1Transport):
         """Initialize SPI transport.
 
         :param spi: SPI interface object
+        :type spi: machine.SPI
         :param cs: Chip select pin object
+        :type cs: machine.Pin
         """
         self._spi = spi
         self._cs = cs
@@ -30,9 +32,8 @@ class SpiTransport(L1Transport):
         """SPI transfer using write_readinto.
 
         :param tx_data: Data to transmit
-        :type tx_data: bytes
+
         :returns: Received data
-        :rtype: bytes
         """
         rx_buffer = bytearray(len(tx_data))
         tx_buffer = bytearray(tx_data)
@@ -44,9 +45,8 @@ class SpiTransport(L1Transport):
         """SPI read operation.
 
         :param length: Number of bytes to read
-        :type length: int
+
         :returns: Read data
-        :rtype: bytes
         """
         return self._spi.read(length)
 
