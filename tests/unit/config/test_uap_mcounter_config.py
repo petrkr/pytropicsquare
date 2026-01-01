@@ -1,80 +1,45 @@
-"""Tests for UAP MCounter configuration classes.
-
-This module tests:
-- MCounterInitConfig
-- MCounterGetConfig
-- MCounterUpdateConfig
-
-All classes inherit from UapDualFieldConfig.
-"""
+"""Tests for UAP MCounter configuration classes."""
 
 import pytest
 from tropicsquare.config.uap_mcounter import (
     MCounterInitConfig,
     MCounterGetConfig,
-    MCounterUpdateConfig
+    MCounterUpdateConfig,
 )
-from tropicsquare.config.uap_base import UapDualFieldConfig
+from tropicsquare.config.uap_base import UapMultiSlotConfig, UapPermissionField
 
 
-class TestMCounterInitConfig:
-    """Test MCounterInitConfig class."""
+MCOUNTER_CONFIG_CLASSES = (
+    MCounterInitConfig,
+    MCounterGetConfig,
+    MCounterUpdateConfig,
+)
 
-    def test_inherits_from_uap_dual_field_config(self):
-        """Test inheritance."""
-        config = MCounterInitConfig()
-        assert isinstance(config, UapDualFieldConfig)
-
-    def test_cfg_and_func_permissions(self):
-        """Test permissions properties."""
-        config = MCounterInitConfig(0x00001234)
-        assert config.cfg_permissions.value == 0x34
-        assert config.func_permissions.value == 0x12
-
-    def test_str_representation(self):
-        """Test __str__()."""
-        config = MCounterInitConfig()
-        result = str(config)
-        assert 'MCounterInitConfig' in result
+MCOUNTER_SLOT_FIELDS = (
+    "mcounter_0_3",
+    "mcounter_4_7",
+    "mcounter_8_11",
+    "mcounter_12_15",
+)
 
 
-class TestMCounterGetConfig:
-    """Test MCounterGetConfig class."""
-
-    def test_inherits_from_uap_dual_field_config(self):
-        """Test inheritance."""
-        config = MCounterGetConfig()
-        assert isinstance(config, UapDualFieldConfig)
-
-    def test_cfg_and_func_permissions(self):
-        """Test permissions properties."""
-        config = MCounterGetConfig(0x00005678)
-        assert config.cfg_permissions.value == 0x78
-        assert config.func_permissions.value == 0x56
-
-    def test_str_representation(self):
-        """Test __str__()."""
-        config = MCounterGetConfig()
-        result = str(config)
-        assert 'MCounterGetConfig' in result
+@pytest.mark.parametrize("config_cls", MCOUNTER_CONFIG_CLASSES)
+def test_inherits_from_uap_multi_slot_config(config_cls):
+    assert isinstance(config_cls(), UapMultiSlotConfig)
 
 
-class TestMCounterUpdateConfig:
-    """Test MCounterUpdateConfig class."""
+@pytest.mark.parametrize("config_cls", MCOUNTER_CONFIG_CLASSES)
+def test_slot_field_properties(config_cls):
+    config = config_cls(0x78563412)
+    expected = (0x12, 0x34, 0x56, 0x78)
 
-    def test_inherits_from_uap_dual_field_config(self):
-        """Test inheritance."""
-        config = MCounterUpdateConfig()
-        assert isinstance(config, UapDualFieldConfig)
+    for field_name, expected_value in zip(MCOUNTER_SLOT_FIELDS, expected):
+        field = getattr(config, field_name)
+        assert isinstance(field, UapPermissionField)
+        assert field.value == expected_value
 
-    def test_cfg_and_func_permissions(self):
-        """Test permissions properties."""
-        config = MCounterUpdateConfig(0x0000ABCD)
-        assert config.cfg_permissions.value == 0xCD
-        assert config.func_permissions.value == 0xAB
 
-    def test_str_representation(self):
-        """Test __str__()."""
-        config = MCounterUpdateConfig()
-        result = str(config)
-        assert 'MCounterUpdateConfig' in result
+@pytest.mark.parametrize("config_cls", MCOUNTER_CONFIG_CLASSES)
+def test_to_dict_contains_slot_fields(config_cls):
+    result = config_cls(0x00000000).to_dict()
+    assert set(result.keys()) == set(MCOUNTER_SLOT_FIELDS)
