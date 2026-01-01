@@ -74,6 +74,24 @@ UAP_PKEY_INVALIDATE_SLOT_1_POS = 8
 UAP_PKEY_INVALIDATE_SLOT_2_POS = 16
 UAP_PKEY_INVALIDATE_SLOT_3_POS = 24
 
+# UAP MAC and Destroy (CFG_UAP_MAC_AND_DESTROY @ 0x160)
+# 4 slots, each 8 bits controlling access to different ranges of MAC-and-Destroy partition
+# - slot_0: Access privileges for MAC-and-Destroy slots 0-31
+# - slot_1: Access privileges for MAC-and-Destroy slots 32-63
+# - slot_2: Access privileges for MAC-and-Destroy slots 64-95
+# - slot_3: Access privileges for MAC-and-Destroy slots 96-127
+UAP_MACANDD_0_31_POS = 0
+UAP_MACANDD_32_63_POS = 8
+UAP_MACANDD_64_95_POS = 16
+UAP_MACANDD_96_127_POS = 24
+
+# UAP Monotonic Counter (shared by INIT @ 0x150, GET @ 0x154, UPDATE @ 0x158)
+# 4 slots, each 8 bits controlling access to different monotonic counters
+UAP_MCOUNTER_0_3_POS = 0
+UAP_MCOUNTER_4_7_POS = 8
+UAP_MCOUNTER_8_11_POS = 16
+UAP_MCOUNTER_12_15_POS = 24
+
 # UAP R-CONFIG Write/Erase (CFG_UAP_R_CONFIG_WRITE_ERASE @ 0x30)
 # Single 8-bit field
 UAP_R_CONFIG_WRITE_ERASE_POS = 0
