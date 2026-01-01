@@ -69,11 +69,6 @@ class PairingKeyWriteConfig(UapMultiSlotConfig):
             'slot_3': self.slot_3.to_dict()
         }
 
-    def __str__(self) -> str:
-        """Human-readable representation."""
-        return "PairingKeyWriteConfig(slot_0={}, slot_1={}, slot_2={}, slot_3={})".format(
-            self.slot_0, self.slot_1, self.slot_2, self.slot_3)
-
 
 class PairingKeyReadConfig(UapMultiSlotConfig):
     """UAP Pairing Key Read configuration (CFG_UAP_PAIRING_KEY_READ @ 0x24).
@@ -126,11 +121,6 @@ class PairingKeyReadConfig(UapMultiSlotConfig):
             'slot_3': self.slot_3.to_dict()
         }
 
-    def __str__(self) -> str:
-        """Human-readable representation."""
-        return "PairingKeyReadConfig(slot_0={}, slot_1={}, slot_2={}, slot_3={})".format(
-            self.slot_0, self.slot_1, self.slot_2, self.slot_3)
-
 
 class PairingKeyInvalidateConfig(UapMultiSlotConfig):
     """UAP Pairing Key Invalidate configuration (CFG_UAP_PAIRING_KEY_INVALIDATE @ 0x28).
@@ -182,8 +172,3 @@ class PairingKeyInvalidateConfig(UapMultiSlotConfig):
             'slot_2': self.slot_2.to_dict(),
             'slot_3': self.slot_3.to_dict()
         }
-
-    def __str__(self) -> str:
-        """Human-readable representation."""
-        return "PairingKeyInvalidateConfig(slot_0={}, slot_1={}, slot_2={}, slot_3={})".format(
-            self.slot_0, self.slot_1, self.slot_2, self.slot_3)
