@@ -1,80 +1,45 @@
-"""Tests for UAP Memory configuration classes.
-
-This module tests:
-- RMemDataWriteConfig
-- RMemDataReadConfig
-- RMemDataEraseConfig
-
-All classes inherit from UapDualFieldConfig.
-"""
+"""Tests for UAP Memory configuration classes."""
 
 import pytest
 from tropicsquare.config.uap_memory import (
     RMemDataWriteConfig,
     RMemDataReadConfig,
-    RMemDataEraseConfig
+    RMemDataEraseConfig,
 )
-from tropicsquare.config.uap_base import UapDualFieldConfig
+from tropicsquare.config.uap_base import UapMultiSlotConfig, UapPermissionField
 
 
-class TestRMemDataWriteConfig:
-    """Test RMemDataWriteConfig class."""
+MEMORY_CONFIG_CLASSES = (
+    RMemDataWriteConfig,
+    RMemDataReadConfig,
+    RMemDataEraseConfig,
+)
 
-    def test_inherits_from_uap_dual_field_config(self):
-        """Test inheritance."""
-        config = RMemDataWriteConfig()
-        assert isinstance(config, UapDualFieldConfig)
-
-    def test_cfg_and_func_permissions(self):
-        """Test permissions properties."""
-        config = RMemDataWriteConfig(0x00000F0A)
-        assert config.cfg_permissions.value == 0x0A
-        assert config.func_permissions.value == 0x0F
-
-    def test_str_representation(self):
-        """Test __str__()."""
-        config = RMemDataWriteConfig()
-        result = str(config)
-        assert 'RMemDataWriteConfig' in result
+MEMORY_SLOT_FIELDS = (
+    "udata_slot_0_127",
+    "udata_slot_128_255",
+    "udata_slot_256_383",
+    "udata_slot_384_511",
+)
 
 
-class TestRMemDataReadConfig:
-    """Test RMemDataReadConfig class."""
-
-    def test_inherits_from_uap_dual_field_config(self):
-        """Test inheritance."""
-        config = RMemDataReadConfig()
-        assert isinstance(config, UapDualFieldConfig)
-
-    def test_cfg_and_func_permissions(self):
-        """Test permissions properties."""
-        config = RMemDataReadConfig(0x00000505)
-        assert config.cfg_permissions.value == 0x05
-        assert config.func_permissions.value == 0x05
-
-    def test_str_representation(self):
-        """Test __str__()."""
-        config = RMemDataReadConfig()
-        result = str(config)
-        assert 'RMemDataReadConfig' in result
+@pytest.mark.parametrize("config_cls", MEMORY_CONFIG_CLASSES)
+def test_inherits_from_uap_multi_slot_config(config_cls):
+    assert isinstance(config_cls(), UapMultiSlotConfig)
 
 
-class TestRMemDataEraseConfig:
-    """Test RMemDataEraseConfig class."""
+@pytest.mark.parametrize("config_cls", MEMORY_CONFIG_CLASSES)
+def test_slot_field_properties(config_cls):
+    config = config_cls(0x78563412)
+    expected = (0x12, 0x34, 0x56, 0x78)
 
-    def test_inherits_from_uap_dual_field_config(self):
-        """Test inheritance."""
-        config = RMemDataEraseConfig()
-        assert isinstance(config, UapDualFieldConfig)
+    for field_name, expected_value in zip(MEMORY_SLOT_FIELDS, expected):
+        field = getattr(config, field_name)
+        assert isinstance(field, UapPermissionField)
+        assert field.value == expected_value
 
-    def test_cfg_and_func_permissions(self):
-        """Test permissions properties."""
-        config = RMemDataEraseConfig(0x0000ABCD)
-        assert config.cfg_permissions.value == 0xCD
-        assert config.func_permissions.value == 0xAB
 
-    def test_str_representation(self):
-        """Test __str__()."""
-        config = RMemDataEraseConfig()
-        result = str(config)
-        assert 'RMemDataEraseConfig' in result
+@pytest.mark.parametrize("config_cls", MEMORY_CONFIG_CLASSES)
+def test_to_dict_contains_slot_fields(config_cls):
+    result = config_cls(0x00000000).to_dict()
+    assert set(result.keys()) == set(MEMORY_SLOT_FIELDS)
