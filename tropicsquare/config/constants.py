@@ -92,6 +92,21 @@ UAP_MCOUNTER_4_7_POS = 8
 UAP_MCOUNTER_8_11_POS = 16
 UAP_MCOUNTER_12_15_POS = 24
 
+# UAP ECC Key operations (shared by GENERATE @ 0x130, STORE @ 0x134, READ @ 0x138,
+# ERASE @ 0x13C, ECDSA @ 0x140, EDDSA @ 0x144)
+# 4 slots, each 8 bits controlling access to different ECC Key slots
+UAP_ECCKEY_SLOT_0_7_POS = 0
+UAP_ECCKEY_SLOT_8_15_POS = 8
+UAP_ECCKEY_SLOT_16_23_POS = 16
+UAP_ECCKEY_SLOT_24_31_POS = 24
+
+# UAP R-MEM User Data operations (shared by WRITE @ 0x110, READ @ 0x114, ERASE @ 0x118)
+# 4 slots, each 8 bits controlling access to different User Data slot ranges
+UAP_UDATA_SLOT_0_127_POS = 0
+UAP_UDATA_SLOT_128_255_POS = 8
+UAP_UDATA_SLOT_256_383_POS = 16
+UAP_UDATA_SLOT_384_511_POS = 24
+
 # UAP R-CONFIG Write/Erase (CFG_UAP_R_CONFIG_WRITE_ERASE @ 0x30)
 # Single 8-bit field
 UAP_R_CONFIG_WRITE_ERASE_POS = 0
