@@ -12,5 +12,9 @@ mypy>=1.5.0
 # Coverage reporting
 coverage[toml]>=7.3.0
 
+# Integration test dependencies
+# TROPIC01 model server (for integration tests)
+https://github.com/tropicsquare/ts-tvl/releases/download/2.3/tvl-2.3-py3-none-any.whl
+
 # All runtime dependencies
 -r requirements.txt
