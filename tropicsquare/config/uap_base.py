@@ -101,14 +101,18 @@ class UapPermissionField:
         }
 
     def __str__(self) -> str:
-        slots = []
+        """Format as table cells: x | x |   | x
+
+        No leading/trailing pipes - will be added by parent class.
+        Returns 4 cells separated by ' | '.
+        """
+        parts = []
         for i in range(4):
             if self.get_slot_permission(i):
-                slots.append(str(i))
-        if slots:
-            return "slots[{}]".format(",".join(slots))
-        else:
-            return "no_access"
+                parts.append("x")
+            else:
+                parts.append(" ")  # 1 space for alignment
+        return " | ".join(parts)
 
 
 class UapMultiSlotConfig(BaseConfig):
@@ -140,6 +144,20 @@ class UapMultiSlotConfig(BaseConfig):
         mask = 0xFF << slot_pos
         self._value = (self._value & ~mask) | (field_value << slot_pos)
 
+    def __str__(self) -> str:
+        """Table row: ClassName | slot_0 || slot_1 || slot_2 || slot_3 |
+
+        Uses || to visually separate 4 different slot permission fields.
+        """
+        s0 = str(self._get_slot_field(0))
+        s1 = str(self._get_slot_field(8))
+        s2 = str(self._get_slot_field(16))
+        s3 = str(self._get_slot_field(24))
+        return "{:24s} | {} || {} || {} || {} |".format(
+            self.__class__.__name__,
+            s0, s1, s2, s3
+        )
+
 
 class UapSingleFieldConfig(BaseConfig):
     """Base class for UAP configs with single 8-bit permission field."""
@@ -164,6 +182,14 @@ class UapSingleFieldConfig(BaseConfig):
         return {
             'permissions': self.permissions.to_dict()
         }
+
+    def __str__(self) -> str:
+        """Table row: ClassName | permissions cells |"""
+        perm_str = str(self.permissions)
+        return "{:24s} | {} |".format(
+            self.__class__.__name__,
+            perm_str
+        )
 
 
 class UapDualFieldConfig(BaseConfig):
@@ -201,3 +227,16 @@ class UapDualFieldConfig(BaseConfig):
             'cfg_permissions': self.cfg_permissions.to_dict(),
             'func_permissions': self.func_permissions.to_dict()
         }
+
+    def __str__(self) -> str:
+        """Table row: ClassName | cfg cells || func cells |
+
+        Uses || to visually separate cfg and func permission fields.
+        """
+        cfg_str = str(self.cfg_permissions)
+        func_str = str(self.func_permissions)
+        return "{:24s} | {} || {} |".format(
+            self.__class__.__name__,
+            cfg_str,
+            func_str
+        )

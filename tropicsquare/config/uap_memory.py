@@ -10,11 +10,6 @@ class RMemDataWriteConfig(UapDualFieldConfig):
     Two 8-bit permission fields: CFG and FUNC.
     """
 
-    def __str__(self) -> str:
-        """Human-readable representation."""
-        return "RMemDataWriteConfig(cfg={}, func={})".format(
-            self.cfg_permissions, self.func_permissions)
-
 
 class RMemDataReadConfig(UapDualFieldConfig):
     """UAP R-MEM Data Read configuration (CFG_UAP_R_MEM_DATA_READ @ 0x114).
@@ -23,11 +18,6 @@ class RMemDataReadConfig(UapDualFieldConfig):
     Two 8-bit permission fields: CFG and FUNC.
     """
 
-    def __str__(self) -> str:
-        """Human-readable representation."""
-        return "RMemDataReadConfig(cfg={}, func={})".format(
-            self.cfg_permissions, self.func_permissions)
-
 
 class RMemDataEraseConfig(UapDualFieldConfig):
     """UAP R-MEM Data Erase configuration (CFG_UAP_R_MEM_DATA_ERASE @ 0x118).
@@ -35,8 +25,3 @@ class RMemDataEraseConfig(UapDualFieldConfig):
     Controls which pairing key slots can erase R-MEM data slots.
     Two 8-bit permission fields: CFG and FUNC.
     """
-
-    def __str__(self) -> str:
-        """Human-readable representation."""
-        return "RMemDataEraseConfig(cfg={}, func={})".format(
-            self.cfg_permissions, self.func_permissions)

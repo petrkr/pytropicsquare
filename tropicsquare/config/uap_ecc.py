@@ -10,11 +10,6 @@ class EccKeyGenerateConfig(UapDualFieldConfig):
         Two 8-bit permission fields: CFG and FUNC.
     """
 
-    def __str__(self) -> str:
-        """Human-readable representation."""
-        return "EccKeyGenerateConfig(cfg={}, func={})".format(
-            self.cfg_permissions, self.func_permissions)
-
 
 class EccKeyStoreConfig(UapDualFieldConfig):
     """UAP ECC Key Store configuration (CFG_UAP_ECC_KEY_STORE @ 0x134).
@@ -22,11 +17,6 @@ class EccKeyStoreConfig(UapDualFieldConfig):
         Controls which pairing key slots can store ECC keys.
         Two 8-bit permission fields: CFG and FUNC.
     """
-
-    def __str__(self) -> str:
-        """Human-readable representation."""
-        return "EccKeyStoreConfig(cfg={}, func={})".format(
-            self.cfg_permissions, self.func_permissions)
 
 
 class EccKeyReadConfig(UapDualFieldConfig):
@@ -36,11 +26,6 @@ class EccKeyReadConfig(UapDualFieldConfig):
         Two 8-bit permission fields: CFG and FUNC.
     """
 
-    def __str__(self) -> str:
-        """Human-readable representation."""
-        return "EccKeyReadConfig(cfg={}, func={})".format(
-            self.cfg_permissions, self.func_permissions)
-
 
 class EccKeyEraseConfig(UapDualFieldConfig):
     """UAP ECC Key Erase configuration (CFG_UAP_ECC_KEY_ERASE @ 0x13C).
@@ -48,11 +33,6 @@ class EccKeyEraseConfig(UapDualFieldConfig):
         Controls which pairing key slots can erase ECC keys.
         Two 8-bit permission fields: CFG and FUNC.
     """
-
-    def __str__(self) -> str:
-        """Human-readable representation."""
-        return "EccKeyEraseConfig(cfg={}, func={})".format(
-            self.cfg_permissions, self.func_permissions)
 
 
 class EcdsaSignConfig(UapDualFieldConfig):
@@ -62,11 +42,6 @@ class EcdsaSignConfig(UapDualFieldConfig):
         Two 8-bit permission fields: CFG and FUNC.
     """
 
-    def __str__(self) -> str:
-        """Human-readable representation."""
-        return "EcdsaSignConfig(cfg={}, func={})".format(
-            self.cfg_permissions, self.func_permissions)
-
 
 class EddsaSignConfig(UapDualFieldConfig):
     """UAP EdDSA Sign configuration (CFG_UAP_EDDSA_SIGN @ 0x144).
@@ -74,8 +49,3 @@ class EddsaSignConfig(UapDualFieldConfig):
         Controls which pairing key slots can perform EdDSA signing.
         Two 8-bit permission fields: CFG and FUNC.
     """
-
-    def __str__(self) -> str:
-        """Human-readable representation."""
-        return "EddsaSignConfig(cfg={}, func={})".format(
-            self.cfg_permissions, self.func_permissions)
