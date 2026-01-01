@@ -67,7 +67,7 @@ class MCounterInitConfig(UapMultiSlotConfig):
         s1 = str(self.mcounter_4_7)
         s2 = str(self.mcounter_8_11)
         s3 = str(self.mcounter_12_15)
-        return "{:24s} | {} || {} || {} || {} |".format(
+        return "{:26s} | {} || {} || {} || {} |".format(
             self.__class__.__name__,
             s0, s1, s2, s3
         )
@@ -131,7 +131,7 @@ class MCounterGetConfig(UapMultiSlotConfig):
         s1 = str(self.mcounter_4_7)
         s2 = str(self.mcounter_8_11)
         s3 = str(self.mcounter_12_15)
-        return "{:24s} | {} || {} || {} || {} |".format(
+        return "{:26s} | {} || {} || {} || {} |".format(
             self.__class__.__name__,
             s0, s1, s2, s3
         )
@@ -195,7 +195,7 @@ class MCounterUpdateConfig(UapMultiSlotConfig):
         s1 = str(self.mcounter_4_7)
         s2 = str(self.mcounter_8_11)
         s3 = str(self.mcounter_12_15)
-        return "{:24s} | {} || {} || {} || {} |".format(
+        return "{:26s} | {} || {} || {} || {} |".format(
             self.__class__.__name__,
             s0, s1, s2, s3
         )
