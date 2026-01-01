@@ -3,8 +3,10 @@
 This module provides:
 - Mock classes for L1 transport layer
 - Mock classes for cryptographic operations
-- Shared test fixtures
+- Shared test fixtures for unit tests
 - Common test utilities
+
+Note: Integration test fixtures are in tests/integration/conftest.py
 """
 
 import pytest
