@@ -292,20 +292,6 @@ class TropicSquare:
         return result[3:]
 
 
-    def get_serial_code(self) -> bytes:
-        """Get serial code from chip.
-
-            :returns: Serial code data
-            :rtype: bytes
-        """
-        request_data = bytearray()
-        request_data.append(CMD_ID_SERIAL_CODE_GET)
-
-        result = self._call_command(request_data)
-
-        return result
-
-
     def r_config_read(self, address: int):
         """Read and parse R-CONFIG register.
 
