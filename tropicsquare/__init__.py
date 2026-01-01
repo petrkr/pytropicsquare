@@ -644,18 +644,52 @@ class TropicSquare:
 
 
     def mac_and_destroy(self, slot: int, data: bytes) -> bytes:
-        """MAC and destroy operation.
+        """MAC and destroy operation for atomic PIN verification.
 
-            :param slot: Memory slot index
-            :param data: Data to MAC
+        This command executes atomic PIN verification using Keccak-based MAC.
+        The operation reads a slot from the MAC-and-Destroy partition (128 slots, 0-127),
+        performs MAC calculation, and destroys/erases the slot data.
 
-            :returns: MAC result
-            :rtype: bytes
+        The MAC-and-Destroy partition is separate from User Data partition and
+        uses Keccak engines with PUF-based per-chip unique keys (K_FXA, K_FXB).
 
-            :raises ValueError: If slot exceeds maximum
+        :param slot: Slot index in MAC-and-Destroy partition (0-127)
+        :param data: Data to MAC (must be exactly 32 bytes)
+
+        :returns: MAC result (32 bytes)
+
+        :raises ValueError: If slot exceeds maximum (127) or data length is not 32 bytes
+        :raises TropicSquareNoSession: If secure session is not established
+
+        .. note::
+           Requires active secure session via :meth:`start_secure_session`.
+
+        .. seealso::
+           TROPIC01 User API v1.1.2, Table 37: MAC_And_Destroy command specification
+
+        Example::
+
+            # Start secure session first
+            ts.start_secure_session(
+                FACTORY_PAIRING_KEY_INDEX,
+                FACTORY_PAIRING_PRIVATE_KEY_PROD0,
+                FACTORY_PAIRING_PUBLIC_KEY_PROD0
+            )
+
+            # Perform MAC and destroy on slot 0
+            pin_data = b'my_32_byte_pin_data_here_000'  # Exactly 32 bytes
+            mac_result = ts.mac_and_destroy(0, pin_data)
+            print(f"MAC: {mac_result.hex()}")  # Returns 32-byte MAC
         """
         if slot > MAC_AND_DESTROY_MAX:
-            raise ValueError("Slot is larger than ECC_MAX_KEYS")
+            raise ValueError(f"Slot {slot} exceeds maximum MAC_AND_DESTROY_MAX ({MAC_AND_DESTROY_MAX})")
+
+        # Validate data length - must be exactly 32 bytes per API specification
+        if len(data) != MAC_AND_DESTROY_DATA_SIZE:
+            raise ValueError(
+                f"Data must be exactly {MAC_AND_DESTROY_DATA_SIZE} bytes "
+                f"(got {len(data)} bytes). See TROPIC01 User API Table 37."
+            )
 
         request_data = bytearray()
         request_data.append(CMD_ID_MAC_AND_DESTROY)
