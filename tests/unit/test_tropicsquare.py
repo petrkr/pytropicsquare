@@ -881,7 +881,8 @@ class TestL3Commands:
         mac_result = b'\xEE' * 32
         ts.response_data = bytes([CMD_RESULT_OK]) + b'\x00\x00\x00' + mac_result
 
-        data = b'test data to MAC'
+        # Data must be exactly 32 bytes per API spec
+        data = b'X' * 32
         result = ts.mac_and_destroy(0, data)
 
         # Verify 3-byte header is stripped
@@ -891,10 +892,33 @@ class TestL3Commands:
         """Test that mac_and_destroy validates slot."""
         ts = ts_with_session
 
-        with pytest.raises(ValueError) as exc_info:
-            ts.mac_and_destroy(MAC_AND_DESTROY_MAX + 1, b'data')
+        # Valid 32-byte data for testing slot validation
+        valid_data = b'X' * 32
 
-        assert "Slot is larger than ECC_MAX_KEYS" in str(exc_info.value)
+        with pytest.raises(ValueError, match=r"exceeds maximum MAC_AND_DESTROY_MAX"):
+            ts.mac_and_destroy(MAC_AND_DESTROY_MAX + 1, valid_data)
+
+    def test_mac_and_destroy_validates_data_length(self, ts_with_session):
+        """Test that MAC_And_Destroy validates data length (must be 32 bytes)."""
+        ts = ts_with_session
+
+        # Test too short data
+        with pytest.raises(ValueError, match=r"Data must be exactly 32 bytes"):
+            ts.mac_and_destroy(0, b'short')
+
+        # Test too long data
+        with pytest.raises(ValueError, match=r"Data must be exactly 32 bytes"):
+            ts.mac_and_destroy(0, b'X' * 64)
+
+        # Test correct length should not raise ValueError for data length
+        # (will still fail with mock but validates length first)
+        try:
+            mac_result = b'\xEE' * 32
+            ts.response_data = bytes([CMD_RESULT_OK]) + b'\x00\x00\x00' + mac_result
+            ts.mac_and_destroy(0, b'X' * 32)  # Should not raise ValueError for data length
+        except ValueError as e:
+            if "Data must be exactly" in str(e):
+                pytest.fail("Should not raise ValueError for 32-byte data")
 
 
 class TestStartSecureSession:
