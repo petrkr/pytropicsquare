@@ -86,7 +86,7 @@ class MacAndDestroyConfig(UapMultiSlotConfig):
         s1 = str(self.macandadd32_63)
         s2 = str(self.macandadd64_95)
         s3 = str(self.macandadd96_127)
-        return "{:24s} | {} || {} || {} || {} |".format(
+        return "{:26s} | {} || {} || {} || {} |".format(
             self.__class__.__name__,
             s0, s1, s2, s3
         )

@@ -67,7 +67,7 @@ class EccKeyGenerateConfig(UapMultiSlotConfig):
         s1 = str(self.ecckey_slot_8_15)
         s2 = str(self.ecckey_slot_16_23)
         s3 = str(self.ecckey_slot_24_31)
-        return "{:24s} | {} || {} || {} || {} |".format(
+        return "{:26s} | {} || {} || {} || {} |".format(
             self.__class__.__name__,
             s0, s1, s2, s3
         )
@@ -131,7 +131,7 @@ class EccKeyStoreConfig(UapMultiSlotConfig):
         s1 = str(self.ecckey_slot_8_15)
         s2 = str(self.ecckey_slot_16_23)
         s3 = str(self.ecckey_slot_24_31)
-        return "{:24s} | {} || {} || {} || {} |".format(
+        return "{:26s} | {} || {} || {} || {} |".format(
             self.__class__.__name__,
             s0, s1, s2, s3
         )
@@ -195,7 +195,7 @@ class EccKeyReadConfig(UapMultiSlotConfig):
         s1 = str(self.ecckey_slot_8_15)
         s2 = str(self.ecckey_slot_16_23)
         s3 = str(self.ecckey_slot_24_31)
-        return "{:24s} | {} || {} || {} || {} |".format(
+        return "{:26s} | {} || {} || {} || {} |".format(
             self.__class__.__name__,
             s0, s1, s2, s3
         )
@@ -259,7 +259,7 @@ class EccKeyEraseConfig(UapMultiSlotConfig):
         s1 = str(self.ecckey_slot_8_15)
         s2 = str(self.ecckey_slot_16_23)
         s3 = str(self.ecckey_slot_24_31)
-        return "{:24s} | {} || {} || {} || {} |".format(
+        return "{:26s} | {} || {} || {} || {} |".format(
             self.__class__.__name__,
             s0, s1, s2, s3
         )
@@ -323,7 +323,7 @@ class EcdsaSignConfig(UapMultiSlotConfig):
         s1 = str(self.ecckey_slot_8_15)
         s2 = str(self.ecckey_slot_16_23)
         s3 = str(self.ecckey_slot_24_31)
-        return "{:24s} | {} || {} || {} || {} |".format(
+        return "{:26s} | {} || {} || {} || {} |".format(
             self.__class__.__name__,
             s0, s1, s2, s3
         )
@@ -387,7 +387,7 @@ class EddsaSignConfig(UapMultiSlotConfig):
         s1 = str(self.ecckey_slot_8_15)
         s2 = str(self.ecckey_slot_16_23)
         s3 = str(self.ecckey_slot_24_31)
-        return "{:24s} | {} || {} || {} || {} |".format(
+        return "{:26s} | {} || {} || {} || {} |".format(
             self.__class__.__name__,
             s0, s1, s2, s3
         )

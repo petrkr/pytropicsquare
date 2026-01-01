@@ -67,7 +67,7 @@ class RMemDataWriteConfig(UapMultiSlotConfig):
         s1 = str(self.udata_slot_128_255)
         s2 = str(self.udata_slot_256_383)
         s3 = str(self.udata_slot_384_511)
-        return "{:24s} | {} || {} || {} || {} |".format(
+        return "{:26s} | {} || {} || {} || {} |".format(
             self.__class__.__name__,
             s0, s1, s2, s3
         )
@@ -131,7 +131,7 @@ class RMemDataReadConfig(UapMultiSlotConfig):
         s1 = str(self.udata_slot_128_255)
         s2 = str(self.udata_slot_256_383)
         s3 = str(self.udata_slot_384_511)
-        return "{:24s} | {} || {} || {} || {} |".format(
+        return "{:26s} | {} || {} || {} || {} |".format(
             self.__class__.__name__,
             s0, s1, s2, s3
         )
@@ -195,7 +195,7 @@ class RMemDataEraseConfig(UapMultiSlotConfig):
         s1 = str(self.udata_slot_128_255)
         s2 = str(self.udata_slot_256_383)
         s3 = str(self.udata_slot_384_511)
-        return "{:24s} | {} || {} || {} || {} |".format(
+        return "{:26s} | {} || {} || {} || {} |".format(
             self.__class__.__name__,
             s0, s1, s2, s3
         )

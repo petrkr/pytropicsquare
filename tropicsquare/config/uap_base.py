@@ -153,7 +153,7 @@ class UapMultiSlotConfig(BaseConfig):
         s1 = str(self._get_slot_field(8))
         s2 = str(self._get_slot_field(16))
         s3 = str(self._get_slot_field(24))
-        return "{:24s} | {} || {} || {} || {} |".format(
+        return "{:26s} | {} || {} || {} || {} |".format(
             self.__class__.__name__,
             s0, s1, s2, s3
         )
@@ -186,7 +186,7 @@ class UapSingleFieldConfig(BaseConfig):
     def __str__(self) -> str:
         """Table row: ClassName | permissions cells |"""
         perm_str = str(self.permissions)
-        return "{:24s} | {} |".format(
+        return "{:26s} | {} |".format(
             self.__class__.__name__,
             perm_str
         )
@@ -235,7 +235,7 @@ class UapDualFieldConfig(BaseConfig):
         """
         cfg_str = str(self.cfg_permissions)
         func_str = str(self.func_permissions)
-        return "{:24s} | {} || {} |".format(
+        return "{:26s} | {} || {} |".format(
             self.__class__.__name__,
             cfg_str,
             func_str
