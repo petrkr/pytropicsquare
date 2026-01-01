@@ -164,12 +164,12 @@ transport = UartTransport('/dev/ttyACM0', baudrate=115200)
 | **raspberry_pi_example.py** | Raspberry Pi (CPython) | Using UART or SPI on Raspberry Pi |
 | **network_bridge_example.py** | Universal | Remote hardware via network bridge |
 
-### TODO: Advanced Features
+### Advanced Features
 
 | Example | Description |
 |---------|-------------|
-| **40_mac_and_destroy.py** | Secure data destruction with MAC authentication |
-| **41_complete_workflow.py** | Real-world application integration pattern |
+| **40_mac_and_destroy.py** | MAC and destroy operations for atomic PIN verification |
+| **41_complete_workflow.py** | TODO: Real-world application integration pattern |
 
 ## Platform Compatibility
 
@@ -291,7 +291,7 @@ if __name__ == "__main__":
 
 ### Advanced Track
 10. `30_config_basics.py` - Configuration registers
-11. `40_mac_and_destroy.py` - Authenticated destruction
+11. `40_mac_and_destroy.py` - Atomic PIN verification
 12. `41_complete_workflow.py` - Real-world integration
 
 ## Hardware Requirements
