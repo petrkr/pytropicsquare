@@ -1,1 +1,5 @@
 cryptography
+
+# SPIDev transport dependencies (Raspberry Pi / Linux)
+spidev>=3.5
+gpiod>=2.0
