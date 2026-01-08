@@ -40,6 +40,7 @@ Transport Classes
    :nosignatures:
 
    tropicsquare.transports.spi.SpiTransport
+   tropicsquare.transports.spidev.SpiDevTransport
    tropicsquare.transports.uart.UartTransport
    tropicsquare.transports.network.NetworkSpiTransport
    tropicsquare.transports.tcp.TcpTransport

@@ -50,7 +50,7 @@ class SpiDevTransport(L1Transport):
 
     :param bus: SPI bus number (default: 0 for /dev/spidev0.x)
     :param device: SPI device number (default: 1 for CE1, use 0 for CE0)
-    :param cs_pin: GPIO pin number for chip select (default: 25 for CE1, use 8 for CE0)
+    :param cs_pin: GPIO pin number for chip select (default: 25 for CE2, use 8 for CE0 or 7 for CE1)
     :param max_speed_hz: SPI clock speed in Hz (default: 1000000 = 1 MHz)
     :param gpio_chip: GPIO chip device path (default: /dev/gpiochip0)
 
@@ -59,11 +59,11 @@ class SpiDevTransport(L1Transport):
         from tropicsquare.transports.spidev import SpiDevTransport
         from tropicsquare import TropicSquareCPython
 
-        # Create transport for Raspberry Pi (using CE1 - no overlay needed)
+        # Create transport for Raspberry Pi (using CE2 - no overlay needed)
         transport = SpiDevTransport(
             bus=0,
             device=1,
-            cs_pin=25  # GPIO 25 (physical pin 22, CE1)
+            cs_pin=25  # GPIO 25 (physical pin 22, CE2)
         )
 
         # Create TropicSquare instance
@@ -98,7 +98,7 @@ class SpiDevTransport(L1Transport):
         self._spi = spidev.SpiDev()
         self._spi.open(bus, device)
 
-        # Configure SPI parameters (just like C library - no special CS flags)
+        # Configure SPI parameters
         self._spi.mode = 0  # SPI_MODE_0: CPOL=0, CPHA=0
         self._spi.max_speed_hz = max_speed_hz
         self._spi.bits_per_word = 8

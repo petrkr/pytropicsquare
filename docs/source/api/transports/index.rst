@@ -11,6 +11,7 @@ Available Transports
    :nosignatures:
 
    tropicsquare.transports.spi.SpiTransport
+   tropicsquare.transports.spidev.SpiDevTransport
    tropicsquare.transports.uart.UartTransport
    tropicsquare.transports.network.NetworkSpiTransport
    tropicsquare.transports.tcp.TcpTransport
@@ -19,6 +20,7 @@ Transport Selection Guide
 --------------------------
 
 * **SPI Transport** - Direct hardware connection via SPI bus (MicroPython ESP32)
+* **SPIDev Transport** - Linux spidev interface with manual GPIO CS (Raspberry Pi / Linux)
 * **UART Transport** - Serial communication via UART (CPython, MicroPython Unix only - NOT ESP32)
 * **Network-SPI Transport** - SPI over network for remote chips (MicroPython ESP32)
 * **TCP Transport** - TCP connection to Tropic01 model server (development/testing)
@@ -31,6 +33,7 @@ Detailed Documentation
 
    base
    spi
+   spidev
    uart
    network
    tcp

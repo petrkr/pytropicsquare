@@ -66,7 +66,7 @@ autodoc_preserve_defaults = True  # Preserve hex literals like 0xFFFFFFFF instea
 autosummary_generate = True
 autosummary_imported_members = False
 
-# Mock imports for MicroPython modules (not available in CPython)
+# Mock imports for MicroPython modules (not available in CPython) and platform-specific modules
 autodoc_mock_imports = ['machine', 'micropython', 'utime', 'ubinascii', 'ucryptolib']
 
 # Intersphinx mapping for cross-references to external documentation
