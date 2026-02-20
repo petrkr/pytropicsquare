@@ -20,7 +20,7 @@ CMD_ID_PING = 0x01
 
 CMD_ID_PAIRING_KEY_WRITE = 0x10
 CMD_ID_PAIRING_KEY_READ = 0x11
-# CMD_ID_PAIRING_KEY_INVALIDATE = [0x03, 0x12] # For debug safe, do not support this yet
+CMD_ID_PAIRING_KEY_INVALIDATE = 0x12
 
 # CMD_ID_R_CFG_WRITE = [0x08, 0x20] # For debug safe, do not support this yet
 CMD_ID_R_CFG_READ = 0x21

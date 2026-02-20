@@ -751,6 +751,27 @@ class TropicSquare:
         return True
 
 
+    def pairing_key_invalidate(self, slot: int) -> bool:
+        """Invalidate pairing key in slot.
+
+            :param slot: Pairing key slot index (0-3)
+
+            :returns: True if successful
+            :rtype: bool
+
+            :raises ValueError: If slot exceeds maximum (3)
+        """
+        if slot > PAIRING_KEY_MAX:
+            raise ValueError(f"Slot {slot} exceeds maximum PAIRING_KEY_MAX ({PAIRING_KEY_MAX})")
+
+        request_data = bytearray()
+        request_data.append(CMD_ID_PAIRING_KEY_INVALIDATE)
+        request_data.extend(slot.to_bytes(PAIRING_ADDRESS_SIZE, "little"))
+
+        self._call_command(request_data)
+
+        return True
+
     def _call_command(self, data):
         if self._secure_session is None:
             raise TropicSquareNoSession("Secure session not started")
