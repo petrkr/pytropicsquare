@@ -41,11 +41,6 @@ class NetworkSpiTransport(L1Transport):
                 f"Failed to connect to {host}:{port}: {e}"
             )
 
-        hostport = socket.getaddrinfo(host, port)
-        self._sock = socket.socket()
-        self._sock.connect(hostport[0][-1])
-
-
     def _transfer(self, write_buf: bytes) -> bytes:
         command = self.COMMAND_WRITE_READINTO
         data = bytes(write_buf)
