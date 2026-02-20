@@ -717,10 +717,38 @@ class TropicSquare:
 
         request_data = bytearray()
         request_data.append(CMD_ID_PAIRING_KEY_READ)
-        request_data.extend(slot.to_bytes(MEM_ADDRESS_SIZE, "little"))
+        request_data.extend(slot.to_bytes(PAIRING_ADDRESS_SIZE, "little"))
         result = self._call_command(request_data)
 
         return result[3:]
+
+
+    def pairing_key_write(self, slot: int, key: bytes) -> bytes:
+        """Write pairing key information to slot.
+
+            :param slot: Pairing key slot index (0-3)
+            :param key: Pairing key data (32 bytes)
+
+            :returns: Response data (32 bytes)
+            :rtype: bytes
+
+            :raises ValueError: If slot exceeds maximum (3) or key length is not 32 bytes
+        """
+        if slot > PAIRING_KEY_MAX:
+            raise ValueError(f"Slot {slot} exceeds maximum PAIRING_KEY_MAX ({PAIRING_KEY_MAX})")
+
+        if len(key) != PAIRING_KEY_SIZE:
+            raise ValueError(f"Key must be exactly {PAIRING_KEY_SIZE} bytes")
+
+        request_data = bytearray()
+        request_data.append(CMD_ID_PAIRING_KEY_WRITE)
+        request_data.extend(slot.to_bytes(PAIRING_ADDRESS_SIZE, "little"))
+        request_data.extend(b'M') # Padding dummy data
+        request_data.extend(key)
+
+        result = self._call_command(request_data)
+
+        return True
 
 
     def _call_command(self, data):

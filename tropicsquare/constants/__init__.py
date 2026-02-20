@@ -10,7 +10,9 @@ MCOUNTER_MAX = 15
 MAC_AND_DESTROY_MAX = 127
 MAC_AND_DESTROY_DATA_SIZE = 32  # Fixed size for MAC_And_Destroy data (API spec Table 37)
 
+PAIRING_ADDRESS_SIZE = 2
 PAIRING_KEY_MAX = 3
+PAIRING_KEY_SIZE = 32
 
 # Format [Optional command Length, Command ID]
 # L3 Command IDs
