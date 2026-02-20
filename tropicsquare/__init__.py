@@ -702,6 +702,27 @@ class TropicSquare:
         return result[3:]
 
 
+    def pairing_key_read(self, slot: int) -> bytes:
+        """Read pairing key information from slot.
+
+            :param slot: Pairing key slot index (0-3)
+
+            :returns: Pairing key information (32 bytes)
+            :rtype: bytes
+
+            :raises ValueError: If slot exceeds maximum (3)
+        """
+        if slot > PAIRING_KEY_MAX:
+            raise ValueError(f"Slot {slot} exceeds maximum PAIRING_KEY_MAX ({PAIRING_KEY_MAX})")
+
+        request_data = bytearray()
+        request_data.append(CMD_ID_PAIRING_KEY_READ)
+        request_data.extend(slot.to_bytes(MEM_ADDRESS_SIZE, "little"))
+        result = self._call_command(request_data)
+
+        return result[3:]
+
+
     def _call_command(self, data):
         if self._secure_session is None:
             raise TropicSquareNoSession("Secure session not started")

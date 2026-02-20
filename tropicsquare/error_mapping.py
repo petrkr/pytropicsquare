@@ -18,6 +18,8 @@ def map_cmd_result_to_exception(cmd_result):
         CMD_RESULT_ECC_INVALID_KEY: (TropicSquareECCInvalidKeyError, "ECC key is invalid or not found"),
         CMD_RESULT_MCOUNTER_UPDATE_ERROR: (TropicSquareCounterUpdateError, "Monotonic counter update failed"),
         CMD_RESULT_MCOUNTER_COUNTER_INVALID: (TropicSquareCounterInvalidError, "Invalid monotonic counter"),
+        CMD_RESULT_PAIRING_KEY_EMPTY: (TropicSquarePairingKeyEmptyError, "Pairing key slot is empty"),
+        CMD_RESULT_PAIRING_KEY_INVALID: (TropicSquarePairingKeyInvalidError, "Invalid pairing key"),
     }
     
     exception_class, message = error_map.get(cmd_result, (TropicSquareCommandError, "Command failed"))

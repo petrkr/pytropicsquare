@@ -84,6 +84,18 @@ class TropicSquareCounterInvalidError(TropicSquareCounterError):
     pass
 
 
+# Pairing keys errors
+class TropicSquarePairingKeyEmptyError(TropicSquareCommandError):
+    """Pairing key empty error"""
+    pass
+
+
+class TropicSquarePairingKeyInvalidError(TropicSquareCommandError):
+    """Pairing key invalid error"""
+    pass
+
+
+
 # Session and handshake errors
 class TropicSquareSessionError(TropicSquareError):
     """Session management error"""
