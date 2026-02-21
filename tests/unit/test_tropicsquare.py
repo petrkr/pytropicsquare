@@ -46,7 +46,8 @@ from tropicsquare.constants import (
     CMD_ID_MCOUNTER_GET,
     MEM_DATA_MAX_SIZE,
     MCOUNTER_MAX,
-    MAC_AND_DESTROY_MAX)
+    MAC_AND_DESTROY_MAX,
+    PAIRING_KEY_MAX)
 from tropicsquare.constants.ecc import ECC_MAX_KEYS, ECC_CURVE_P256
 from tropicsquare.constants.config import CFG_START_UP
 from tropicsquare.config.startup import StartUpConfig
@@ -920,9 +921,51 @@ class TestL3Commands:
             if "Data must be exactly" in str(e):
                 pytest.fail("Should not raise ValueError for 32-byte data")
 
+    @pytest.mark.parametrize("slot", [-1, PAIRING_KEY_MAX + 1])
+    def test_pairing_key_read_validates_slot_range(self, ts_with_session, slot):
+        """Test pairing_key_read validates slot in range 0..PAIRING_KEY_MAX."""
+        ts = ts_with_session
+
+        with pytest.raises(ValueError, match=r"Pairing key slot must be in range"):
+            ts.pairing_key_read(slot)
+
+    @pytest.mark.parametrize("slot", [-1, PAIRING_KEY_MAX + 1])
+    def test_pairing_key_write_validates_slot_range(self, ts_with_session, slot):
+        """Test pairing_key_write validates slot in range 0..PAIRING_KEY_MAX."""
+        ts = ts_with_session
+
+        with pytest.raises(ValueError, match=r"Pairing key slot must be in range"):
+            ts.pairing_key_write(slot, b"\x01" * 32)
+
+    @pytest.mark.parametrize("slot", [-1, PAIRING_KEY_MAX + 1])
+    def test_pairing_key_invalidate_validates_slot_range(self, ts_with_session, slot):
+        """Test pairing_key_invalidate validates slot in range 0..PAIRING_KEY_MAX."""
+        ts = ts_with_session
+
+        with pytest.raises(ValueError, match=r"Pairing key slot must be in range"):
+            ts.pairing_key_invalidate(slot)
+
+    def test_pairing_key_write_returns_true(self, ts_with_session):
+        """Test pairing_key_write returns True on successful command."""
+        ts = ts_with_session
+        ts.response_data = bytes([CMD_RESULT_OK])
+
+        assert ts.pairing_key_write(0, b"\xAA" * 32) is True
+
 
 class TestStartSecureSession:
     """Test start_secure_session() method."""
+
+    @pytest.mark.parametrize("pkey_index", [-1, PAIRING_KEY_MAX + 1])
+    def test_start_secure_session_validates_pairing_slot(self, pkey_index):
+        """Test start_secure_session validates pkey_index range before handshake."""
+        from tropicsquare.ports.cpython import TropicSquareCPython
+
+        transport = MockL1Transport()
+        ts = TropicSquareCPython(transport)
+
+        with pytest.raises(ValueError, match=r"Pairing key slot must be in range"):
+            ts.start_secure_session(pkey_index, b'\x03' * 32, b'\x04' * 32)
 
     def test_start_secure_session_auth_tag_mismatch_raises_error(self):
         """Test that auth tag mismatch raises TropicSquareHandshakeError."""
