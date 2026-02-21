@@ -13,6 +13,7 @@ from tropicsquare.exceptions import *
 from tropicsquare.error_mapping import raise_for_cmd_result
 from tropicsquare.chip_id import ChipId
 from tropicsquare.config import parse_config
+from tropicsquare.config.base import BaseConfig
 from tropicsquare.ecc import EccKeyInfo
 from tropicsquare.ecc.signature import EcdsaSignature, EddsaSignature
 
@@ -335,6 +336,31 @@ class TropicSquare:
         return parse_config(address, data)
 
 
+    def r_config_write(self, address: int, value) -> bool:
+        """Write single R-CONFIG register.
+
+            :param address: Register address (use CFG_* constants from tropicsquare.constants.config)
+            :param value: 32-bit register value or BaseConfig object
+
+            :returns: True if write succeeded
+            :rtype: bool
+        """
+        self._config_write_raw(CMD_ID_R_CFG_WRITE, address, value)
+        return True
+
+
+    def r_config_erase(self) -> bool:
+        """Erase whole R-CONFIG (sets all bits of all COs to 1).
+
+            :returns: True if erase succeeded
+            :rtype: bool
+        """
+        request_data = bytearray()
+        request_data.append(CMD_ID_R_CFG_ERASE)
+        self._call_command(request_data)
+        return True
+
+
     def _config_read_raw(self, cmd_id: int, address: int) -> bytes:
         """Read raw 4-byte config value payload for a single CO."""
         self._validate_config_address(address)
@@ -344,6 +370,33 @@ class TropicSquare:
         request_data.extend(address.to_bytes(CFG_ADDRESS_SIZE, "little"))
         result = self._call_command(request_data)
         return result[3:]
+
+
+    def _config_write_raw(self, cmd_id: int, address: int, value) -> None:
+        """Write raw 4-byte config value payload for a single CO."""
+        self._validate_config_address(address)
+        value_bytes = self._config_value_to_bytes(value)
+
+        request_data = bytearray()
+        request_data.append(cmd_id)
+        request_data.extend(address.to_bytes(CFG_ADDRESS_SIZE, "little"))
+        request_data.extend(b'M')  # Padding dummy data
+        request_data.extend(value_bytes)
+        self._call_command(request_data)
+
+
+    def _config_value_to_bytes(self, value) -> bytes:
+        """Convert config value input to 4-byte wire format."""
+        if isinstance(value, BaseConfig):
+            return value.to_bytes()
+
+        if not isinstance(value, int):
+            raise TypeError("value must be int or BaseConfig")
+
+        if not 0 <= value <= 0xFFFFFFFF:
+            raise ValueError("Config value must be 32-bit unsigned integer")
+
+        return value.to_bytes(4, "big")
 
 
     def _validate_config_address(self, address: int) -> None:

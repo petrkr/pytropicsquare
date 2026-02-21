@@ -22,11 +22,11 @@ CMD_ID_PAIRING_KEY_WRITE = 0x10
 CMD_ID_PAIRING_KEY_READ = 0x11
 CMD_ID_PAIRING_KEY_INVALIDATE = 0x12
 
-# CMD_ID_R_CFG_WRITE = [0x08, 0x20] # For debug safe, do not support this yet
+CMD_ID_R_CFG_WRITE = 0x20
 CMD_ID_R_CFG_READ = 0x21
-# CMD_ID_R_CFG_ERASE = [0x01, 0x22] # For debug safe, do not support this yet
+CMD_ID_R_CFG_ERASE = 0x22
 
-# CMD_ID_I_CFG_WRITE = [0x04, 0x30] # For debug safe, do not support this yet
+CMD_ID_I_CFG_WRITE = 0x30
 CMD_ID_I_CFG_READ = 0x31
 
 CMD_ID_R_MEMDATA_WRITE = 0x40
