@@ -166,6 +166,11 @@ class TropicSquare:
 
             :raises TropicSquareError: If secure session handshake failed
         """
+        if not 0 <= pkey_index <= PAIRING_KEY_MAX:
+            raise ValueError(
+                f"Pairing key slot must be in range 0-{PAIRING_KEY_MAX}, got {pkey_index}"
+            )
+
         ehpriv, ehpub = self._get_ephemeral_keypair()
 
         # Handshake request
@@ -712,8 +717,10 @@ class TropicSquare:
 
             :raises ValueError: If slot exceeds maximum (3)
         """
-        if slot > PAIRING_KEY_MAX:
-            raise ValueError(f"Slot {slot} exceeds maximum PAIRING_KEY_MAX ({PAIRING_KEY_MAX})")
+        if not 0 <= slot <= PAIRING_KEY_MAX:
+            raise ValueError(
+                f"Pairing key slot must be in range 0-{PAIRING_KEY_MAX}, got {slot}"
+            )
 
         request_data = bytearray()
         request_data.append(CMD_ID_PAIRING_KEY_READ)
@@ -723,19 +730,21 @@ class TropicSquare:
         return result[3:]
 
 
-    def pairing_key_write(self, slot: int, key: bytes) -> bytes:
+    def pairing_key_write(self, slot: int, key: bytes) -> bool:
         """Write pairing key information to slot.
 
             :param slot: Pairing key slot index (0-3)
             :param key: Pairing key data (32 bytes)
 
-            :returns: Response data (32 bytes)
-            :rtype: bytes
+            :returns: True if write succeeded
+            :rtype: bool
 
             :raises ValueError: If slot exceeds maximum (3) or key length is not 32 bytes
         """
-        if slot > PAIRING_KEY_MAX:
-            raise ValueError(f"Slot {slot} exceeds maximum PAIRING_KEY_MAX ({PAIRING_KEY_MAX})")
+        if not 0 <= slot <= PAIRING_KEY_MAX:
+            raise ValueError(
+                f"Pairing key slot must be in range 0-{PAIRING_KEY_MAX}, got {slot}"
+            )
 
         if len(key) != PAIRING_KEY_SIZE:
             raise ValueError(f"Key must be exactly {PAIRING_KEY_SIZE} bytes")
@@ -761,8 +770,10 @@ class TropicSquare:
 
             :raises ValueError: If slot exceeds maximum (3)
         """
-        if slot > PAIRING_KEY_MAX:
-            raise ValueError(f"Slot {slot} exceeds maximum PAIRING_KEY_MAX ({PAIRING_KEY_MAX})")
+        if not 0 <= slot <= PAIRING_KEY_MAX:
+            raise ValueError(
+                f"Pairing key slot must be in range 0-{PAIRING_KEY_MAX}, got {slot}"
+            )
 
         request_data = bytearray()
         request_data.append(CMD_ID_PAIRING_KEY_INVALIDATE)
