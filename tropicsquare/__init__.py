@@ -312,13 +312,8 @@ class TropicSquare:
                 config = ts.r_config_read(CFG_START_UP)
                 print(config.mbist_dis)
         """
-        request_data = bytearray()
-        request_data.append(CMD_ID_R_CFG_READ)
-        request_data.extend(address.to_bytes(CFG_ADDRESS_SIZE, "little"))
-
-        result = self._call_command(request_data)
-
-        return parse_config(address, result[3:])
+        data = self._config_read_raw(CMD_ID_R_CFG_READ, address)
+        return parse_config(address, data)
 
 
     def i_config_read(self, address: int):
@@ -336,13 +331,27 @@ class TropicSquare:
                 config = ts.i_config_read(CFG_START_UP)
                 print(config.mbist_dis)
         """
+        data = self._config_read_raw(CMD_ID_I_CFG_READ, address)
+        return parse_config(address, data)
+
+
+    def _config_read_raw(self, cmd_id: int, address: int) -> bytes:
+        """Read raw 4-byte config value payload for a single CO."""
+        self._validate_config_address(address)
+
         request_data = bytearray()
-        request_data.append(CMD_ID_I_CFG_READ)
+        request_data.append(cmd_id)
         request_data.extend(address.to_bytes(CFG_ADDRESS_SIZE, "little"))
-
         result = self._call_command(request_data)
+        return result[3:]
 
-        return parse_config(address, result[3:])
+
+    def _validate_config_address(self, address: int) -> None:
+        """Validate 16-bit config CO address."""
+        if not isinstance(address, int):
+            raise TypeError("Config address must be integer")
+        if not 0 <= address <= 0xFFFF:
+            raise ValueError("Config address must be 16-bit (0x0000-0xFFFF)")
 
 
     def mem_data_read(self, slot : int) -> bytes:
