@@ -35,7 +35,7 @@ class BaseConfig:
         """
         if len(data) != 4:
             raise ValueError("Expected 4 bytes, got {}".format(len(data)))
-        value = int.from_bytes(data, 'big')
+        value = int.from_bytes(data, 'little')
         return cls(value)
 
     def to_bytes(self) -> bytes:
@@ -43,7 +43,7 @@ class BaseConfig:
 
             :returns: 4 bytes in big-endian format
         """
-        return self._value.to_bytes(4, 'big')
+        return self._value.to_bytes(4, 'little')
 
     def to_dict(self) -> dict:
         """Export configuration fields as dictionary.

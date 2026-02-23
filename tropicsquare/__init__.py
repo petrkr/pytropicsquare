@@ -396,7 +396,7 @@ class TropicSquare:
         if not 0 <= value <= 0xFFFFFFFF:
             raise ValueError("Config value must be 32-bit unsigned integer")
 
-        return value.to_bytes(4, "big")
+        return value.to_bytes(4, "little")
 
 
     def _validate_config_address(self, address: int) -> None:
