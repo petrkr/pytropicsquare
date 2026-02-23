@@ -23,7 +23,7 @@ def map_cmd_result_to_exception(cmd_result):
     }
     
     exception_class, message = error_map.get(cmd_result, (TropicSquareCommandError, "Command failed"))
-    return exception_class(f"{message} (result: {hex(cmd_result)})")
+    return exception_class(f"{message} (result: {hex(cmd_result)})", error_code=cmd_result)
 
 
 def map_response_status_to_exception(rsp_status):
@@ -40,7 +40,7 @@ def map_response_status_to_exception(rsp_status):
     }
     
     exception_class, message = error_map.get(rsp_status, (TropicSquareError, "Unknown response error"))
-    return exception_class(f"{message} (status: {hex(rsp_status)})")
+    return exception_class(f"{message} (status: {hex(rsp_status)})", error_code=rsp_status)
 
 
 def raise_for_cmd_result(cmd_result):

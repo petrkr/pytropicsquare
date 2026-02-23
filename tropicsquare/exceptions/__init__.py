@@ -1,7 +1,9 @@
 
 class TropicSquareError(Exception):
     """Base exception for all TropicSquare errors"""
-    pass
+    def __init__(self, message: str = "", error_code=None):
+        super().__init__(message)
+        self.error_code = error_code
 
 
 class TropicSquareCRCError(TropicSquareError):
@@ -115,4 +117,3 @@ class TropicSquareTagError(TropicSquareSessionError):
 class TropicSquareResponseError(TropicSquareError):
     """Response processing error"""
     pass
-
