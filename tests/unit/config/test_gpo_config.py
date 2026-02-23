@@ -182,7 +182,7 @@ class TestGpoConfigInheritance:
 
     def test_from_bytes_inherited(self):
         """Test that from_bytes works (inherited from BaseConfig)."""
-        data = b'\x00\x00\x00\x03'
+        data = b'\x03\x00\x00\x00'
         config = GpoConfig.from_bytes(data)
         assert config._value == 0x00000003
         assert config.gpo_func == 3
@@ -191,5 +191,5 @@ class TestGpoConfigInheritance:
         """Test that to_bytes works (inherited from BaseConfig)."""
         config = GpoConfig(0x00000006)
         data = config.to_bytes()
-        assert data == b'\x00\x00\x00\x06'
+        assert data == b'\x06\x00\x00\x00'
         assert len(data) == 4

@@ -43,7 +43,7 @@ class TestBaseConfigFromBytes:
         """Test creating config from valid 4-byte data."""
         data = b'\x12\x34\x56\x78'
         config = BaseConfig.from_bytes(data)
-        assert config._value == 0x12345678
+        assert config._value == 0x78563412
 
     def test_from_bytes_all_zeros(self):
         """Test creating config from all zeros."""
@@ -57,12 +57,12 @@ class TestBaseConfigFromBytes:
         config = BaseConfig.from_bytes(data)
         assert config._value == 0xFFFFFFFF
 
-    def test_from_bytes_big_endian(self):
-        """Test that from_bytes uses big-endian format."""
+    def test_from_bytes_little_endian(self):
+        """Test that from_bytes uses little-endian format."""
         data = b'\x01\x02\x03\x04'
         config = BaseConfig.from_bytes(data)
-        # Big-endian: most significant byte first
-        assert config._value == 0x01020304
+        # Little-endian: least significant byte first
+        assert config._value == 0x04030201
 
     def test_from_bytes_wrong_length_short(self):
         """Test that from_bytes raises error for data too short."""
@@ -99,7 +99,7 @@ class TestBaseConfigToBytes:
         """Test converting custom value to bytes."""
         config = BaseConfig(0x12345678)
         data = config.to_bytes()
-        assert data == b'\x12\x34\x56\x78'
+        assert data == b'\x78\x56\x34\x12'
         assert len(data) == 4
 
     def test_to_bytes_zero_value(self):
@@ -109,12 +109,12 @@ class TestBaseConfigToBytes:
         assert data == b'\x00\x00\x00\x00'
         assert len(data) == 4
 
-    def test_to_bytes_big_endian(self):
-        """Test that to_bytes uses big-endian format."""
+    def test_to_bytes_little_endian(self):
+        """Test that to_bytes uses little-endian format."""
         config = BaseConfig(0x01020304)
         data = config.to_bytes()
-        # Big-endian: most significant byte first
-        assert data == b'\x01\x02\x03\x04'
+        # Little-endian: least significant byte first
+        assert data == b'\x04\x03\x02\x01'
 
     def test_to_bytes_returns_bytes(self):
         """Test that to_bytes returns bytes type."""
@@ -237,13 +237,13 @@ class TestBaseConfigEdgeCases:
         """Test with single bit set."""
         config = BaseConfig(0x00000001)
         data = config.to_bytes()
-        assert data == b'\x00\x00\x00\x01'
+        assert data == b'\x01\x00\x00\x00'
 
     def test_msb_set(self):
         """Test with most significant bit set."""
         config = BaseConfig(0x80000000)
         data = config.to_bytes()
-        assert data == b'\x80\x00\x00\x00'
+        assert data == b'\x00\x00\x00\x80'
 
 
 class TestBaseConfigInheritance:
@@ -267,7 +267,7 @@ class TestBaseConfigInheritance:
 
         config = TestConfig.from_bytes(b'\x12\x34\x56\x78')
         assert isinstance(config, TestConfig)
-        assert config._value == 0x12345678
+        assert config._value == 0x78563412
 
     def test_subclass_repr_shows_subclass_name(self):
         """Test that __repr__ shows subclass name."""

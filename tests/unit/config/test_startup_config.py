@@ -250,7 +250,7 @@ class TestStartUpConfigInheritance:
 
     def test_from_bytes_inherited(self):
         """Test that from_bytes works (inherited from BaseConfig)."""
-        data = b'\x00\x00\x00\x0E'  # Some specific value
+        data = b'\x0E\x00\x00\x00'  # Some specific value
         config = StartUpConfig.from_bytes(data)
 
         assert config._value == 0x0000000E
@@ -260,5 +260,5 @@ class TestStartUpConfigInheritance:
         config = StartUpConfig(0x12345678)
         data = config.to_bytes()
 
-        assert data == b'\x12\x34\x56\x78'
+        assert data == b'\x78\x56\x34\x12'
         assert len(data) == 4

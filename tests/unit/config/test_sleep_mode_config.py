@@ -116,7 +116,7 @@ class TestSleepModeConfigInheritance:
 
     def test_from_bytes_inherited(self):
         """Test that from_bytes works (inherited from BaseConfig)."""
-        data = b'\x00\x00\x00\x01'
+        data = b'\x01\x00\x00\x00'
         config = SleepModeConfig.from_bytes(data)
         assert config._value == 0x00000001
 
@@ -124,5 +124,5 @@ class TestSleepModeConfigInheritance:
         """Test that to_bytes works (inherited from BaseConfig)."""
         config = SleepModeConfig(0x00000001)
         data = config.to_bytes()
-        assert data == b'\x00\x00\x00\x01'
+        assert data == b'\x01\x00\x00\x00'
         assert len(data) == 4

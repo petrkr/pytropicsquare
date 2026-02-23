@@ -755,8 +755,8 @@ class TestL3Commands:
 
         # Verify result is parsed config object
         assert isinstance(result, StartUpConfig)
-        # Verify the underlying value is correct (config uses big-endian)
-        assert result._value == int.from_bytes(config_data, 'big')
+        # Verify the underlying value is correct (config uses little-endian)
+        assert result._value == int.from_bytes(config_data, 'little')
 
     def test_i_config_read_command(self, ts_with_session):
         """Test i_config_read command execution and auto-parsing."""
@@ -770,8 +770,8 @@ class TestL3Commands:
 
         # Verify result is parsed config object
         assert isinstance(result, StartUpConfig)
-        # Verify the underlying value is correct (config uses big-endian)
-        assert result._value == int.from_bytes(config_data, 'big')
+        # Verify the underlying value is correct (config uses little-endian)
+        assert result._value == int.from_bytes(config_data, 'little')
 
     def test_ecc_key_store_command(self, ts_with_session):
         """Test ecc_key_store command execution."""
