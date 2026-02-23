@@ -50,6 +50,12 @@ from tropicsquare.constants import (
     PAIRING_KEY_MAX)
 from tropicsquare.constants.ecc import ECC_MAX_KEYS, ECC_CURVE_P256
 from tropicsquare.constants.config import CFG_START_UP
+from tropicsquare.constants.l2 import (
+    SLEEP_MODE_SLEEP,
+    SLEEP_MODE_DEEP_SLEEP,
+    STARTUP_REBOOT,
+    STARTUP_MAINTENANCE_REBOOT,
+)
 from tropicsquare.config.startup import StartUpConfig
 from tests.conftest import MockL1Transport, MockAESGCM
 
@@ -554,6 +560,76 @@ class TestAbortSecureSession:
         assert result is False
         # Session should still be set
         assert ts._secure_session is not None
+
+
+class TestPowerModeWrappers:
+    """Test reboot() and sleep() wrappers."""
+
+    @pytest.mark.parametrize("mode", [STARTUP_REBOOT, STARTUP_MAINTENANCE_REBOOT])
+    def test_reboot_calls_l2_startup_req(self, mode):
+        """Test reboot forwards mode to _l2.startup_req."""
+        from tropicsquare.ports.cpython import TropicSquareCPython
+
+        transport = MockL1Transport()
+        ts = TropicSquareCPython(transport)
+
+        seen = {}
+
+        def mock_startup_req(mode):
+            seen["mode"] = mode
+            return True
+
+        ts._l2.startup_req = mock_startup_req
+
+        result = ts.reboot(mode)
+
+        assert result is True
+        assert seen["mode"] == mode
+
+    def test_reboot_invalid_mode_raises_error(self):
+        """Test reboot validates allowed startup modes."""
+        from tropicsquare.ports.cpython import TropicSquareCPython
+
+        transport = MockL1Transport()
+        ts = TropicSquareCPython(transport)
+
+        with pytest.raises(ValueError) as exc_info:
+            ts.reboot(0xFF)
+
+        assert "Invalid startup mode" in str(exc_info.value)
+
+    @pytest.mark.parametrize("mode", [SLEEP_MODE_SLEEP, SLEEP_MODE_DEEP_SLEEP])
+    def test_sleep_calls_l2_sleep_req(self, mode):
+        """Test sleep forwards mode to _l2.sleep_req."""
+        from tropicsquare.ports.cpython import TropicSquareCPython
+
+        transport = MockL1Transport()
+        ts = TropicSquareCPython(transport)
+
+        seen = {}
+
+        def mock_sleep_req(mode):
+            seen["mode"] = mode
+            return True
+
+        ts._l2.sleep_req = mock_sleep_req
+
+        result = ts.sleep(mode)
+
+        assert result is True
+        assert seen["mode"] == mode
+
+    def test_sleep_invalid_mode_raises_error(self):
+        """Test sleep validates allowed sleep modes."""
+        from tropicsquare.ports.cpython import TropicSquareCPython
+
+        transport = MockL1Transport()
+        ts = TropicSquareCPython(transport)
+
+        with pytest.raises(ValueError) as exc_info:
+            ts.sleep(0xFF)
+
+        assert "Invalid sleep mode" in str(exc_info.value)
 
 
 class TestL3Commands:

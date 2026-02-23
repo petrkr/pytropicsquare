@@ -355,15 +355,17 @@ class TestSleepReq:
 
         assert result is True
 
-    def test_sleep_req_invalid_mode_raises_error(self):
-        """Test that invalid sleep mode raises ValueError."""
+    def test_sleep_req_accepts_raw_mode_value(self):
+        """Test that sleep_req forwards mode value without local validation."""
         transport = MockL1Transport()
+        transport.next_responses = [b'']
         l2 = L2Protocol(transport)
 
-        with pytest.raises(ValueError) as exc_info:
-            l2.sleep_req(0xFF)
+        result = l2.sleep_req(0xFF)
 
-        assert "Invalid sleep mode" in str(exc_info.value)
+        assert result is True
+        sent_request = transport.send_request_calls[0]
+        assert b'\xFF' in sent_request
 
 
 class TestStartupReq:
@@ -390,12 +392,14 @@ class TestStartupReq:
 
         assert result is True
 
-    def test_startup_req_invalid_mode_raises_error(self):
-        """Test that invalid startup mode raises ValueError."""
+    def test_startup_req_accepts_raw_mode_value(self):
+        """Test that startup_req forwards mode value without local validation."""
         transport = MockL1Transport()
+        transport.next_responses = [b'']
         l2 = L2Protocol(transport)
 
-        with pytest.raises(ValueError) as exc_info:
-            l2.startup_req(0xFF)
+        result = l2.startup_req(0xFF)
 
-        assert "Invalid startup mode" in str(exc_info.value)
+        assert result is True
+        sent_request = transport.send_request_calls[0]
+        assert b'\xFF' in sent_request
