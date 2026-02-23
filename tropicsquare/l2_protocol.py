@@ -166,8 +166,6 @@ class L2Protocol:
             :raises ValueError: If invalid sleep mode
             :raises TropicSquareError: If chip status is not ready
         """
-        if sleep_mode not in [SLEEP_MODE_SLEEP, SLEEP_MODE_DEEP_SLEEP]:
-            raise ValueError("Invalid sleep mode")
 
         payload = bytes([sleep_mode])
         self._send_and_get_response(REQ_ID_SLEEP_REQ, payload)
@@ -185,8 +183,6 @@ class L2Protocol:
             :raises ValueError: If invalid startup mode
             :raises TropicSquareError: If chip status is not ready
         """
-        if startup_id not in [STARTUP_REBOOT, STARTUP_MAINTENANCE_REBOOT]:
-            raise ValueError("Invalid startup mode")
 
         payload = bytes([startup_id])
         self._send_and_get_response(REQ_ID_STARTUP_REQ, payload)

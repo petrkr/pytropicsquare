@@ -4,6 +4,7 @@ __version__ = "0.0.1"
 __license__ = "MIT"
 
 
+from tropicsquare.constants.l2 import SLEEP_MODE_DEEP_SLEEP, SLEEP_MODE_SLEEP, STARTUP_REBOOT, STARTUP_MAINTENANCE_REBOOT
 from tropicsquare.l2_protocol import L2Protocol
 from tropicsquare.transports import L1Transport
 from tropicsquare.constants import *
@@ -242,6 +243,39 @@ class TropicSquare:
             return True
 
         return False
+
+    def reboot(self, mode: int) -> bool:
+        """Startup/reboot chip
+
+            :param mode: Startup mode (STARTUP_REBOOT or STARTUP_MAINTENANCE_REBOOT)
+
+            :returns: True if startup request was sent
+            :rtype: bool
+
+            :raises ValueError: If invalid startup mode
+            :raises TropicSquareError: If startup request failed
+        """
+        if mode not in [STARTUP_REBOOT, STARTUP_MAINTENANCE_REBOOT]:
+            raise ValueError("Invalid startup mode")
+
+        return self._l2.startup_req(mode)
+
+
+    def sleep(self, mode: int) -> bool:
+        """Put chip to sleep
+
+            :param mode: Sleep mode (SLEEP_MODE_SLEEP or SLEEP_MODE_DEEP_SLEEP)
+
+            :returns: True if sleep request was sent
+            :rtype: bool
+
+            :raises ValueError: If invalid sleep mode
+            :raises TropicSquareError: If sleep request failed
+        """
+        if mode not in [SLEEP_MODE_SLEEP, SLEEP_MODE_DEEP_SLEEP]:
+            raise ValueError("Invalid sleep mode")
+
+        return self._l2.sleep_req(mode)
 
 
     def get_log(self) -> str:
