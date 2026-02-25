@@ -23,20 +23,45 @@ class NetworkSpiTransport(L1Transport):
     COMMAND_CS_LOW = b'\x10'
     COMMAND_CS_HIGH = b'\x20'
 
-    def __init__(self, host: str, port: int = 12345, timeout: float = 5.0):
+    def __init__(
+        self,
+        host: str,
+        port: int = 12345,
+        timeout: float = 5.0,
+        connect_timeout: float = 1.0,
+    ):
         """Initialize Network SPI transport.
 
         :param host: Hostname or IP address of the SPI bridge
         :param port: Port number for the SPI connection (default: 12345)
-        :param timeout: Socket timeout in seconds (default: 5.0)
+        :param timeout: Socket I/O timeout in seconds (default: 5.0)
+        :param connect_timeout: Connect timeout per resolved address in seconds (default: 1.0)
         """
+        self._sock = None
         try:
-            hostport = socket.getaddrinfo(host, port)
-            self._sock = socket.socket()
-            self._sock.settimeout(timeout)
-            self._sock.connect(hostport[0][-1])
+            addrinfos = socket.getaddrinfo(host, port, 0, socket.SOCK_STREAM, 0)
+            errors = []
+            for family, socktype, proto, _, sockaddr in addrinfos:
+                sock = None
+                try:
+                    sock = socket.socket(family, socktype, proto)
+                    sock.settimeout(connect_timeout)
+                    sock.connect(sockaddr)
+                    sock.settimeout(timeout)
+                    self._sock = sock
+                    break
+                except Exception as e:
+                    errors.append(f"{sockaddr}: {e}")
+                    if sock is not None:
+                        sock.close()
+            if self._sock is None:
+                if errors:
+                    summary = "; ".join(errors)
+                    raise OSError(summary)
+                raise OSError("No resolved addresses")
         except Exception as e:
-            self._sock.close()
+            if self._sock is not None:
+                self._sock.close()
             raise TropicSquareError(
                 f"Failed to connect to {host}:{port}: {e}"
             )

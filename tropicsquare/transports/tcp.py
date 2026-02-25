@@ -82,22 +82,54 @@ class TcpTransport(L1Transport):
     TX_ATTEMPTS = 3
     RX_ATTEMPTS = 3
 
-    def __init__(self, host: str, port: int = 28992, timeout: float = 5.0):
+    @staticmethod
+    def _is_timeout_exception(error: Exception) -> bool:
+        if isinstance(error, OSError):
+            if getattr(error, "errno", None) in (110, 60):
+                return True
+        return "timed out" in str(error).lower()
+
+    def __init__(
+        self,
+        host: str,
+        port: int = 28992,
+        timeout: float = 5.0,
+        connect_timeout: float = 1.0,
+    ):
         """Initialize TCP transport.
 
         :param host: Hostname or IP address of the model server
         :param port: Port number for the TCP connection (default: 28992)
-        :param timeout: Socket timeout in seconds (default: 5.0)
+        :param timeout: Socket I/O timeout in seconds (default: 5.0)
+        :param connect_timeout: Connect timeout per resolved address in seconds (default: 1.0)
 
         :raises TropicSquareError: If connection fails
         """
+        self._sock = None
         try:
-            hostport = socket.getaddrinfo(host, port)
-            self._sock = socket.socket()
-            self._sock.settimeout(timeout)
-            self._sock.connect(hostport[0][-1])
+            addrinfos = socket.getaddrinfo(host, port, 0, socket.SOCK_STREAM, 0)
+            errors = []
+            for family, socktype, proto, _, sockaddr in addrinfos:
+                sock = None
+                try:
+                    sock = socket.socket(family, socktype, proto)
+                    sock.settimeout(connect_timeout)
+                    sock.connect(sockaddr)
+                    sock.settimeout(timeout)
+                    self._sock = sock
+                    break
+                except Exception as e:
+                    errors.append(f"{sockaddr}: {e}")
+                    if sock is not None:
+                        sock.close()
+            if self._sock is None:
+                if errors:
+                    summary = "; ".join(errors)
+                    raise OSError(summary)
+                raise OSError("No resolved addresses")
         except Exception as e:
-            self._sock.close()
+            if self._sock is not None:
+                self._sock.close()
             raise TropicSquareError(
                 f"Failed to connect to {host}:{port}: {e}"
             )
@@ -173,13 +205,14 @@ class TcpTransport(L1Transport):
                 if sent == 0:
                     raise TropicSquareError("Connection lost during send")
                 total_sent += sent
-            except socket.timeout:
-                attempts += 1
-                if attempts >= self.TX_ATTEMPTS:
-                    raise TropicSquareTimeoutError(
-                        f"Send timeout after {attempts} attempts"
-                    )
             except Exception as e:
+                if self._is_timeout_exception(e):
+                    attempts += 1
+                    if attempts >= self.TX_ATTEMPTS:
+                        raise TropicSquareTimeoutError(
+                            f"Send timeout after {attempts} attempts"
+                        )
+                    continue
                 raise TropicSquareError(f"Send failed: {e}")
 
         if total_sent < len(data):
@@ -207,13 +240,14 @@ class TcpTransport(L1Transport):
                 if not chunk:
                     raise TropicSquareError("Connection lost during receive")
                 received.extend(chunk)
-            except socket.timeout:
-                attempts += 1
-                if attempts >= self.RX_ATTEMPTS:
-                    raise TropicSquareTimeoutError(
-                        f"Receive timeout after {attempts} attempts"
-                    )
             except Exception as e:
+                if self._is_timeout_exception(e):
+                    attempts += 1
+                    if attempts >= self.RX_ATTEMPTS:
+                        raise TropicSquareTimeoutError(
+                            f"Receive timeout after {attempts} attempts"
+                        )
+                    continue
                 raise TropicSquareError(f"Receive failed: {e}")
 
         if len(received) < num_bytes:
