@@ -1,0 +1,56 @@
+name: Build MIP Package JSON
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build-mip-package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate MIP package.json
+        run: |
+          set -euxo pipefail
+          mkdir -p release-assets
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          import os
+
+          owner_repo = os.environ["GITHUB_REPOSITORY"]
+          tag = os.environ["GITHUB_REF_NAME"]
+          pkg_ver = tag[1:] if tag.startswith("v") else tag
+          out_name = f"pytropicsquare-{pkg_ver}-mip.json"
+          root = Path("tropicsquare")
+
+          urls = []
+          for p in sorted(root.rglob("*.py")):
+              rel = p.as_posix()
+              urls.append([
+                  rel,
+                  f"https://raw.githubusercontent.com/{owner_repo}/{tag}/{rel}",
+              ])
+
+          package = {
+              "v": 1,
+              "urls": urls,
+          }
+
+          with open(f"release-assets/{out_name}", "w", encoding="utf-8") as f:
+              json.dump(package, f, indent=2)
+              f.write("\n")
+          PY
+
+      - name: Publish package.json to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release-assets/pytropicsquare-*-mip.json
+          overwrite_files: true
