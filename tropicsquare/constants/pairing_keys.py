@@ -38,17 +38,3 @@ FACTORY_PAIRING_PUBLIC_KEY_PROD0 = bytes([
     0xF9,0x75,0xEB,0x3C,0x2F,0xD7,0x90,0xC9,0x6F,0x29,0x4F,0x15,0x57,0xA5,0x03,0x17,
     0x80,0xC9,0xAA,0xFA,0x14,0x0D,0xA2,0x8F,0x55,0xE7,0x51,0x57,0x37,0xB2,0x50,0x2C
 ])
-
-
-def get_pairing_keys(batch_id=None, part_number=None):
-    """Get pairing keys based on chip information
-
-        :param batch_id: Chip batch ID (future use)
-        :param part_number: Chip part number (future use)
-
-        :returns: (key_index, private_key, public_key)
-        :rtype: tuple
-
-        TODO: Implement logic to select keys based on batch_id/part_number
-    """
-    raise NotImplementedError("get_pairing_keys() is not yet implemented")
