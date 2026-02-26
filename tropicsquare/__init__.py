@@ -383,6 +383,19 @@ class TropicSquare:
         return True
 
 
+    def i_config_write(self, address: int, value) -> bool:
+        """Write single I-CONFIG register.
+
+            :param address: Register address (use CFG_* constants from tropicsquare.constants.config)
+            :param value: 32-bit register value or BaseConfig object
+
+            :returns: True if write succeeded
+            :rtype: bool
+        """
+        self._config_write_raw(CMD_ID_I_CFG_WRITE, address, value)
+        return True
+
+
     def r_config_erase(self) -> bool:
         """Erase whole R-CONFIG (sets all bits of all COs to 1).
 

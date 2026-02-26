@@ -35,6 +35,7 @@ from tropicsquare.constants.get_info_req import (
 )
 from tropicsquare.constants import (
     CMD_ID_PING,
+    CMD_ID_I_CFG_WRITE,
     CMD_ID_RANDOM_VALUE,
     CMD_ID_R_MEMDATA_WRITE,
     CMD_ID_R_MEMDATA_READ,
@@ -49,7 +50,7 @@ from tropicsquare.constants import (
     MAC_AND_DESTROY_MAX,
     PAIRING_KEY_MAX)
 from tropicsquare.constants.ecc import ECC_MAX_KEYS, ECC_CURVE_P256
-from tropicsquare.constants.config import CFG_START_UP
+from tropicsquare.constants.config import CFG_START_UP, CFG_UAP_PING
 from tropicsquare.constants.l2 import (
     SLEEP_MODE_SLEEP,
     SLEEP_MODE_DEEP_SLEEP,
@@ -57,6 +58,7 @@ from tropicsquare.constants.l2 import (
     STARTUP_MAINTENANCE_REBOOT,
 )
 from tropicsquare.config.startup import StartUpConfig
+from tropicsquare.config.uap_operations import PingConfig
 from tests.conftest import MockL1Transport, MockAESGCM
 
 
@@ -848,6 +850,40 @@ class TestL3Commands:
         assert isinstance(result, StartUpConfig)
         # Verify the underlying value is correct (config uses little-endian)
         assert result._value == int.from_bytes(config_data, 'little')
+
+    def test_i_config_write_ping_uap_slot0_denied_payload(self, ts_with_session):
+        """Test i_config_write payload for CFG_UAP_PING with slot 0 denied."""
+        ts = ts_with_session
+
+        captured = {}
+
+        def capture_encrypted_command(size, ciphertext, tag):
+            captured["size"] = size
+            captured["ciphertext"] = ciphertext
+            captured["tag"] = tag
+            return (bytes([CMD_RESULT_OK]), b'\x00' * 16)
+
+        ts._l2.encrypted_command = capture_encrypted_command
+
+        ping_cfg = PingConfig()
+        permissions = ping_cfg.permissions
+        permissions.pkey_slot_0 = False
+        ping_cfg.permissions = permissions
+
+        result = ts.i_config_write(CFG_UAP_PING, ping_cfg)
+
+        assert result is True
+        assert captured["size"] == len(captured["ciphertext"])
+
+        expected_payload = bytearray()
+        expected_payload.append(CMD_ID_I_CFG_WRITE)
+        expected_payload.extend(CFG_UAP_PING.to_bytes(2, "little"))
+        expected_payload.extend(b"M")
+        expected_payload.extend(ping_cfg.to_bytes())
+
+        # MockAESGCM returns plaintext as ciphertext in unit tests, so we can
+        # validate exact command bytes sent to L2 encrypted_command().
+        assert captured["ciphertext"] == bytes(expected_payload)
 
     def test_ecc_key_store_command(self, ts_with_session):
         """Test ecc_key_store command execution."""
