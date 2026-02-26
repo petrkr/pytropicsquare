@@ -1,0 +1,131 @@
+name: Publish Python Packages
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  classify-tag:
+    runs-on: ubuntu-latest
+    outputs:
+      is_tag: ${{ steps.check.outputs.is_tag }}
+      is_semver_tag: ${{ steps.check.outputs.is_semver_tag }}
+    steps:
+      - name: Classify ref
+        id: check
+        run: |
+          set -eu
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            echo "is_tag=true" >> "${GITHUB_OUTPUT}"
+          else
+            echo "is_tag=false" >> "${GITHUB_OUTPUT}"
+          fi
+
+          if [[ "${GITHUB_REF_NAME}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "is_semver_tag=true" >> "${GITHUB_OUTPUT}"
+          else
+            echo "is_semver_tag=false" >> "${GITHUB_OUTPUT}"
+          fi
+
+  build-testpypi:
+    runs-on: ubuntu-latest
+    needs: classify-tag
+    if: needs.classify-tag.outputs.is_tag == 'true'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Prepare TestPyPI version
+        run: |
+          set -euxo pipefail
+          if [[ "${GITHUB_REF_NAME}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Semver tag, keep package version as-is."
+            exit 0
+          fi
+
+          BASE_VER="$(sed -n 's/^__version__ = "\(.*\)"/\1/p' tropicsquare/__init__.py)"
+          DEV_VER="${BASE_VER}.dev${GITHUB_RUN_ID}"
+          sed -i "s/^__version__ = .*/__version__ = \"${DEV_VER}\"/" tropicsquare/__init__.py
+
+      - name: Build TestPyPI package
+        run: |
+          set -euxo pipefail
+          python -m pip install --upgrade pip build twine
+          python -m build
+          twine check dist/*
+
+      - name: Upload TestPyPI dist artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-testpypi
+          path: dist/*
+
+  publish-testpypi:
+    runs-on: ubuntu-latest
+    needs: build-testpypi
+    permissions:
+      id-token: write
+    steps:
+      - name: Download TestPyPI dist artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-testpypi
+          path: dist
+
+      - name: Publish to TestPyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+          verbose: true
+          skip-existing: true
+
+  build-pypi:
+    runs-on: ubuntu-latest
+    needs: classify-tag
+    if: needs.classify-tag.outputs.is_semver_tag == 'true'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Build PyPI package
+        run: |
+          set -euxo pipefail
+          python -m pip install --upgrade pip build twine
+          python -m build
+          twine check dist/*
+
+      - name: Upload PyPI dist artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-pypi
+          path: dist/*
+
+  publish-pypi:
+    runs-on: ubuntu-latest
+    needs: build-pypi
+    permissions:
+      id-token: write
+    steps:
+      - name: Download PyPI dist artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-pypi
+          path: dist
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
