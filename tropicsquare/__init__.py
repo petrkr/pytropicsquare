@@ -379,12 +379,20 @@ class TropicSquare:
             :returns: True if write succeeded
             :rtype: bool
         """
-        self._config_write_raw(CMD_ID_R_CFG_WRITE, address, value)
+        self._validate_config_address(address)
+        value_bytes = self._config_value_to_bytes(value)
+
+        request_data = bytearray()
+        request_data.append(CMD_ID_R_CFG_WRITE)
+        request_data.extend(address.to_bytes(CFG_ADDRESS_SIZE, "little"))
+        request_data.extend(b'M')  # Padding dummy data
+        request_data.extend(value_bytes)
+        self._call_command(request_data)
         return True
 
 
     def i_config_write(self, address: int, value) -> bool:
-        """Write single I-CONFIG register.
+        """Write single I-CONFIG register (1->0 transitions only).
 
             :param address: Register address (use CFG_* constants from tropicsquare.constants.config)
             :param value: 32-bit register value or BaseConfig object
@@ -392,7 +400,27 @@ class TropicSquare:
             :returns: True if write succeeded
             :rtype: bool
         """
-        self._config_write_raw(CMD_ID_I_CFG_WRITE, address, value)
+        self._validate_config_address(address)
+        target_bytes = self._config_value_to_bytes(value)
+        target = int.from_bytes(target_bytes, "little")
+
+        # I-CONFIG supports only irreversible 1->0 transitions.
+        current_bytes = self._config_read_raw(CMD_ID_I_CFG_READ, address)
+        current = int.from_bytes(current_bytes, "little")
+
+        # Attempt to set a bit from 0->1 is not possible in I-CONFIG.
+        if (target & ~current) != 0:
+            raise ValueError("I-CONFIG can only change bits from 1 to 0")
+
+        bits_to_clear = current & ~target
+        for bit_index in range(32):
+            if (bits_to_clear >> bit_index) & 0x1:
+                request_data = bytearray()
+                request_data.append(CMD_ID_I_CFG_WRITE)
+                request_data.extend(address.to_bytes(CFG_ADDRESS_SIZE, "little"))
+                request_data.append(bit_index)
+                self._call_command(request_data)
+
         return True
 
 
@@ -417,19 +445,6 @@ class TropicSquare:
         request_data.extend(address.to_bytes(CFG_ADDRESS_SIZE, "little"))
         result = self._call_command(request_data)
         return result[3:]
-
-
-    def _config_write_raw(self, cmd_id: int, address: int, value) -> None:
-        """Write raw 4-byte config value payload for a single CO."""
-        self._validate_config_address(address)
-        value_bytes = self._config_value_to_bytes(value)
-
-        request_data = bytearray()
-        request_data.append(cmd_id)
-        request_data.extend(address.to_bytes(CFG_ADDRESS_SIZE, "little"))
-        request_data.extend(b'M')  # Padding dummy data
-        request_data.extend(value_bytes)
-        self._call_command(request_data)
 
 
     def _config_value_to_bytes(self, value) -> bytes:
