@@ -1,0 +1,59 @@
+name: Build MicroPython MPY
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    env:
+      MPY_VERSIONS: "1.25.0 1.26.0"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build .mpy tar files
+        run: |
+          set -euxo pipefail
+          mkdir -p release-assets
+          PKG_VER="${GITHUB_REF_NAME#v}"
+
+          for ver in ${MPY_VERSIONS}; do
+            MP_TAG="v${ver}"
+            SRC_TAR="micropython-${ver}.tar.gz"
+
+            curl -fL -o "${SRC_TAR}" \
+              "https://github.com/micropython/micropython/archive/refs/tags/${MP_TAG}.tar.gz"
+            tar -xf "${SRC_TAR}"
+            tar -tf "${SRC_TAR}" > tar_contents.txt
+            MP_DIR="$(head -1 tar_contents.txt | cut -d/ -f1)"
+
+            make -C "${MP_DIR}/mpy-cross"
+
+            rm -rf build/mpy
+            mkdir -p build/mpy
+            while IFS= read -r -d '' src; do
+              rel="${src#tropicsquare/}"
+              out="build/mpy/tropicsquare/${rel%.py}.mpy"
+              mkdir -p "$(dirname "${out}")"
+              "${GITHUB_WORKSPACE}/${MP_DIR}/mpy-cross/build/mpy-cross" -O2 -o "${out}" "${src}"
+            done < <(find tropicsquare -type f -name '*.py' -print0 | sort -z)
+
+            (
+              cd build/mpy
+              tar -cf "../../release-assets/pytropicsquare-${PKG_VER}-mpy-${ver}.tar" -- *
+            )
+            rm -rf "${MP_DIR}" "${SRC_TAR}" tar_contents.txt
+          done
+
+      - name: Publish tag release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release-assets/*.tar
+          overwrite_files: true
