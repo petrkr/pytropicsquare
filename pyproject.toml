@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pytropicsquare"
+dynamic = ["version"]
+description = "Library for Tropic Square TROPIC01 secure element"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [
+  { name = "Petr Kracik", email = "petrkr@petrkr.net" },
+]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Development Status :: 3 - Alpha",
+]
+
+[project.urls]
+Homepage = "https://github.com/petrkr/pytropicsquare"
+
+[tool.setuptools.dynamic]
+version = { attr = "tropicsquare.__version__" }
+
+[tool.setuptools.packages.find]
+include = ["tropicsquare*"]
