@@ -1,4 +1,4 @@
-# by Petr Kracik (c) 2025
+# by Petr Kracik (c) 2026
 
 __version__ = "0.0.1"
 __license__ = "MIT"
