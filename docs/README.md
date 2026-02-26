@@ -35,7 +35,7 @@ The workflow is defined in `.github/workflows/sphinx-docs.yml`.
 
 - `source/conf.py` - Sphinx configuration with Napoleon extension for parsing Google and NumPy style docstrings
 - `source/index.rst` - Main documentation index page
-- `source/modules.rst` - API reference auto-generated from Python docstrings
+- `source/api/index.rst` - API reference entry point (autodoc/autosummary from Python docstrings)
 
 ## Docstring Format
 

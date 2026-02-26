@@ -99,7 +99,7 @@ transport = SpiTransport(spi, cs)
 ```
 
 **Platform support:**
-- ⚠️  **CPython (Raspberry Pi)** - TODO: `spidev` support not yet implemented (TROPIC01 Raspberry Pi shield available)
+- ✅ **CPython (Raspberry Pi/Linux)** - `SpiDevTransport` is available via `spidev` + `gpiod` (see `rpi_spidev_quickstart.py`)
 - ✅ **MicroPython ESP32** - via `machine.SPI`
 - ❌ **MicroPython Unix** - no `machine.SPI` module available
 
@@ -156,33 +156,32 @@ transport = UartTransport('/dev/ttyACM0', baudrate=115200)
 |---------|-------------|
 | **30_config_basics.py** | Read R-CONFIG and I-CONFIG registers |
 
-### TODO: Platform-Specific Examples
+### Platform-Specific Examples
 
 | Example | Platform | Description |
 |---------|----------|-------------|
 | **esp32_quickstart.py** | ESP32 MicroPython | Copy-paste ready example with direct SPI |
-| **raspberry_pi_example.py** | Raspberry Pi (CPython) | Using UART or SPI on Raspberry Pi |
-| **network_bridge_example.py** | Universal | Remote hardware via network bridge |
+| **rpi_spidev_quickstart.py** | Raspberry Pi/Linux (CPython) | Direct SPI via `spidev` + GPIO CS |
+| **tcp_model_quickstart.py** | CPython / MicroPython Unix | TCP transport to libtropic model server |
 
 ### Advanced Features
 
 | Example | Description |
 |---------|-------------|
-| **40_mac_and_destroy.py** | MAC and destroy operations for atomic PIN verification |
-| **41_complete_workflow.py** | TODO: Real-world application integration pattern |
+| **40_mac_and_destroy.py** | MAC-and-destroy flow (experimental; verify on your hardware before production use) |
 
 ## Platform Compatibility
 
 | Example | CPython | MicroPython Unix | ESP32 MicroPython | Notes |
 |---------|---------|------------------|-------------------|-------|
 | 01-03 (Getting Started) | ✅ | ✅ | ✅ | Universal |
-| 10-13 (Crypto) | ✅ | ✅ | ✅ | Coming soon |
-| 20-21 (Storage) | ✅ | ✅ | ✅ | Coming soon |
-| 30-32 (Config) | ✅ | ✅ | ✅ | Coming soon |
+| 10-13 (Crypto) | ✅ | ✅ | ✅ | Implemented |
+| 20-21 (Storage) | ✅ | ✅ | ✅ | Implemented |
+| 30 (Config) | ✅ | ✅ | ✅ | Implemented |
 | esp32_quickstart.py | ❌ | ❌ | ✅ | ESP32 only |
-| raspberry_pi_example.py | ✅ | ✅ | ❌ | Linux only |
-| network_bridge_example.py | ✅ | ✅ | ✅ | Universal |
-| 40-41 (Advanced) | ✅ | ✅ | ✅ | Coming soon |
+| rpi_spidev_quickstart.py | ✅ | ❌ | ❌ | Linux `spidev` + `gpiod` |
+| tcp_model_quickstart.py | ✅ | ✅ | ❌ | Requires model server |
+| 40 (Advanced) | ✅ | ✅ | ✅ | Treat as experimental; verify in target environment |
 
 ### Platform-Specific Limitations
 
@@ -200,7 +199,7 @@ transport = UartTransport('/dev/ttyACM0', baudrate=115200)
 - ✅ All platforms - universal compatibility
 
 **SpiTransport:**
-- ⚠️  CPython (Raspberry Pi) - TODO: `spidev` support not yet implemented
+- ✅ CPython (Raspberry Pi/Linux) - use `SpiDevTransport` for Linux `spidev` + GPIO CS
 - ✅ MicroPython ESP32 - via `machine.SPI`
 - ❌ MicroPython Unix - no `machine.SPI` module
 
@@ -291,8 +290,7 @@ if __name__ == "__main__":
 
 ### Advanced Track
 10. `30_config_basics.py` - Configuration registers
-11. `40_mac_and_destroy.py` - Atomic PIN verification
-12. `41_complete_workflow.py` - Real-world integration
+11. `40_mac_and_destroy.py` - Atomic PIN verification (experimental; validate on target hardware)
 
 ## Hardware Requirements
 

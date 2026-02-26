@@ -46,11 +46,17 @@ pip install -e .
 ### Example
 ```python
 from tropicsquare import TropicSquare
+from tropicsquare.constants.ecc import ECC_CURVE_ED25519
+from tropicsquare.constants.pairing_keys import (
+    FACTORY_PAIRING_KEY_INDEX,
+    FACTORY_PAIRING_PRIVATE_KEY_PROD0,
+    FACTORY_PAIRING_PUBLIC_KEY_PROD0,
+)
 
 # Initialize with your SPI interface and CS pin
 
 # Micropython machine.SPI
-from machine import Spi, Pin
+from machine import SPI, Pin
 from tropicsquare.transports.spi import SpiTransport
 
 spi = SPI(...)
@@ -68,14 +74,19 @@ transport = SpiTransport(spi, cs)
 ts = TropicSquare(transport)
 
 # Get chip information
-print(ts.chipid)  # Human-readable output
+chip_id = ts.chipid
+print(chip_id)  # Human-readable output
 print(f"Package: {chip_id.package_type_name}")
 print(f"Fabrication: {chip_id.fab_name}")
 print(f"SPECT FW: {ts.spect_fw_version}")
 print(f"RISC-V FW: {ts.riscv_fw_version}")
 
 # Start secure session (requires pairing keys)
-ts.start_secure_session(key_index, private_key, public_key)
+ts.start_secure_session(
+    FACTORY_PAIRING_KEY_INDEX,
+    FACTORY_PAIRING_PRIVATE_KEY_PROD0,
+    FACTORY_PAIRING_PUBLIC_KEY_PROD0,
+)
 
 # Perform operations
 random_data = ts.get_random(32)
@@ -160,7 +171,7 @@ print(f"TRNG disabled: {config.trng_dis}")
 
 # Modify and write back
 config.mbist_dis = True
-ts.r_config_write(CFG_START_UP, config.to_bytes())
+ts.r_config_write(CFG_START_UP, config)
 
 # Read I-CONFIG and compute effective value
 r_config = ts.r_config_read(CFG_START_UP)
@@ -225,7 +236,9 @@ The library is structured in three protocol layers:
 ## Examples
 
 See the `examples/` directory for complete usage examples:
-- `esp32-hello.py`: MicroPython example for ESP32
+- `esp32_quickstart.py`: MicroPython example for ESP32
+- `rpi_spidev_quickstart.py`: Linux/Raspberry Pi example using `SpiDevTransport`
+- `tcp_model_quickstart.py`: Quickstart for TCP model/simulator transport
 
 ## Requirements
 

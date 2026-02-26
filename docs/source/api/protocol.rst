@@ -24,7 +24,7 @@ The L2 protocol provides:
 Session Management
 ------------------
 
-Before executing L3 commands, a secure session must be established using the :meth:`~tropicsquare.TropicSquare.session_start` method.
+Before executing L3 commands, a secure session must be established using the :meth:`~tropicsquare.TropicSquare.start_secure_session` method.
 
 See Also
 --------

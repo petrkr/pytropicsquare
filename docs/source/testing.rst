@@ -20,14 +20,14 @@ Running Tests Locally
 ----------------------
 
 Prerequisites
-^^^^^^^^^^^^^
+~~~~~~~~~~~~~
 
 Install development dependencies::
 
     pip install -r requirements-dev.txt
 
 Running the Full Test Suite
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Run all tests with coverage::
 
@@ -40,7 +40,7 @@ This will:
 * Show coverage summary in terminal
 
 Running Specific Tests
-^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~
 
 Run a single test file::
 
@@ -58,7 +58,7 @@ Continuous Integration
 ----------------------
 
 GitHub Actions
-^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~
 
 Our CI/CD pipeline runs on every push and pull request:
 
@@ -79,7 +79,7 @@ Test Organization
 -----------------
 
 Test Structure
-^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~
 
 Tests are organized by functionality::
 
@@ -93,7 +93,7 @@ Tests are organized by functionality::
     └── fixtures/               # Test data from real hardware
 
 Testing Strategy
-^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~
 
 **Unit Tests**
   Tests that run without hardware, using mocked dependencies:
@@ -122,7 +122,7 @@ Writing Tests
 -------------
 
 Test Naming
-^^^^^^^^^^^
+~~~~~~~~~~~
 
 Follow pytest conventions:
 
@@ -131,7 +131,7 @@ Follow pytest conventions:
 * Test functions: ``test_*``
 
 Example Test
-^^^^^^^^^^^^
+~~~~~~~~~~~~
 
 .. code-block:: python
 
@@ -157,7 +157,7 @@ Example Test
             assert result1 == result2
 
 Using Fixtures
-^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~
 
 .. code-block:: python
 
@@ -175,22 +175,38 @@ Coverage Guidelines
 -------------------
 
 Target Coverage
-^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~
 
-============== ======= ===========
-Module         Target  Difficulty
-============== ======= ===========
-crc.py         100%    Easy
-exceptions/    100%    Easy
-chip_id/       95%+    Easy
-config/        90%+    Medium
-l2_protocol    85%+    Medium
-transports/    80%+    Medium
-**Overall**    **70-80%** **-**
-============== ======= ===========
+.. list-table::
+   :header-rows: 1
+
+   * - Module
+     - Target
+     - Difficulty
+   * - ``crc.py``
+     - 100%
+     - Easy
+   * - ``exceptions/``
+     - 100%
+     - Easy
+   * - ``chip_id/``
+     - 95%+
+     - Easy
+   * - ``config/``
+     - 90%+
+     - Medium
+   * - ``l2_protocol``
+     - 85%+
+     - Medium
+   * - ``transports/``
+     - 80%+
+     - Medium
+   * - **Overall**
+     - **70-80%**
+     - -
 
 What to Test
-^^^^^^^^^^^^
+~~~~~~~~~~~~
 
 **High Priority**
   * Core functionality (CRC, parsing, protocol)
@@ -212,7 +228,7 @@ Troubleshooting
 ---------------
 
 Common Issues
-^^^^^^^^^^^^^
+~~~~~~~~~~~~~
 
 **Import errors**
   Ensure the package is installed in development mode::

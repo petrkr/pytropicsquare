@@ -18,6 +18,7 @@ Constant Categories
    tropicsquare.constants.ecc
    tropicsquare.constants.get_info_req
    tropicsquare.constants.pairing_keys
+   tropicsquare.constants.config
 
 Usage
 -----
@@ -42,3 +43,4 @@ Detailed Documentation
    ecc
    info
    pairing_keys
+   config
