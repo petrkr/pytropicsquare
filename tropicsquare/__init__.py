@@ -80,8 +80,8 @@ class TropicSquare:
         # 2 bytes: unknown
         # 2 bytes (big-endian): length of the certificate
         # 6 bytes: unknown
-        lenght = int.from_bytes(data[2:4], "big")
-        self._certificate = data[10:10+lenght]
+        length = int.from_bytes(data[2:4], "big")
+        self._certificate = data[10:10+length]
         return self._certificate
 
 
