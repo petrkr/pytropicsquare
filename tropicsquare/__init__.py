@@ -913,6 +913,7 @@ class TropicSquare:
             raise TropicSquareNoSession("Secure session not started")
 
         nonce = self._secure_session[2].to_bytes(12, "little")
+        data = bytes(data)
 
         enc = self._secure_session[0].encrypt(nonce=nonce, data=data, associated_data=b'')
         ciphertext = enc[:-16]
