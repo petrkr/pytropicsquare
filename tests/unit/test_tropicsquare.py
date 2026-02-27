@@ -35,7 +35,6 @@ from tropicsquare.constants.get_info_req import (
 )
 from tropicsquare.constants import (
     CMD_ID_PING,
-    CMD_ID_I_CFG_READ,
     CMD_ID_I_CFG_WRITE,
     CMD_ID_RANDOM_VALUE,
     CMD_ID_R_MEMDATA_WRITE,
@@ -860,12 +859,6 @@ class TestL3Commands:
 
         def capture_encrypted_command(size, ciphertext, tag):
             captured.append(ciphertext)
-            # I-CONFIG read returns current CO value in RES_DATA[3:].
-            if ciphertext[0] == CMD_ID_I_CFG_READ:
-                return (
-                    bytes([CMD_RESULT_OK]) + b'\x00\x00\x00' + b'\xff\xff\xff\xff',
-                    b'\x00' * 16
-                )
             return (bytes([CMD_RESULT_OK]), b'\x00' * 16)
 
         ts._l2.encrypted_command = capture_encrypted_command
@@ -878,18 +871,12 @@ class TestL3Commands:
         result = ts.i_config_write(CFG_UAP_PING, ping_cfg)
 
         assert result is True
-        # First command: I-CONFIG read current value.
-        expected_read = bytearray()
-        expected_read.append(CMD_ID_I_CFG_READ)
-        expected_read.extend(CFG_UAP_PING.to_bytes(2, "little"))
-        assert captured[0] == bytes(expected_read)
-
-        # Second command: clear bit 0 in I-CONFIG via BIT_INDEX payload.
+        # Command: clear bit 0 in I-CONFIG via BIT_INDEX payload.
         expected_write = bytearray()
         expected_write.append(CMD_ID_I_CFG_WRITE)
         expected_write.extend(CFG_UAP_PING.to_bytes(2, "little"))
         expected_write.append(0)
-        assert captured[1] == bytes(expected_write)
+        assert captured[0] == bytes(expected_write)
 
     def test_ecc_key_store_command(self, ts_with_session):
         """Test ecc_key_store command execution."""

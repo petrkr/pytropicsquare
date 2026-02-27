@@ -395,31 +395,32 @@ class TropicSquare:
         """Write single I-CONFIG register (1->0 transitions only).
 
             :param address: Register address (use CFG_* constants from tropicsquare.constants.config)
-            :param value: 32-bit register value or BaseConfig object
+            :param value:
+                - bit index (0-31), or
+                - 32-bit register value / BaseConfig object; each zero bit is sent
+                  as an I_Config_Write bit-clear command
 
             :returns: True if write succeeded
             :rtype: bool
         """
         self._validate_config_address(address)
-        target_bytes = self._config_value_to_bytes(value)
-        target = int.from_bytes(target_bytes, "little")
 
-        # I-CONFIG supports only irreversible 1->0 transitions.
-        current_bytes = self._config_read_raw(CMD_ID_I_CFG_READ, address)
-        current = int.from_bytes(current_bytes, "little")
+        # API v1.3.0 i_config_write command accepts ADDRESS + BIT_INDEX.
+        # Do not read current state first because READ permission can be denied
+        # while WRITE permission is still granted.
+        if isinstance(value, int) and 0 <= value <= 31:
+            bit_indexes = (value,)
+        else:
+            target_bytes = self._config_value_to_bytes(value)
+            target = int.from_bytes(target_bytes, "little")
+            bit_indexes = [i for i in range(32) if ((target >> i) & 0x1) == 0]
 
-        # Attempt to set a bit from 0->1 is not possible in I-CONFIG.
-        if (target & ~current) != 0:
-            raise ValueError("I-CONFIG can only change bits from 1 to 0")
-
-        bits_to_clear = current & ~target
-        for bit_index in range(32):
-            if (bits_to_clear >> bit_index) & 0x1:
-                request_data = bytearray()
-                request_data.append(CMD_ID_I_CFG_WRITE)
-                request_data.extend(address.to_bytes(CFG_ADDRESS_SIZE, "little"))
-                request_data.append(bit_index)
-                self._call_command(request_data)
+        for bit_index in bit_indexes:
+            request_data = bytearray()
+            request_data.append(CMD_ID_I_CFG_WRITE)
+            request_data.extend(address.to_bytes(CFG_ADDRESS_SIZE, "little"))
+            request_data.append(bit_index)
+            self._call_command(request_data)
 
         return True
 
