@@ -10,7 +10,7 @@ Configuration Types
 The TROPIC01 chip supports two types of configuration:
 
 * **R-CONFIG** (Resettable Configuration) - Can be modified at runtime
-* **I-CONFIG** (Immutable Configuration) - Set during manufacturing, read-only
+* **I-CONFIG** (Irreversible Configuration) - Bits can only change from ``1`` to ``0``
 
 Configuration Classes
 ---------------------

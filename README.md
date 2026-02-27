@@ -230,7 +230,7 @@ The library is structured in three protocol layers:
 - `r_config_read(register)`: Read and parse R-CONFIG register (returns Config object)
 - `r_config_write(register, data)`: Write R-CONFIG register
 - `i_config_read(register)`: Read and parse I-CONFIG register (returns Config object)
-- `i_config_write(register, data)`: Write I-CONFIG register (irreversible!)
+- `i_config_write(register, data)`: Write I-CONFIG register (only `1 -> 0` bit transitions)
 - `parse_config(register, data)`: Parse raw bytes into config object (used internally)
 
 ## Examples
