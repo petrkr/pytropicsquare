@@ -6,6 +6,7 @@
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../..'))
+from tropicsquare import __version__ as package_version
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
@@ -13,7 +14,8 @@ sys.path.insert(0, os.path.abspath('../..'))
 project = 'pytropicsquare'
 copyright = '2025, Petr Kracik'
 author = 'Petr Kracik'
-release = '0.1.0'
+version = package_version
+release = package_version
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
