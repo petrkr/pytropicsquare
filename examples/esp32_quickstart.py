@@ -38,7 +38,6 @@ from machine import SPI, Pin
 
 from tropicsquare import TropicSquare
 from tropicsquare.transports.spi import SpiTransport
-from tropicsquare.constants.pairing_keys import *
 from tropicsquare.exceptions import *
 
 # ==============================================================================
@@ -50,6 +49,15 @@ PIN_SCK = 18
 PIN_MOSI = 23
 PIN_MISO = 19
 PIN_CS = 5
+
+from tropicsquare.constants.pairing_keys import FACTORY_PAIRING_KEY_INDEX
+
+# Uncomment the appropriate pairing keys based on your TROPIC01 chip's provisioning.
+from tropicsquare.constants.pairing_keys import FACTORY_PAIRING_PRIVATE_KEY_PROD0 as FACTORY_PRIVATE_KEY
+from tropicsquare.constants.pairing_keys import FACTORY_PAIRING_PUBLIC_KEY_PROD0 as FACTORY_PUBLIC_KEY
+
+#from tropicsquare.constants.pairing_keys import FACTORY_PAIRING_PRIVATE_KEY_ENG_SAMPLE as FACTORY_PRIVATE_KEY
+#from tropicsquare.constants.pairing_keys import FACTORY_PAIRING_PUBLIC_KEY_ENG_SAMPLE as FACTORY_PUBLIC_KEY
 
 
 def main():
@@ -75,8 +83,8 @@ def main():
         print("\n=== STARTING SECURE SESSION ===")
         ts.start_secure_session(
             FACTORY_PAIRING_KEY_INDEX,
-            FACTORY_PAIRING_PRIVATE_KEY_PROD0,
-            FACTORY_PAIRING_PUBLIC_KEY_PROD0
+            FACTORY_PRIVATE_KEY,
+            FACTORY_PUBLIC_KEY
         )
         print("✓ Session established")
 
