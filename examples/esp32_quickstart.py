@@ -66,11 +66,11 @@ def main():
     ts = TropicSquare(SpiTransport(spi, cs))
 
     try:
-        print("\n=== CHIP INFORMATION ===")
-        print(f"SPECT FW:  {ts.spect_fw_version}")
-        print(f"RISC-V FW: {ts.riscv_fw_version}")
-        print(f"Chip ID:   {ts.chipid.hex()}")
-        print(f"Cert Pub:  {ts.public_key.hex()}")
+        # Get chip information
+        print("\n=== Chip Information ===")
+        print(ts.chipid)
+        print(f"RISCV FW Version: {'.'.join(map(str, ts.riscv_fw_version))}")
+        print(f"SPECT FW Version: {'.'.join(map(str, ts.spect_fw_version))}")
 
         print("\n=== STARTING SECURE SESSION ===")
         ts.start_secure_session(
