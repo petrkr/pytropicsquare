@@ -675,15 +675,15 @@ class TestL3Commands:
 
         assert result == ping_data
 
-    def test_get_random_command(self, ts_with_session):
-        """Test get_random command."""
+    def test_random_command(self, ts_with_session):
+        """Test random command."""
         ts = ts_with_session
 
         # Mock response: CMD_RESULT_OK + 3 bytes header + random data
         random_data = b'\xAB\xCD\xEF\x01\x02'
         ts.response_data = bytes([CMD_RESULT_OK]) + b'\x00\x00\x00' + random_data
 
-        result = ts.get_random(5)
+        result = ts.random(5)
 
         # Should strip first 3 bytes after CMD_RESULT
         assert result == random_data

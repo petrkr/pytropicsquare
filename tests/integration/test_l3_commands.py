@@ -34,12 +34,12 @@ class TestRandomGeneration:
         )
 
         # Generate random bytes
-        random_data = tropic_square.get_random(32)
+        random_data = tropic_square.random(32)
 
         assert random_data is not None
         assert isinstance(random_data, bytes)
         assert len(random_data) == 32
 
         # Generate again - should be different
-        random_data2 = tropic_square.get_random(32)
+        random_data2 = tropic_square.random(32)
         assert random_data != random_data2, "RNG returned same value twice"

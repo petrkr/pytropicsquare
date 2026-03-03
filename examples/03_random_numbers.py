@@ -97,11 +97,11 @@ def main():
         print("\n=== GENERATING RANDOM BYTES ===")
 
         # Generate 16 bytes (128-bit) - suitable for AES-128 key or IV
-        random_16 = ts.get_random(16)
+        random_16 = ts.random(16)
         print(f"16 bytes:  {random_16.hex()}")
 
         # Generate 32 bytes (256-bit) - suitable for AES-256 key
-        random_32 = ts.get_random(32)
+        random_32 = ts.random(32)
         print(f"32 bytes:  {random_32.hex()}")
 
         print("\n=== CLEANUP ===")

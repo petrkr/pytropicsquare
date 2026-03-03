@@ -315,7 +315,7 @@ class TropicSquare:
         return result
 
 
-    def get_random(self, nbytes : int) -> bytes:
+    def random(self, nbytes : int) -> bytes:
         """Get random bytes
 
             :param nbytes: Number of bytes to generate

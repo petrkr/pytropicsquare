@@ -68,7 +68,7 @@ def main():
 
     # Generate random data
     print("\n=== Testing Random Generation ===")
-    random_data = ts.get_random(16)
+    random_data = ts.random(16)
     print(f"Random data (16 bytes): {random_data.hex()}")
 
     print("\n=== Test Complete ===")
