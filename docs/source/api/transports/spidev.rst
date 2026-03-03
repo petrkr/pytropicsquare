@@ -51,7 +51,7 @@ Example Usage
 
    try:
        # Use the chip
-       chip_id = ts.chipid
+       chip_id = ts.chip_id
        print(f"Chip ID: {chip_id}")
    finally:
        # Always cleanup

@@ -43,7 +43,7 @@ def main():
 
     # Get chip information
     print("\n=== Chip Information ===")
-    print(ts.chipid)
+    print(ts.chip_id)
 
     # Start secure session
     print("\n=== Starting Secure Session ===")

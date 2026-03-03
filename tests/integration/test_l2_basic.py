@@ -29,13 +29,13 @@ class TestBasicCommunication:
 
         :param tropic_square: TropicSquare instance fixture
         """
-        chipid = tropic_square.chipid
+        chip_id = tropic_square.chip_id
 
-        assert chipid is not None
-        assert chipid.serial_number is not None
+        assert chip_id is not None
+        assert chip_id.serial_number is not None
         # Check parsed fields
-        assert chipid.package_type_name is not None
-        assert chipid.fab_name is not None
+        assert chip_id.package_type_name is not None
+        assert chip_id.fab_name is not None
 
     def test_get_certificate(self, tropic_square):
         """Test reading X.509 certificate from model.

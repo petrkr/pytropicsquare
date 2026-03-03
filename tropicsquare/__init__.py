@@ -114,7 +114,7 @@ class TropicSquare:
 
 
     @property
-    def chipid(self) -> ChipId:
+    def chip_id(self) -> ChipId:
         """Get parsed chip ID structure
 
             :returns: Parsed chip ID object with all fields

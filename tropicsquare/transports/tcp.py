@@ -32,7 +32,7 @@ Example::
     ts = TropicSquare(transport)
 
     # Use chip normally
-    print(ts.chipid)
+    print(ts.chip_id)
 
 :note: Server must be running libtropic-compatible model/simulator from https://github.com/tropicsquare/ts-tvl/
 """
@@ -65,7 +65,7 @@ class TcpTransport(L1Transport):
 
         transport = TcpTransport("127.0.0.1")
         ts = TropicSquare(transport)
-        print(ts.chipid)
+        print(ts.chip_id)
     """
 
     # Protocol tags

@@ -2,7 +2,7 @@
 
 This module tests:
 - TropicSquare initialization and factory method
-- Properties (certificate, public_key, chipid, firmware versions)
+- Properties (certificate, public_key, chip_id, firmware versions)
 - get_log() method
 - _call_command() encrypt/decrypt flow
 - L3 command execution
@@ -280,7 +280,7 @@ class TestTropicSquareProperties:
         assert key is None
 
     def test_chipid_property_returns_parsed_chip_id(self):
-        """Test that chipid property returns parsed ChipId object."""
+        """Test that chip_id property returns parsed ChipId object."""
         from tropicsquare.ports.cpython import TropicSquareCPython
         from tests.fixtures.chip_id_responses import CHIP_ID_SAMPLE
 
@@ -290,7 +290,7 @@ class TestTropicSquareProperties:
         # Use real chip ID data from hardware fixture
         ts._l2.get_info_req = lambda obj_id: CHIP_ID_SAMPLE
 
-        chip_id = ts.chipid
+        chip_id = ts.chip_id
 
         assert isinstance(chip_id, ChipId)
         # Verify it parsed the real data correctly

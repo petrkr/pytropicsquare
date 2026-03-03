@@ -82,7 +82,7 @@ def main():
 
     try:
         print("\n=== CHIP IDENTIFICATION ===")
-        print(ts.chipid)
+        print(ts.chip_id)
 
         print("\n=== FIRMWARE VERSIONS ===")
         print(f"SPECT FW:  {ts.spect_fw_version}")

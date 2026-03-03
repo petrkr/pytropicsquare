@@ -14,4 +14,4 @@ See Also
 --------
 
 * :doc:`/api/chip_info/chip_id` - ChipId class
-* :doc:`/api/core` - TropicSquare info properties (``chipid``, ``certificate``, firmware version properties)
+* :doc:`/api/core` - TropicSquare info properties (``chip_id``, ``certificate``, firmware version properties)

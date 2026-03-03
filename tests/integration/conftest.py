@@ -146,7 +146,7 @@ def tcp_transport(model_server):
         def test_basic_communication(tcp_transport):
             from tropicsquare.ports.cpython import TropicSquareCPython
             ts = TropicSquareCPython(tcp_transport)
-            print(ts.chipid)
+            print(ts.chip_id)
     """
     from tropicsquare.transports.tcp import TcpTransport
 
@@ -176,8 +176,8 @@ def tropic_square(tcp_transport):
 
         @pytest.mark.integration
         def test_get_chipid(tropic_square):
-            chipid = tropic_square.chipid
-            assert chipid is not None
+            chip_id = tropic_square.chip_id
+            assert chip_id is not None
     """
     from tropicsquare.ports.cpython import TropicSquareCPython
 

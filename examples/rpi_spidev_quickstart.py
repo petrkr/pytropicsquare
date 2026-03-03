@@ -49,7 +49,7 @@ def main():
 
         # Get chip information
         print("\n=== Chip Information ===")
-        print(ts.chipid)
+        print(ts.chip_id)
         print(f"RISCV FW Version: {'.'.join(map(str, ts.riscv_fw_version))}")
         print(f"SPECT FW Version: {'.'.join(map(str, ts.spect_fw_version))}")
 

@@ -24,4 +24,4 @@ See Also
 --------
 
 * :doc:`serial_number` - Serial number utilities
-* :doc:`/api/core` - TropicSquare.chipid property
+* :doc:`/api/core` - TropicSquare.chip_id property
