@@ -45,7 +45,7 @@ jobs:
           }
 
           with open(f"release-assets/{out_name}", "w", encoding="utf-8") as f:
-              json.dump(package, f, indent=2)
+              json.dump(package, f, separators=(",", ":"))
               f.write("\n")
           PY
 
