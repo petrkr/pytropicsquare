@@ -4,14 +4,6 @@ PyTropicSquare Documentation
 .. include:: ../../README.md
    :parser: myst_parser.sphinx_
 
-Examples
---------
-
-.. toctree::
-   :maxdepth: 2
-
-   examples
-
 Contents
 --------
 
@@ -19,10 +11,19 @@ Contents
    :maxdepth: 2
    :caption: Documentation:
 
+   installation
    api/index
    testing
    test_results
    coverage
+
+Examples
+--------
+
+.. toctree::
+   :maxdepth: 2
+
+   examples
 
 Indices and tables
 ==================

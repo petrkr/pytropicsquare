@@ -2,51 +2,10 @@
 
 This directory contains comprehensive examples for the PyTropicSquare library, organized by complexity and feature area.
 
-## Installation and Setup
+## Setup
 
-### For Development (Recommended)
-
-Install the library in **editable mode** using your virtual environment. This creates a symlink, so all code changes are immediately available without reinstalling:
-
-```bash
-git clone https://github.com/petrkr/pytropicsquare
-cd pytropicsquare
-
-# Create and activate virtual environment (if not already done)
-python3 -m venv venv
-source venv/bin/activate  # On Linux/macOS
-# or: venv\Scripts\activate  # On Windows
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Install in editable mode
-pip install -e .
-```
-
-Now you can run examples directly:
-```bash
-python examples/01_chip_info.py 10.200.0.176
-```
-
-### For ESP32 MicroPython
-
-1. Upload the `tropicsquare/` directory to your ESP32
-2. Copy the example file you want to use and rename it to `main.py`
-3. Upload `main.py` to your ESP32
-4. The example will run automatically on boot
-
-Using `mpremote`:
-```bash
-# Upload library
-mpremote cp -r tropicsquare :
-
-# Upload example as main.py
-mpremote cp examples/01_chip_info.py :main.py
-
-# Reset to run
-mpremote reset
-```
+See the main installation documentation for CPython and ESP32 MicroPython setup.
+This page assumes the library is already installed and focuses only on example usage.
 
 ## Quick Start
 

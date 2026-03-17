@@ -21,25 +21,7 @@ Platform Requirements
 Installation
 ------------
 
-Connect your board to Wi-Fi and install the package with ``mip``:
-
-.. code-block:: python
-
-   from network import WLAN
-
-   w = WLAN()
-   w.active(1)
-   w.connect(ssid, psk)
-
-   import mip
-   mip.install("https://github.com/petrkr/pytropicsquare/releases/download/<release-tag>/pytropicsquare-<version>-mip.json")
-
-Example for release ``v0.1.0``:
-
-.. code-block:: python
-
-   import mip
-   mip.install("https://github.com/petrkr/pytropicsquare/releases/download/v0.1.0/pytropicsquare-0.1.0-mip.json")
+See :doc:`/installation` for CPython and ESP32 MicroPython installation instructions.
 
 Features
 --------
@@ -62,5 +44,6 @@ The MicroPython port includes custom implementations of:
 See Also
 --------
 
+* :doc:`/installation` - Installation and ESP32 onboarding
 * :doc:`cpython` - CPython implementation
 * :doc:`/api/core` - Base TropicSquare class
