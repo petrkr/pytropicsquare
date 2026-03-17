@@ -74,7 +74,7 @@ transport = SpiTransport(spi, cs)
 ts = TropicSquare(transport)
 
 # Get chip information
-chip_id = ts.chipid
+chip_id = ts.chip_id
 print(chip_id)  # Human-readable output
 print(f"Package: {chip_id.package_type_name}")
 print(f"Fabrication: {chip_id.fab_name}")
@@ -89,7 +89,7 @@ ts.start_secure_session(
 )
 
 # Perform operations
-random_data = ts.get_random(32)
+random_data = ts.random(32)
 ping_response = ts.ping(b"Hello TROPIC01!")
 
 # Generate and use ECC keys
@@ -103,7 +103,7 @@ The library provides detailed chip identification and manufacturing data through
 
 ```python
 # Get parsed chip ID
-chip_id = ts.chipid
+chip_id = ts.chip_id
 
 # Access chip information
 print(chip_id)  # Multi-line human-readable output
@@ -211,7 +211,7 @@ The library is structured in three protocol layers:
 - `abort_secure_session()`: Terminate current session
 
 #### Cryptographic Operations
-- `get_random(nbytes)`: Generate true random bytes
+- `random(nbytes)`: Generate true random bytes
 - `ecc_key_generate(slot, curve)`: Generate ECC keypair
 - `ecdsa_sign(slot, hash)`: Sign hash with P256 key
 - `eddsa_sign(slot, message)`: Sign message with Ed25519 key
