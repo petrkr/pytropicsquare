@@ -8,6 +8,10 @@ dynamic = ["version"]
 description = "Library for Tropic Square TROPIC01 secure element"
 readme = "README.md"
 requires-python = ">=3.9"
+dependencies = [
+  "cryptography",
+  "pyserial",
+]
 license = { text = "MIT" }
 authors = [
   { name = "Petr Kracik", email = "petrkr@petrkr.net" },

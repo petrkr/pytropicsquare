@@ -1,4 +1,5 @@
 cryptography
+pyserial
 
 # SPIDev transport dependencies (Raspberry Pi / Linux)
 spidev>=3.5
