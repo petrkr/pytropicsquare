@@ -14,7 +14,7 @@ It uses the ``cryptography`` library for all cryptographic operations.
 Platform Requirements
 ---------------------
 
-* Python 3.7+
+* Python 3.11+
 * ``cryptography`` library
 
 Features

@@ -63,7 +63,7 @@ GitHub Actions
 Our CI/CD pipeline runs on every push and pull request:
 
 **Test Workflow** (``.github/workflows/tests.yml``)
-  * Runs on Python 3.9, 3.10, 3.11, 3.12
+  * Runs on Python 3.11, 3.12, and 3.13
   * Generates JUnit XML for GitHub annotations
   * Posts coverage comments on pull requests
   * Fails if coverage drops below 70%

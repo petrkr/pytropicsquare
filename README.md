@@ -242,7 +242,7 @@ See the `examples/` directory for complete usage examples:
 
 ## Requirements
 
-- Python 3.9+
+- Python 3.11+
 - `cryptography` library (CPython only)
 
 ## Documentation

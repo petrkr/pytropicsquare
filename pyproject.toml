@@ -7,7 +7,7 @@ name = "pytropicsquare"
 dynamic = ["version"]
 description = "Library for Tropic Square TROPIC01 secure element"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 dependencies = [
   "cryptography",
   "pyserial",
