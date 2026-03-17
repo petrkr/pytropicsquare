@@ -58,7 +58,6 @@ from tropicsquare.constants.l2 import (
     STARTUP_MAINTENANCE_REBOOT,
 )
 from tropicsquare.config.startup import StartUpConfig
-from tropicsquare.config.uap_operations import PingConfig
 from tests.conftest import MockL1Transport, MockAESGCM
 
 
@@ -852,7 +851,7 @@ class TestL3Commands:
         assert result._value == int.from_bytes(config_data, 'little')
 
     def test_i_config_write_ping_uap_slot0_denied_payload(self, ts_with_session):
-        """Test i_config_write payload for CFG_UAP_PING with slot 0 denied."""
+        """Test i_config_write payload for CFG_UAP_PING bit 0 clear."""
         ts = ts_with_session
 
         captured = []
@@ -863,12 +862,7 @@ class TestL3Commands:
 
         ts._l2.encrypted_command = capture_encrypted_command
 
-        ping_cfg = PingConfig()
-        permissions = ping_cfg.permissions
-        permissions.pkey_slot_0 = False
-        ping_cfg.permissions = permissions
-
-        result = ts.i_config_write(CFG_UAP_PING, ping_cfg)
+        result = ts.i_config_write(CFG_UAP_PING, 0)
 
         assert result is True
         # Command: clear bit 0 in I-CONFIG via BIT_INDEX payload.

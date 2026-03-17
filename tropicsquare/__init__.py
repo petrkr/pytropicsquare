@@ -391,36 +391,28 @@ class TropicSquare:
         return True
 
 
-    def i_config_write(self, address: int, value) -> bool:
-        """Write single I-CONFIG register (1->0 transitions only).
+    def i_config_write(self, address: int, bit_index: int) -> bool:
+        """Clear a single I-CONFIG bit (1->0 transition only).
 
             :param address: Register address (use CFG_* constants from tropicsquare.constants.config)
-            :param value:
-                - bit index (0-31), or
-                - 32-bit register value / BaseConfig object; each zero bit is sent
-                  as an I_Config_Write bit-clear command
+            :param bit_index: Bit index to clear (0-31)
 
             :returns: True if write succeeded
             :rtype: bool
         """
         self._validate_config_address(address)
 
-        # API v1.3.0 i_config_write command accepts ADDRESS + BIT_INDEX.
-        # Do not read current state first because READ permission can be denied
-        # while WRITE permission is still granted.
-        if isinstance(value, int) and 0 <= value <= 31:
-            bit_indexes = (value,)
-        else:
-            target_bytes = self._config_value_to_bytes(value)
-            target = int.from_bytes(target_bytes, "little")
-            bit_indexes = [i for i in range(32) if ((target >> i) & 0x1) == 0]
+        if not isinstance(bit_index, int):
+            raise TypeError("I-CONFIG bit index must be integer")
 
-        for bit_index in bit_indexes:
-            request_data = bytearray()
-            request_data.append(CMD_ID_I_CFG_WRITE)
-            request_data.extend(address.to_bytes(CFG_ADDRESS_SIZE, "little"))
-            request_data.append(bit_index)
-            self._call_command(request_data)
+        if not 0 <= bit_index <= 31:
+            raise ValueError("I-CONFIG bit index must be in range 0-31")
+
+        request_data = bytearray()
+        request_data.append(CMD_ID_I_CFG_WRITE)
+        request_data.extend(address.to_bytes(CFG_ADDRESS_SIZE, "little"))
+        request_data.append(bit_index)
+        self._call_command(request_data)
 
         return True
 
