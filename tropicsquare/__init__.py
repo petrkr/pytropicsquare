@@ -31,7 +31,7 @@ class TropicSquare:
 
         This allows users to write platform-agnostic code:
             from tropicsquare import TropicSquare
-            ts = TropicSquare(spi, cs)
+            ts = TropicSquare(transport)
         """
         if cls is not TropicSquare:
             return super().__new__(cls)

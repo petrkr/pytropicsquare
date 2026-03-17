@@ -3,6 +3,7 @@ TropicSquare Core Class
 
 The :class:`~tropicsquare.TropicSquare` class is the main interface for communicating with the TROPIC01 secure element chip.
 It implements the L2 and L3 protocol layers and provides high-level methods for all chip operations.
+It serves as the common base class for the platform-specific implementations.
 
 .. currentmodule:: tropicsquare
 

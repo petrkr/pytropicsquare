@@ -191,7 +191,7 @@ The library is structured in three protocol layers:
 
 ### Core Classes
 
-- `TropicSquare`: Abstract base class with protocol implementation
+- `TropicSquare`: Base class with protocol implementation
 - `TropicSquareCPython`: CPython implementation
 - `TropicSquareMicroPython`: MicroPython implementation
 
