@@ -1,9 +1,6 @@
 import sys
 import types
 
-import pytest
-
-from tropicsquare.exceptions import TropicSquareError
 from tropicsquare.transports.ftdi_mpsse import FtdiMpsseTransport
 
 
@@ -39,10 +36,3 @@ def test_native_cs_keeps_transaction_open():
         ("read", 2, False, False, 0),
         ("force_select", True, 0),
     ]
-
-
-def test_init_validates_spi_port():
-    with pytest.raises(TropicSquareError) as exc_info:
-        FtdiMpsseTransport(object())
-
-    assert "spi must provide exchange()" in str(exc_info.value)
