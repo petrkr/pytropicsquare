@@ -1,15 +1,18 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+## [0.0.4-SNAPSHOT]
 
-The format is based on Keep a Changelog.
+### Added
+ - L1 Transport for FTDI chips
 
-## [Unreleased]
+## [0.0.3]
 
 ### Changed
-- Started changelog tracking before first release.
+- Started changelog tracking before first release
+- renamed chipId to chip_id
+- renamed getRandom to random
 
-## [0.1.0] - Unreleased
+## [0.0.2]
 
 ### Added
 - Initial public release of `pytropicsquare`.
